@@ -99,7 +99,7 @@ class LoginScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.black,
+                        backgroundColor: AppColors.blue,
                         padding: const EdgeInsets.symmetric(vertical: 15),
                       ),
                       onPressed: () => controller.login(),
@@ -116,7 +116,7 @@ class LoginScreen extends StatelessWidget {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            WidgetStateProperty.all(AppColors.black), // Updated
+                            WidgetStateProperty.all(AppColors.blue), // Updated
                       ),
                       onPressed: () {
                         var locale = Get.locale == const Locale('en', 'US')

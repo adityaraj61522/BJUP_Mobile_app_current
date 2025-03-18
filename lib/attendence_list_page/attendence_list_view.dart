@@ -19,8 +19,11 @@ class AttendenceListView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: const Text("Attendence List"),
-        backgroundColor: AppColors.black,
+        title: const Text(
+          "Attendence List",
+          style: TextStyle(color: AppColors.white),
+        ),
+        backgroundColor: AppColors.blue,
         centerTitle: true,
       ),
       body: Stack(

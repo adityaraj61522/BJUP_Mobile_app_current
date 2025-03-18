@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       translations: LocalizationService(), // Set up translations
       locale: Get.deviceLocale, // Detect system language
       fallbackLocale: const Locale('en', 'US'), // Default to English
-      initialRoute: AppRoutes.attendenceList, // Open LoginScreen first
+      initialRoute: AppRoutes.login, // Open LoginScreen first
       getPages: AppRoutes.routes, // Define routes
     );
   }
