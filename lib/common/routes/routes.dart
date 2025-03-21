@@ -1,10 +1,12 @@
-import 'package:bjup_application/attendence_list_page/attendence_list_view.dart';
-import 'package:bjup_application/login_page/login_view.dart';
-import 'package:bjup_application/module_selection_page/module_selection_view.dart';
 import 'package:get/get.dart';
+import '../../module_selection_page/module_selection_view.dart';
+import '../../attendence_list_page/attendence_list_view.dart';
+import '../../screens/home_screen.dart';
+import '../../login_page/login_view.dart';
 
 class AppRoutes {
   static const String login = '/login';
+  static const String home = '/home';
   static const String moduleSelection = '/moduleSelection';
   static const String attendenceList = '/attendenceList';
 
@@ -12,7 +14,11 @@ class AppRoutes {
     GetPage(
       name: login,
       page: () => LoginScreen(),
-      transition: Transition.fadeIn, // Smooth transition
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: home,
+      page: () => HomeScreen(),
     ),
     GetPage(
       name: moduleSelection,
