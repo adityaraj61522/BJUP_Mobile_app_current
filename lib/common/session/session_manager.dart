@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -111,16 +112,43 @@ class SessionManager {
     }
   }
 
-  Future<void> saveProjectList() async {
+  Future<void> saveProjectList({required List<Project> projects}) async {
     await init();
     try {
-      final user = getUser();
-      if (user != null) {
-        await _sessionBox?.put('projects', user.projects);
+      if (projects.isNotEmpty) {
+        // final projectData = projects
+        //     .map(
+        //       (e) => e.toMap(),
+        //     )
+        //     .toList()
+        //     .toString();
+        // await _sessionBox?.put('projects', projectData);
+        await _sessionBox?.put(
+            'projects', jsonEncode(projects.map((p) => p.toMap()).toList()));
       }
     } catch (e) {
       print('Project list save error: $e');
       rethrow;
+    }
+  }
+
+  Future<List<Project>> getProjectList() async {
+    await init();
+    try {
+      var storedData = _sessionBox?.get('projects'); // Get data from Hive
+
+      if (storedData != null) {
+        print("Stored raw data: $storedData");
+
+        // Decode JSON string back to List
+        List<dynamic> jsonList = jsonDecode(storedData);
+        return jsonList.map<Project>((x) => Project.fromMap(x)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching projects from Hive: $e');
+      return [];
     }
   }
 }

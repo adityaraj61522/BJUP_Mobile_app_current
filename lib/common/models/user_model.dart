@@ -145,7 +145,7 @@ class Project extends HiveObject {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'project_id': projectId,
       'project_title': projectTitle,

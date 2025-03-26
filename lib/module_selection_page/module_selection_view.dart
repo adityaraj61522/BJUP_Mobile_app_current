@@ -12,9 +12,16 @@ class ModuleSelectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: const Text("Dashboard"),
         backgroundColor: AppColors.white,
-        // centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: AppColors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -51,7 +58,7 @@ class ModuleSelectionView extends StatelessWidget {
                 _buildDashboardButton(
                     icon: Icons.analytics,
                     label: "Project Monitoring",
-                    onTap: () => Get.toNamed(AppRoutes.projectActionList),
+                    onTap: () => Get.toNamed(AppRoutes.projectList),
                     tileColor: const Color.fromARGB(255, 25, 107, 25)),
               ],
             ),

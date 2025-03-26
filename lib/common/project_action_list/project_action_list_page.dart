@@ -10,11 +10,26 @@ class ProjectMonitoringActionListView extends StatelessWidget {
     final sessionManager = SessionManager();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Data Collection"),
+        title: const Text(
+          "Data Collection",
+          style: TextStyle(
+            color: AppColors.white,
+          ),
+        ),
         backgroundColor: AppColors.green,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: AppColors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           IconButton(
+            color: AppColors.white,
             icon: const Icon(Icons.logout),
             onPressed: () => {
               sessionManager.forceLogout(),

@@ -42,7 +42,6 @@ class LoginController extends GetxController {
       isLoading.value = true;
       errorText.value = '';
 
-      // Create FormData
       var formData = FormData.fromMap({
         'username': username,
         'password': password,
@@ -62,23 +61,18 @@ class LoginController extends GetxController {
       if (response != null) {
         var data = response.data;
 
-        // Handle different response codes
         if (data['response_code'] == 200) {
-          // Login successful
           var userData = UserModel.fromMap(data['data']);
           await _sessionManager.saveValidSession();
-          await _sessionManager.saveProjectList();
+          await _sessionManager.saveProjectList(projects: userData.projects);
           errorText.value = '';
           Get.offAllNamed('/moduleSelection');
         } else if (data['response_code'] == 100) {
-          // Invalid credentials
           errorText.value = "incorrect_username_password".tr;
           await _sessionManager.logout();
         } else if (data['response_code'] == 300) {
-          // Force logout
           await _sessionManager.checkSession();
         } else {
-          // Unknown response code
           errorText.value = data['message'] ?? "something_went_wrong".tr;
           await _sessionManager.logout();
         }
