@@ -19,8 +19,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       userTypeId: fields[3] as int,
       userTypeLabel: fields[4] as String,
       userAccess: fields[5] as Map<String, dynamic>,
-      projects:
-          (fields[6] as List).map((e) => e as Map<String, dynamic>).toList(),
+      projects: (fields[6] as List).map((e) => e as Project).toList(),
       office: fields[7] as Map<String, dynamic>,
     );
   }
