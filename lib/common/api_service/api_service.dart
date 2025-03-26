@@ -19,11 +19,11 @@ class ApiService {
     // Attach authentication token if available
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        var box = Hive.box('session');
-        var token = box.get('token'); // Retrieve stored token
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
+        // var box = Hive.box('session');
+        // var token = box.get('token'); // Retrieve stored token
+        // if (token != null) {
+        //   options.headers['Authorization'] = 'Bearer $token';
+        // }
         return handler.next(options);
       },
       onResponse: (response, handler) async {

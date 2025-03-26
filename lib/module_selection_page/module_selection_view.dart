@@ -1,17 +1,29 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/routes/routes.dart';
+import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ModuleSelectionView extends StatelessWidget {
-  const ModuleSelectionView({super.key});
+  ModuleSelectionView({super.key});
+  final sessionManager = SessionManager();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text("Dashboard"),
-      //   backgroundColor: AppColors.black,
-      //   centerTitle: true,
-      // ),
+      appBar: AppBar(
+        // title: const Text("Dashboard"),
+        backgroundColor: AppColors.white,
+        // centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => {
+              sessionManager.forceLogout(),
+            },
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           Container(
@@ -32,18 +44,15 @@ class ModuleSelectionView extends StatelessWidget {
                 _buildDashboardButton(
                   icon: Icons.calendar_month_rounded,
                   label: "Field Attendance",
-                  onTap: () => {},
+                  onTap: () => Get.toNamed(AppRoutes.attendenceList),
                   tileColor: AppColors.blue,
-                  // onTap: () => Get.to(() => const FieldAttendanceScreen()),
                 ),
                 const SizedBox(height: 20),
                 _buildDashboardButton(
                     icon: Icons.analytics,
                     label: "Project Monitoring",
-                    onTap: () => {},
-                    tileColor: const Color.fromARGB(255, 25, 107, 25)
-                    // onTap: () => Get.to(() => const ProjectMonitoringScreen()),
-                    ),
+                    onTap: () => Get.toNamed(AppRoutes.projectActionList),
+                    tileColor: const Color.fromARGB(255, 25, 107, 25)),
               ],
             ),
           ),

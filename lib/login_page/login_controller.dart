@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/api_service/api_service.dart';
+import 'package:bjup_application/common/models/user_model.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -64,29 +65,30 @@ class LoginController extends GetxController {
         // Handle different response codes
         if (data['response_code'] == 200) {
           // Login successful
-          var userData = data['data'];
-          await _sessionManager.saveSession(userData);
+          var userData = UserModel.fromMap(data['data']);
+          await _sessionManager.saveValidSession();
+          await _sessionManager.saveProjectList();
           errorText.value = '';
           Get.offAllNamed('/moduleSelection');
         } else if (data['response_code'] == 100) {
           // Invalid credentials
-          errorText.value = "invalid_credentials".tr;
+          errorText.value = "incorrect_username_password".tr;
           await _sessionManager.logout();
         } else if (data['response_code'] == 300) {
           // Force logout
           await _sessionManager.checkSession();
         } else {
           // Unknown response code
-          errorText.value = data['message'] ?? "unknown_error".tr;
+          errorText.value = data['message'] ?? "something_went_wrong".tr;
           await _sessionManager.logout();
         }
       } else {
-        errorText.value = "server_error".tr;
+        errorText.value = "something_went_wrong".tr;
         await _sessionManager.logout();
       }
     } catch (e) {
       print('Login error: $e');
-      errorText.value = "login_failed".tr;
+      errorText.value = "something_went_wrong".tr;
       await _sessionManager.logout();
     } finally {
       isLoading.value = false;

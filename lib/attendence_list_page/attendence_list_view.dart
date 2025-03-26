@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bjup_application/attendence_list_page/attendence_list_controller.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 class AttendenceListView extends StatelessWidget {
   final AttendenceListController controller =
       Get.put(AttendenceListController());
+  final sessionManager = SessionManager();
 
   AttendenceListView({super.key});
 
@@ -25,6 +27,14 @@ class AttendenceListView extends StatelessWidget {
         ),
         backgroundColor: AppColors.blue,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => {
+              sessionManager.forceLogout(),
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [

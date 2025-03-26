@@ -30,8 +30,23 @@ class SessionManager {
   Future<void> saveSession(Map<String, dynamic> userData) async {
     await init();
     try {
-      final user = UserModel.fromJson(userData);
-      await _sessionBox?.put('user', user);
+      // final user = UserModel.fromJson(userData);
+      // await _sessionBox?.put('user', user);
+
+      // await _sessionBox?.put('user', userData);
+
+      await _sessionBox?.put('isVlaid', userData);
+    } catch (e) {
+      print('Session save error: $e');
+      rethrow;
+    }
+  }
+
+  // Store user session
+  Future<void> saveValidSession() async {
+    await init();
+    try {
+      await _sessionBox?.put('isVlaidSession', true);
     } catch (e) {
       print('Session save error: $e');
       rethrow;
@@ -88,13 +103,24 @@ class SessionManager {
   // Check session status
   Future<void> checkSession() async {
     await init();
-    final user = getUser();
-    if (user != null) {
-      if (user.userTypeId == 300) {
-        await forceLogout();
-      } else if (Get.currentRoute == '/login') {
-        Get.offNamed('/moduleSelection');
+    // final user = getUser();
+    if (await _sessionBox?.get('isVlaidSession')) {
+      Get.offNamed('/moduleSelection');
+    } else {
+      await forceLogout();
+    }
+  }
+
+  Future<void> saveProjectList() async {
+    await init();
+    try {
+      final user = getUser();
+      if (user != null) {
+        await _sessionBox?.put('projects', user.projects);
       }
+    } catch (e) {
+      print('Project list save error: $e');
+      rethrow;
     }
   }
 }

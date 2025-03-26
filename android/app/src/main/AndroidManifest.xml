@@ -21,13 +21,13 @@
 
     <!-- <uses-permission android:name="android.permission.READ_DEVICE_CONFIG"/> -->
 
-    
+    <uses-permission android:name="android.permission.INTERNET"/>
 
 
     
 
     <application
-        android:label="bjup_application"
+        android:label="BJUP Application"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

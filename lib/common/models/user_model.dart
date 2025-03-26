@@ -23,7 +23,7 @@ class UserModel extends HiveObject {
   final Map<String, dynamic> userAccess;
 
   @HiveField(6)
-  final List<Map<String, dynamic>> projects;
+  final List<Project> projects;
 
   @HiveField(7)
   final Map<String, dynamic> office;
@@ -39,10 +39,10 @@ class UserModel extends HiveObject {
     required this.office,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromMap(Map<String, dynamic> json) {
     return UserModel(
-      userId: json['userid']?.toString() ?? '',
-      animatorId: json['animator_id']?.toString() ?? '',
+      userId: json['userid'] ?? '',
+      animatorId: json['animator_id'] ?? '',
       accessTypes: (json['access_type'] as String?)
               ?.split(',')
               .map((e) => e.trim())
@@ -51,10 +51,10 @@ class UserModel extends HiveObject {
       userTypeId: int.tryParse(json['user_type_id']?.toString() ?? '') ?? 0,
       userTypeLabel: json['user_type_label']?.toString() ?? '',
       userAccess: json['user_access'] as Map<String, dynamic>? ?? {},
-      projects: (json['projects'] as List?)
-              ?.map((x) => x as Map<String, dynamic>)
-              .toList() ??
-          [],
+      projects: json['projects'] != null
+          ? List<Project>.from(
+              json['projects']?.map<Project>((x) => Project.fromMap(x)) ?? [])
+          : [],
       office: json['office'] as Map<String, dynamic>? ?? {},
     );
   }
@@ -85,7 +85,7 @@ class UserModel extends HiveObject {
   }
 
   String get projectTitle =>
-      projects.isNotEmpty ? projects.first['project_title'] ?? '' : '';
+      projects.isNotEmpty ? projects.first.projectTitle : '';
   String get officeTitle => office['office_title'] ?? '';
 }
 
@@ -106,7 +106,7 @@ class UserAccess extends HiveObject {
     required this.projectMonitoring,
   });
 
-  factory UserAccess.fromJson(Map<String, dynamic> json) {
+  factory UserAccess.fromMap(Map<String, dynamic> json) {
     return UserAccess(
       observationReport:
           int.tryParse(json['observatin_report']?.toString() ?? '0') ?? 0,
@@ -125,7 +125,7 @@ class UserAccess extends HiveObject {
   }
 }
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 6)
 class Project extends HiveObject {
   @HiveField(0)
   final String projectId;
@@ -138,7 +138,7 @@ class Project extends HiveObject {
     required this.projectTitle,
   });
 
-  factory Project.fromJson(Map<String, dynamic> json) {
+  factory Project.fromMap(Map<String, dynamic> json) {
     return Project(
       projectId: json['project_id']?.toString() ?? '',
       projectTitle: json['project_title']?.toString() ?? '',
@@ -166,7 +166,7 @@ class Office extends HiveObject {
     required this.officeTitle,
   });
 
-  factory Office.fromJson(Map<String, dynamic> json) {
+  factory Office.fromMap(Map<String, dynamic> json) {
     return Office(
       id: json['id']?.toString() ?? '',
       officeTitle: json['office_title']?.toString() ?? '',

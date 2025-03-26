@@ -1,4 +1,3 @@
 class ApiConfig {
-  static const String baseUrl =
-      "http://cmisbjup.in/beta/drrquestion/api_v1"; // Change to your API
+  static const String baseUrl = "https://cmisbjup.in/beta/drrquestion/api_v1";
 }

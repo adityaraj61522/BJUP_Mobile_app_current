@@ -4,10 +4,12 @@ import 'package:bjup_application/login_page/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
+  final dir = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter(dir.path);
   Get.put(LoginController()); // Initialize controller
 
   runApp(MyApp());

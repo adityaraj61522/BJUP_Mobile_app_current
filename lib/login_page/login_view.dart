@@ -174,8 +174,8 @@ class LoginScreen extends StatelessWidget {
         await controller.login();
       } catch (e) {
         Get.snackbar(
-          'error'.tr,
           'login_failed'.tr,
+          'something_went_wrong'.tr,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: AppColors.red,
           colorText: AppColors.white,
