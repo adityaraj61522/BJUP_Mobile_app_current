@@ -4,13 +4,14 @@ import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/models/user_model.dart';
 import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
+import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
 import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 
-class DownloadQuestionSetController extends GetxController {
+class DownloadVillageDataController extends GetxController {
   final SessionManager sessionManager = SessionManager();
   final DownloadQuestionSetStorage downloadedStorageManager =
       DownloadQuestionSetStorage();
@@ -25,11 +26,9 @@ class DownloadQuestionSetController extends GetxController {
 
   final selectedOfficeId = ''.obs;
 
-  final selectedLanguage = 'question'.obs;
+  final selectedInterviewType = ''.obs;
 
-  final selectedReportType = ''.obs;
-
-  final selectedQuestionSet = ''.obs;
+  final selectedVillage = ''.obs;
 
   final errorText = ''.obs;
 
@@ -37,8 +36,8 @@ class DownloadQuestionSetController extends GetxController {
 
   final SessionManager _sessionManager = SessionManager();
 
-  List<Language>? languages = [];
-  List<ReportType>? reportType = [];
+  List<Village>? villages = [];
+  List<InterviewType>? interviewTypes = [];
   List<QuestionSet>? questionSet = [];
 
   String projectId = '';
@@ -58,7 +57,7 @@ class DownloadQuestionSetController extends GetxController {
     officeName = userData!.office.officeTitle;
     selectedOfficeId.value = userData!.office.id;
     selectedAnamitorId.value = userData!.userId;
-    await fetchQuestionSet();
+    await fetchVillageData();
   }
 
   Future<void> getProjectList() async {
@@ -68,18 +67,12 @@ class DownloadQuestionSetController extends GetxController {
     });
   }
 
-  Future<void> fetchQuestionSet() async {
+  Future<void> fetchVillageData() async {
     String anamitorId = selectedAnamitorId.value;
-    String officeId = selectedOfficeId.value;
     String projectId = selectedProject.value;
 
     if (projectId.isEmpty || projectId.isEmpty) {
       errorText.value = "Project Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-    if (officeId.isEmpty || officeId.isEmpty) {
-      errorText.value = "Office Not Selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
@@ -96,11 +89,10 @@ class DownloadQuestionSetController extends GetxController {
       var formData = FormData.fromMap({
         'animator_id': anamitorId,
         'project_id': projectId,
-        'office_id': officeId,
       });
 
       var response = await apiService.post(
-        "/downloadForm.php",
+        "/getVillages.php",
         formData,
         options: Options(
           headers: {
@@ -114,10 +106,9 @@ class DownloadQuestionSetController extends GetxController {
         var data = response.data;
 
         if (data['response_code'] == 200) {
-          var questionSetData = QuestionSetResponse.fromMap(data);
-          languages = questionSetData.language;
-          reportType = questionSetData.reportType;
-          questionSet = questionSetData.questionSet;
+          var villageData = DownloadVillageDataResponse.fromMap(data);
+          villages = villageData.villages;
+          interviewTypes = villageData.interviewTypes;
           // await _sessionManager.saveValidSession();
           // await _sessionManager.saveProjectList(projects: userData.projects);
           errorText.value = '';
@@ -146,18 +137,13 @@ class DownloadQuestionSetController extends GetxController {
     }
   }
 
-  void changeLanguage(String language) {
-    selectedLanguage.value = language;
+  void changeVillage(String village) {
+    selectedVillage.value = village;
     update();
   }
 
-  void changeReportType(String reportType) {
-    selectedReportType.value = reportType;
-    update();
-  }
-
-  void changeQuestionSet(String questionSet) {
-    selectedQuestionSet.value = questionSet;
+  void changeInterviewType(String interviewType) {
+    selectedInterviewType.value = interviewType;
     update();
   }
 
@@ -231,14 +217,6 @@ class DownloadQuestionSetController extends GetxController {
 
           await downloadedStorageManager.saveDownloadedQuestionSet(
               downloadedQuestionSet: questionSetData);
-
-          Get.snackbar(
-            "Success",
-            'Question Set Data saved successfully!!'.tr,
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.green,
-            colorText: AppColors.white,
-          );
 
           final downloadedData =
               await downloadedStorageManager.getDownloadedQuestionSet();

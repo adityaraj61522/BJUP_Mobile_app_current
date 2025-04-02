@@ -1,5 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
-import 'package:bjup_application/common/project_action_list/project_action_list_controller.dart';
+import 'package:bjup_application/project_action_list/project_action_list_controller.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -65,7 +65,7 @@ class ProjectMonitoringActionListView extends StatelessWidget {
                     _buildDashboardButton(
                       icon: Icons.download_for_offline_rounded,
                       label: "Download Village Data",
-                      onTap: () => {},
+                      onTap: () => controller.routeToDownloadVillageData(),
                       tileColor: AppColors.green,
                       // onTap: () => Get.to(() => const FieldAttendanceScreen()),
                     ),
