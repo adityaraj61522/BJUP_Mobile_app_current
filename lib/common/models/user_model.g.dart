@@ -14,36 +14,48 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
     };
     return UserModel(
       userId: fields[0] as String,
-      animatorId: fields[1] as String,
-      accessTypes: (fields[2] as List).cast<String>(),
-      userTypeId: fields[3] as int,
-      userTypeLabel: fields[4] as String,
-      userAccess: fields[5] as Map<String, dynamic>,
-      projects: (fields[6] as List).map((e) => e as Project).toList(),
-      office: fields[7] as Map<String, dynamic>,
+      username: fields[1] as String,
+      mobileNo: fields[2] as String?,
+      email: fields[3] as String,
+      animatorId: fields[4] as String,
+      accessTypes: (fields[5] as List).cast<String>(),
+      userTypeId: fields[6] as int,
+      userTypeLabel: fields[7] as String,
+      userAccess: fields[8] as UserAccess,
+      projects: (fields[9] as List).map((e) => e as Project).toList(),
+      office: fields[10] as Office,
+      plan: fields[11] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
-      ..write(obj.animatorId)
+      ..write(obj.username)
       ..writeByte(2)
-      ..write(obj.accessTypes)
+      ..write(obj.mobileNo)
       ..writeByte(3)
-      ..write(obj.userTypeId)
+      ..write(obj.email)
       ..writeByte(4)
-      ..write(obj.userTypeLabel)
+      ..write(obj.animatorId)
       ..writeByte(5)
-      ..write(obj.userAccess)
+      ..write(obj.accessTypes)
       ..writeByte(6)
-      ..write(obj.projects)
+      ..write(obj.userTypeId)
       ..writeByte(7)
-      ..write(obj.office);
+      ..write(obj.userTypeLabel)
+      ..writeByte(8)
+      ..write(obj.userAccess)
+      ..writeByte(9)
+      ..write(obj.projects)
+      ..writeByte(10)
+      ..write(obj.office)
+      ..writeByte(11)
+      ..write(obj.plan);
   }
 }
 

@@ -64,6 +64,7 @@ class LoginController extends GetxController {
         if (data['response_code'] == 200) {
           var userData = UserModel.fromMap(data['data']);
           await _sessionManager.saveValidSession();
+          await _sessionManager.saveUserSession(userData: userData);
           await _sessionManager.saveProjectList(projects: userData.projects);
           errorText.value = '';
           Get.offAllNamed('/moduleSelection');

@@ -81,7 +81,10 @@ class ProjectMonitoringListView extends StatelessWidget {
 
   Widget _buildProjectMonitoringCard({required Project projectItem}) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.projectActionList),
+      onTap: () => Get.toNamed(AppRoutes.projectActionList, arguments: {
+        "projectId": projectItem.projectId,
+        "projectTitle": projectItem.projectTitle,
+      }),
       child: Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(

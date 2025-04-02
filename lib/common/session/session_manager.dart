@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'package:bjup_application/common/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import '../models/user_model.dart';
 
 class SessionManager {
   static final SessionManager _instance = SessionManager._internal();
@@ -17,6 +17,9 @@ class SessionManager {
       try {
         if (!Hive.isAdapterRegistered(1)) {
           Hive.registerAdapter(UserModelAdapter());
+          Hive.registerAdapter(UserAccessAdapter());
+          Hive.registerAdapter(ProjectAdapter());
+          Hive.registerAdapter(OfficeAdapter());
         }
         _sessionBox = await Hive.openBox('session');
         _isInitialized = true;
@@ -54,6 +57,17 @@ class SessionManager {
     }
   }
 
+  // Store user session
+  Future<void> saveUserSession({required UserModel userData}) async {
+    await init();
+    try {
+      await _sessionBox?.put('userData', userData);
+    } catch (e) {
+      print('Session save error: $e');
+      rethrow;
+    }
+  }
+
   // Get current user
   UserModel? getUser() {
     try {
@@ -64,11 +78,22 @@ class SessionManager {
     }
   }
 
+  // Get current user
+  Future<UserModel?> getUserData() async {
+    try {
+      final userData = await _sessionBox?.get('userData');
+      return userData as UserModel;
+    } catch (e) {
+      print('Session read error: $e');
+      return null;
+    }
+  }
+
   // Quick access helpers
   bool get isLoggedIn => getUser() != null;
   String get userType => getUser()?.userTypeLabel ?? '';
   String get projectTitle => getUser()?.projectTitle ?? '';
-  String get officeTitle => getUser()?.officeTitle ?? '';
+  // String get officeTitle => getUser()?.officeTitle ?? '';
 
   // Feature access checks
   bool hasAccess(String accessType) =>

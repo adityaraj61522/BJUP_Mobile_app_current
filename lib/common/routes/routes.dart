@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/project_action_list/project_action_list_page.dart';
+import 'package:bjup_application/download_question_set_page/download_question_set_view.dart';
 import 'package:bjup_application/project_list_page/project_list_page.dart';
 import 'package:get/get.dart';
 import '../../module_selection_page/module_selection_view.dart';
@@ -12,6 +13,7 @@ class AppRoutes {
   static const String attendenceList = '/attendenceList';
   static const String projectActionList = '/projectActionList';
   static const String projectList = '/projectList';
+  static const String downlaodQuestionSet = '/downlaodQuestionSet';
 
   static final routes = [
     GetPage(
@@ -37,6 +39,11 @@ class AppRoutes {
     GetPage(
       name: projectList,
       page: () => ProjectMonitoringListView(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: downlaodQuestionSet,
+      page: () => DownloadQuestionSetView(),
       transition: Transition.fadeIn,
     ),
   ];

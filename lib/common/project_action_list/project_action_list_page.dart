@@ -1,9 +1,13 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/project_action_list/project_action_list_controller.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ProjectMonitoringActionListView extends StatelessWidget {
-  const ProjectMonitoringActionListView({super.key});
+  ProjectMonitoringActionListView({super.key});
+
+  final controller = Get.put(ProjectMonitoringActionListController());
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +72,7 @@ class ProjectMonitoringActionListView extends StatelessWidget {
                     _buildDashboardButton(
                       icon: Icons.question_mark_rounded,
                       label: "Download Question Set",
-                      onTap: () => {},
+                      onTap: () => controller.routeToDownloadQuestionSet(),
                       tileColor: AppColors.green,
                       // onTap: () => Get.to(() => const ProjectMonitoringScreen()),
                     ),
