@@ -16,15 +16,23 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key}); // Add constructor with key
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      title: 'BJUP Application', // Add app title
       debugShowCheckedModeBanner: false,
-      translations: LocalizationService(), // Set up translations
-      locale: Get.deviceLocale, // Detect system language
-      fallbackLocale: const Locale('en', 'US'), // Default to English
-      initialRoute: AppRoutes.login, // Open LoginScreen first
-      getPages: AppRoutes.routes, // Define routes
+      theme: ThemeData(
+        // Add theme configuration
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+      ),
+      translations: LocalizationService(),
+      locale: Get.deviceLocale,
+      fallbackLocale: const Locale('en', 'US'),
+      initialRoute: AppRoutes.login,
+      getPages: AppRoutes.routes,
     );
   }
 }

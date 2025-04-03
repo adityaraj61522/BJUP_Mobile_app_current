@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'download_village_data_response.g.dart';
 
-@HiveType(typeId: 22)
+@HiveType(typeId: 222)
 class DownloadVillageDataResponse extends HiveObject {
   @HiveField(0)
   final int responseCode;
@@ -50,7 +50,7 @@ class DownloadVillageDataResponse extends HiveObject {
   }
 }
 
-@HiveType(typeId: 33)
+@HiveType(typeId: 333)
 class Village extends HiveObject {
   @HiveField(0)
   final String villageId;
@@ -78,7 +78,7 @@ class Village extends HiveObject {
   }
 }
 
-@HiveType(typeId: 44)
+@HiveType(typeId: 444)
 class InterviewType extends HiveObject {
   @HiveField(0)
   final String id;

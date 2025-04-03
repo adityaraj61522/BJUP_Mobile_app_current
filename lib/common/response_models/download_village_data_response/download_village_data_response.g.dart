@@ -1,8 +1,9 @@
 part of 'download_village_data_response.dart';
 
-class SurveyResponseAdapter extends TypeAdapter<DownloadVillageDataResponse> {
+class DownloadVillageDataResponseAdapter
+    extends TypeAdapter<DownloadVillageDataResponse> {
   @override
-  final int typeId = 22;
+  final int typeId = 222;
 
   @override
   DownloadVillageDataResponse read(BinaryReader reader) {
@@ -35,7 +36,7 @@ class SurveyResponseAdapter extends TypeAdapter<DownloadVillageDataResponse> {
 
 class VillageAdapter extends TypeAdapter<Village> {
   @override
-  final int typeId = 33;
+  final int typeId = 333;
 
   @override
   Village read(BinaryReader reader) {
@@ -62,7 +63,7 @@ class VillageAdapter extends TypeAdapter<Village> {
 
 class InterviewTypeAdapter extends TypeAdapter<InterviewType> {
   @override
-  final int typeId = 44;
+  final int typeId = 444;
 
   @override
   InterviewType read(BinaryReader reader) {
