@@ -1,4 +1,4 @@
-import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
+import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
 import 'package:hive/hive.dart';
 
 class DownloadVillageDataStorage {
@@ -13,10 +13,10 @@ class DownloadVillageDataStorage {
   Future<void> init() async {
     if (!_isInitialized) {
       try {
-        if (!Hive.isAdapterRegistered(22)) {
-          Hive.registerAdapter(DownloadVillageDataResponseAdapter());
+        if (!Hive.isAdapterRegistered(2222)) {
+          Hive.registerAdapter(DownloadCBODataResponseAdapter());
           Hive.registerAdapter(VillageAdapter());
-          Hive.registerAdapter(InterviewTypeAdapter());
+          Hive.registerAdapter(CBOAdapter());
         }
         _storageBox = await Hive.openBox('downloadedVillageData');
         _isInitialized = true;
@@ -29,7 +29,7 @@ class DownloadVillageDataStorage {
 
   // Store user session
   Future<void> saveDownloadedVillageData(
-      {required DownloadVillageDataResponse downloadedVillageData}) async {
+      {required DownloadCBODataResponse downloadedVillageData}) async {
     await init();
     try {
       await _storageBox?.put('downloadedVillageData', downloadedVillageData);
@@ -40,12 +40,12 @@ class DownloadVillageDataStorage {
   }
 
   // Get current user
-  Future<DownloadVillageDataResponse?> getDownloadedVillageData() async {
+  Future<DownloadCBODataResponse?> getDownloadedVillageData() async {
     try {
-      final downloadedQuestionSet =
+      final downloadedVillageData =
           await _storageBox?.get('downloadedVillageData');
-      print(downloadedQuestionSet);
-      return downloadedQuestionSet as DownloadVillageDataResponse;
+      print(downloadedVillageData);
+      return downloadedVillageData as DownloadCBODataResponse;
     } catch (e) {
       print('downloadedVillageData read error: $e');
       return null;

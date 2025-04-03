@@ -3,18 +3,17 @@ import 'dart:async';
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/models/user_model.dart';
-import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
+import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
 import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
-import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
-import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
+import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 
 class DownloadVillageDataController extends GetxController {
   final SessionManager sessionManager = SessionManager();
-  final DownloadQuestionSetStorage downloadedStorageManager =
-      DownloadQuestionSetStorage();
+  final DownloadVillageDataStorage downloadedStorageManager =
+      DownloadVillageDataStorage();
 
   final projectList = <Project>[].obs;
 
@@ -38,7 +37,6 @@ class DownloadVillageDataController extends GetxController {
 
   List<Village>? villages = [];
   List<InterviewType>? interviewTypes = [];
-  List<QuestionSet>? questionSet = [];
 
   String projectId = '';
   String projectTitle = '';
@@ -148,30 +146,18 @@ class DownloadVillageDataController extends GetxController {
   }
 
   void onDownloadQuestionSetClicked() async {
-    // String language = selectedLanguage.value;
-    // String reportTypeId = selectedReportType.value;
-    // String questionSetId = selectedQuestionSet.value;
-    // String interviewTypeId = selectedQuestionSet.value;
-    // String villageId = selectedQuestionSet.value;
+    String partnerId = selectedOfficeId.value;
+    String projectsId = selectedProject.value;
+    String interviewTypeId = selectedInterviewType.value;
+    String villageId = selectedVillage.value;
 
-    String language = 'question';
-    String reportTypeId = '7';
-    String questionSetId = '2';
-    String interviewTypeId = '44';
-    String villageId = '236017';
-
-    if (language.isEmpty) {
-      errorText.value = "Language Not Selected".tr;
+    if (projectsId.isEmpty) {
+      errorText.value = "Project Not Selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
-    if (reportTypeId.isEmpty) {
-      errorText.value = "Report Type Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-    if (questionSetId.isEmpty) {
-      errorText.value = "Question Set Not Selected".tr;
+    if (partnerId.isEmpty) {
+      errorText.value = "Partner Not Selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
@@ -191,15 +177,14 @@ class DownloadVillageDataController extends GetxController {
       errorText.value = '';
 
       var formData = FormData.fromMap({
-        'question_set_id': questionSetId,
-        'report_type_id': reportTypeId,
-        'interview_type_id': interviewTypeId,
+        'partner_id': partnerId,
+        'project_id': projectsId,
+        'interview_type': interviewTypeId,
         'village_id': villageId,
-        'language': language,
       });
 
       var response = await apiService.post(
-        "/getSurveyQuestions.php",
+        "/getBenificiaryCBO.php",
         formData,
         options: Options(
           headers: {
@@ -213,13 +198,13 @@ class DownloadVillageDataController extends GetxController {
         var data = response.data;
 
         if (data['response_code'] == 200) {
-          var questionSetData = SurveyModel.fromMap(data);
+          var beneficieryCBOData = DownloadCBODataResponse.fromMap(data);
 
-          await downloadedStorageManager.saveDownloadedQuestionSet(
-              downloadedQuestionSet: questionSetData);
+          await downloadedStorageManager.saveDownloadedVillageData(
+              downloadedVillageData: beneficieryCBOData);
 
           final downloadedData =
-              await downloadedStorageManager.getDownloadedQuestionSet();
+              await downloadedStorageManager.getDownloadedVillageData();
           print(downloadedData);
           // await _sessionManager.saveProjectList(projects: userData.projects);
           errorText.value = '';
