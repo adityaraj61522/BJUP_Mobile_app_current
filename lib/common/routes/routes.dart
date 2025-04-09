@@ -5,6 +5,7 @@ import 'package:bjup_application/module_selection_page/module_selection_view.dar
 import 'package:bjup_application/project_action_list/project_action_list_page.dart';
 import 'package:bjup_application/download_question_set_page/download_question_set_view.dart';
 import 'package:bjup_application/project_list_page/project_list_page.dart';
+import 'package:bjup_application/start_monitoring_page/start_monitoring_view.dart';
 import 'package:get/get.dart';
 
 class AppRoutes {
@@ -16,6 +17,7 @@ class AppRoutes {
   static const String projectList = '/projectList';
   static const String downlaodQuestionSet = '/downlaodQuestionSet';
   static const String downlaodVillageData = '/downlaodVillageData';
+  static const String startMonitoring = '/startMonitoring';
 
   static final routes = [
     GetPage(
@@ -51,6 +53,11 @@ class AppRoutes {
     GetPage(
       name: downlaodVillageData,
       page: () => DownloadVillageDataView(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: startMonitoring,
+      page: () => StartMonitoringView(),
       transition: Transition.fadeIn,
     ),
   ];

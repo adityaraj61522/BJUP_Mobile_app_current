@@ -1,5 +1,4 @@
 import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
-import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
 import 'package:hive/hive.dart';
 
 class DownloadVillageDataStorage {
@@ -9,7 +8,6 @@ class DownloadVillageDataStorage {
   DownloadVillageDataStorage._internal();
 
   Box? _storageBox;
-  Box? _storageVillageBox;
   bool _isInitialized = false;
 
   Future<void> init() async {
@@ -21,7 +19,7 @@ class DownloadVillageDataStorage {
           Hive.registerAdapter(BeneficiaryAdapter());
           Hive.registerAdapter(CBOAdapter());
         }
-        _storageVillageBox =
+        _storageBox =
             await Hive.openBox<CBOBeneficiaryResponse>('downloadedVillageData');
         _isInitialized = true;
       } catch (e) {
@@ -38,7 +36,7 @@ class DownloadVillageDataStorage {
   }) async {
     await init();
     try {
-      await _storageVillageBox?.put(interviewId, downloadedVillageData);
+      await _storageBox?.put(interviewId, downloadedVillageData);
     } catch (e) {
       print('downloadedVillageData save error: $e');
       rethrow;
@@ -48,56 +46,12 @@ class DownloadVillageDataStorage {
   // Get current user
   Future<CBOBeneficiaryResponse?> getDownloadedVillageData(
       {required String interviewId}) async {
-    await init();
     try {
-      final downloadedVillageData = await _storageVillageBox?.get(interviewId);
+      final downloadedVillageData = await _storageBox?.get(interviewId);
       print(downloadedVillageData);
       return downloadedVillageData as CBOBeneficiaryResponse;
     } catch (e) {
       print('downloadedVillageData read error: $e');
-      return null;
-    }
-  }
-
-  Future<void> initVillageData() async {
-    if (!_isInitialized) {
-      try {
-        if (!Hive.isAdapterRegistered(222)) {
-          Hive.registerAdapter(DownloadVillageDataResponseAdapter());
-          Hive.registerAdapter(VillageResAdapter());
-          Hive.registerAdapter(InterviewTypeAdapter());
-        }
-        _storageBox = await Hive.openBox<Village>('villageData');
-        _isInitialized = true;
-      } catch (e) {
-        print('villageData initialization error: $e');
-        rethrow;
-      }
-    }
-  }
-
-  // Store user session
-  Future<void> saveVillageData({
-    required Village villageData,
-  }) async {
-    await initVillageData();
-    try {
-      await _storageBox?.add(villageData);
-    } catch (e) {
-      print('villageData save error: $e');
-      rethrow;
-    }
-  }
-
-  // Get current user
-  Future<Village?> getVillageData() async {
-    await initVillageData();
-    try {
-      final villageData = await _storageBox?.get('villageData');
-      print(villageData);
-      return villageData as Village;
-    } catch (e) {
-      print('villageData read error: $e');
       return null;
     }
   }

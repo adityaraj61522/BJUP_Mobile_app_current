@@ -34,9 +34,9 @@ class DownloadVillageDataResponseAdapter
   }
 }
 
-class VillageAdapter extends TypeAdapter<Village> {
+class VillageResAdapter extends TypeAdapter<Village> {
   @override
-  final int typeId = 333;
+  final int typeId = 223;
 
   @override
   Village read(BinaryReader reader) {
@@ -63,7 +63,7 @@ class VillageAdapter extends TypeAdapter<Village> {
 
 class InterviewTypeAdapter extends TypeAdapter<InterviewType> {
   @override
-  final int typeId = 444;
+  final int typeId = 70;
 
   @override
   InterviewType read(BinaryReader reader) {

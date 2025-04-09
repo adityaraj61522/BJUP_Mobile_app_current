@@ -79,8 +79,8 @@ class ProjectMonitoringActionListView extends StatelessWidget {
                     _buildDashboardButton(
                       icon: Icons.analytics,
                       label: "Start Monitoring",
-                      onTap: () => {},
                       tileColor: AppColors.green,
+                      onTap: () => controller.routeToStartMonitoring(),
                       // onTap: () => Get.to(() => const ProjectMonitoringScreen()),
                     ),
                     _buildDashboardButton(

@@ -31,4 +31,11 @@ class ProjectMonitoringActionListController extends GetxController {
       "projectTitle": projectTitle,
     });
   }
+
+  void routeToStartMonitoring() async {
+    await Get.toNamed(AppRoutes.startMonitoring, arguments: {
+      "projectId": projectId,
+      "projectTitle": projectTitle,
+    });
+  }
 }

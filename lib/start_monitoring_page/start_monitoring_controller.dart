@@ -5,12 +5,13 @@ import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/models/user_model.dart';
 import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
 import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
+import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 
-class DownloadVillageDataController extends GetxController {
+class StartMonitoringController extends GetxController {
   final SessionManager sessionManager = SessionManager();
   final DownloadVillageDataStorage downloadedStorageManager =
       DownloadVillageDataStorage();
@@ -44,6 +45,10 @@ class DownloadVillageDataController extends GetxController {
 
   UserModel? userData;
 
+  final villageList = <Village>[].obs;
+  final questionSet = <QuestionSet>[].obs;
+  final showSelector = false.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -58,9 +63,16 @@ class DownloadVillageDataController extends GetxController {
     await fetchVillageData();
   }
 
-  Future<void> getProjectList() async {
-    sessionManager.getProjectList().then((value) {
-      projectList.addAll(value);
+  void onExistingInterviewClicked() async {
+    await getVillageList();
+    showSelector.value = true;
+  }
+
+  Future<void> getVillageList() async {
+    downloadedStorageManager.getVillageData().then((value) {
+      if (value != null) {
+        villageList.add(value);
+      }
       update();
     });
   }
