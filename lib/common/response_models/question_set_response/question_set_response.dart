@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'question_set_response.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 91)
 class QuestionSetResponse {
   @HiveField(0)
   final int responseCode;
@@ -44,7 +44,7 @@ class QuestionSetResponse {
   }
 }
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 92)
 class QuestionSet {
   @HiveField(0)
   final String id;
@@ -80,7 +80,7 @@ class QuestionSet {
   }
 }
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 93)
 class ReportType {
   @HiveField(0)
   final String id;
@@ -98,7 +98,7 @@ class ReportType {
   }
 }
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 94)
 class Language {
   @HiveField(0)
   final String key;

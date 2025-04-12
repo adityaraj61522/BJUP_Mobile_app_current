@@ -3,20 +3,21 @@ import 'dart:async';
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/models/user_model.dart';
-import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
 import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
 import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
+import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
 import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 
 class StartMonitoringController extends GetxController {
   final SessionManager sessionManager = SessionManager();
-  final DownloadVillageDataStorage downloadedStorageManager =
+  final DownloadVillageDataStorage downloadedVillageStorageManager =
       DownloadVillageDataStorage();
 
-  final projectList = <Project>[].obs;
+  final DownloadQuestionSetStorage downloadedQuestionSetStorageManager =
+      DownloadQuestionSetStorage();
 
   final ApiService apiService = ApiService();
 
@@ -46,7 +47,7 @@ class StartMonitoringController extends GetxController {
   UserModel? userData;
 
   final villageList = <Village>[].obs;
-  final questionSet = <QuestionSet>[].obs;
+  final questionSetList = <QuestionSet>[].obs;
   final showSelector = false.obs;
 
   @override
@@ -64,14 +65,24 @@ class StartMonitoringController extends GetxController {
   }
 
   void onExistingInterviewClicked() async {
+    await getQuestionSetList();
     await getVillageList();
     showSelector.value = true;
   }
 
   Future<void> getVillageList() async {
-    downloadedStorageManager.getVillageData().then((value) {
-      if (value != null) {
-        villageList.add(value);
+    downloadedVillageStorageManager.getVillageData().then((value) {
+      if (value.isNotEmpty) {
+        villageList.addAll(value);
+      }
+      update();
+    });
+  }
+
+  Future<void> getQuestionSetList() async {
+    downloadedQuestionSetStorageManager.getQuestionSetData().then((value) {
+      if (value.isNotEmpty) {
+        questionSetList.addAll(value);
       }
       update();
     });
@@ -155,90 +166,6 @@ class StartMonitoringController extends GetxController {
   void changeInterviewType(String interviewType) {
     selectedInterviewType.value = interviewType;
     update();
-  }
-
-  void onDownloadQuestionSetClicked() async {
-    String partnerId = selectedOfficeId.value;
-    String projectsId = selectedProject.value;
-    String interviewTypeId = selectedInterviewType.value;
-    String villageId = selectedVillage.value;
-
-    if (projectsId.isEmpty) {
-      errorText.value = "Project Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-    if (partnerId.isEmpty) {
-      errorText.value = "Partner Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-    if (interviewTypeId.isEmpty) {
-      errorText.value = "Interview Type Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-    if (villageId.isEmpty) {
-      errorText.value = "Village Id Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-
-    try {
-      isLoading.value = true;
-      errorText.value = '';
-      var formData = FormData.fromMap({
-        'partner_id': partnerId,
-        'project_id': projectsId,
-        'interview_type': interviewTypeId,
-        'village_id': villageId,
-      });
-      var response = await apiService.post(
-        "/getBenificiaryCBO.php",
-        formData,
-        options: Options(
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Accept': '*/*',
-          },
-        ),
-      );
-      if (response != null) {
-        var data = response.data;
-        if (data['response_code'] == 200) {
-          var beneficieryCBOData = CBOBeneficiaryResponse.fromMap(data);
-          await downloadedStorageManager.saveVillageData(
-            villageData: villages!
-                .where((e) => e.villageId == selectedVillage.value)
-                .first,
-          );
-          await downloadedStorageManager.saveDownloadedVillageData(
-              interviewId:
-                  '${beneficieryCBOData.selectedVillages.first.villageId}-$interviewTypeId',
-              downloadedVillageData: beneficieryCBOData);
-          final downloadedData =
-              await downloadedStorageManager.getDownloadedVillageData(
-                  interviewId:
-                      '${beneficieryCBOData.selectedVillages.first.villageId}-$interviewTypeId');
-          print(downloadedData);
-          errorText.value = '';
-        } else if (data['response_code'] == 100) {
-          handleErrorReported(error: "Data not available!!".tr);
-        } else if (data['response_code'] == 300) {
-          await _sessionManager.checkSession();
-        } else {
-          errorText.value = data['message'] ?? "something_went_wrong".tr;
-          handleErrorReported(error: errorText.value);
-        }
-      } else {
-        handleErrorReported(error: "something_went_wrong".tr);
-      }
-    } catch (e) {
-      print('saveDownloadedQuestionSet error: $e');
-      handleErrorReported(error: "something_went_wrong".tr);
-    } finally {
-      isLoading.value = false;
-    }
   }
 }
 

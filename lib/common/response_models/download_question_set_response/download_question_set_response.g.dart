@@ -1,32 +1,48 @@
 part of 'download_question_set_response.dart';
 
-class SurveyModelAdapter extends TypeAdapter<SurveyModel> {
+class SurveyModelAdapter extends TypeAdapter<DownloadedQuestionSetResponse> {
   @override
   final int typeId = 22;
 
   @override
-  SurveyModel read(BinaryReader reader) {
+  DownloadedQuestionSetResponse read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return SurveyModel(
+
+    return DownloadedQuestionSetResponse(
       responseCode: fields[0] as int,
       message: fields[1] as String,
       formQuestions: (fields[2] as List).cast<FormQuestion>(),
+      oldSurvey: fields[3] as List,
+      questionSetId: fields[4] as String,
+      reportTypeId: fields[5] as String,
+      interviewTypeId: fields[6] as String,
+      language: fields[7] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, SurveyModel obj) {
+  void write(BinaryWriter writer, DownloadedQuestionSetResponse obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.responseCode)
       ..writeByte(1)
       ..write(obj.message)
       ..writeByte(2)
-      ..write(obj.formQuestions);
+      ..write(obj.formQuestions)
+      ..writeByte(3)
+      ..write(obj.oldSurvey)
+      ..writeByte(4)
+      ..write(obj.questionSetId)
+      ..writeByte(5)
+      ..write(obj.reportTypeId)
+      ..writeByte(6)
+      ..write(obj.interviewTypeId)
+      ..writeByte(7)
+      ..write(obj.language);
   }
 }
 
@@ -40,6 +56,7 @@ class FormQuestionAdapter extends TypeAdapter<FormQuestion> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+
     return FormQuestion(
       questionId: fields[0] as String,
       questionText: fields[1] as String,
@@ -82,6 +99,7 @@ class QuestionOptionAdapter extends TypeAdapter<QuestionOption> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+
     return QuestionOption(
       optionId: fields[0] as String,
       optionText: fields[1] as String,

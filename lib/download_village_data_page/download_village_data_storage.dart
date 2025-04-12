@@ -11,6 +11,7 @@ class DownloadVillageDataStorage {
   Box? _storageBox;
   Box? _storageVillageBox;
   bool _isInitialized = false;
+  bool _isVillageInitialized = false;
 
   Future<void> init() async {
     if (!_isInitialized) {
@@ -33,12 +34,12 @@ class DownloadVillageDataStorage {
 
   // Store user session
   Future<void> saveDownloadedVillageData({
-    required String interviewId,
+    required String villageInterviewId,
     required CBOBeneficiaryResponse downloadedVillageData,
   }) async {
     await init();
     try {
-      await _storageVillageBox?.put(interviewId, downloadedVillageData);
+      await _storageVillageBox?.put(villageInterviewId, downloadedVillageData);
     } catch (e) {
       print('downloadedVillageData save error: $e');
       rethrow;
@@ -60,7 +61,7 @@ class DownloadVillageDataStorage {
   }
 
   Future<void> initVillageData() async {
-    if (!_isInitialized) {
+    if (!_isVillageInitialized) {
       try {
         if (!Hive.isAdapterRegistered(222)) {
           Hive.registerAdapter(DownloadVillageDataResponseAdapter());
@@ -68,7 +69,7 @@ class DownloadVillageDataStorage {
           Hive.registerAdapter(InterviewTypeAdapter());
         }
         _storageBox = await Hive.openBox<Village>('villageData');
-        _isInitialized = true;
+        _isVillageInitialized = true;
       } catch (e) {
         print('villageData initialization error: $e');
         rethrow;
@@ -90,15 +91,18 @@ class DownloadVillageDataStorage {
   }
 
   // Get current user
-  Future<Village?> getVillageData() async {
-    await initVillageData();
+  Future<List<Village>> getVillageData() async {
     try {
-      final villageData = await _storageBox?.get('villageData');
+      final boxData = await Hive.box<Village>('villageData');
+      final villageData = boxData.values.toList();
+      if (villageData.isEmpty) {
+        return <Village>[];
+      }
       print(villageData);
-      return villageData as Village;
+      return villageData;
     } catch (e) {
       print('villageData read error: $e');
-      return null;
+      return <Village>[];
     }
   }
 }

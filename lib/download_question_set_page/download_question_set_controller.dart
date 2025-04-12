@@ -227,7 +227,13 @@ class DownloadQuestionSetController extends GetxController {
         var data = response.data;
 
         if (data['response_code'] == 200) {
-          var questionSetData = SurveyModel.fromMap(data);
+          var questionSetData = DownloadedQuestionSetResponse.fromMap(data);
+
+          await downloadedStorageManager.saveQuestionSetData(
+            questionSetData: questionSet!
+                .where((e) => e.id == selectedQuestionSet.value)
+                .first,
+          );
 
           await downloadedStorageManager.saveDownloadedQuestionSet(
               downloadedQuestionSet: questionSetData);

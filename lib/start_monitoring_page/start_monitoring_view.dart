@@ -109,19 +109,43 @@ class StartMonitoringView extends StatelessWidget {
   }
 
   Widget buildInterviewTypeSelector() {
-    final Widget questionSetDropdown = controller.villageList.isNotEmpty
-        ? DropdownButton<String>(
-            // value: selectedValue,
-            hint: const Text('Select an item'),
-            items: controller.villageList.map((item) {
-              return DropdownMenuItem(
-                value: item.villageId,
-                child: Text(item.villageName),
-              );
-            }).toList(),
-            onChanged: (value) {
-              // if (value != null) onChanged(value);
-            },
+    final Widget questionSetDropdown = controller.questionSetList.isNotEmpty
+        ? Expanded(
+            child: DropdownButton<String>(
+              // value: selectedValue,
+              hint: const Text('Select an item'),
+              items: controller.questionSetList.map((item) {
+                return DropdownMenuItem(
+                  value: item.id,
+                  child: Text(item.title),
+                );
+              }).toList(),
+              onChanged: (value) {
+                // if (value != null) onChanged(value);
+              },
+            ),
+          )
+        : Center(
+            child: Text(
+              'No interview type List Exist',
+              style: TextStyle(color: AppColors.gray),
+            ),
+          );
+    final Widget villageDropdown = controller.villageList.isNotEmpty
+        ? Expanded(
+            child: DropdownButton<String>(
+              // value: selectedValue,
+              hint: const Text('Select an item'),
+              items: controller.villageList.map((item) {
+                return DropdownMenuItem(
+                  value: item.villageId,
+                  child: Text(item.villageName),
+                );
+              }).toList(),
+              onChanged: (value) {
+                // if (value != null) onChanged(value);
+              },
+            ),
           )
         : Center(
             child: Text(
@@ -134,11 +158,24 @@ class StartMonitoringView extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              "Question Set: ",
-              style: TextStyle(color: AppColors.gray),
+            Expanded(
+              child: Text(
+                "Question Set: ",
+                style: TextStyle(color: AppColors.gray),
+              ),
             ),
             questionSetDropdown,
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                "Village: ",
+                style: TextStyle(color: AppColors.gray),
+              ),
+            ),
+            villageDropdown,
           ],
         ),
       ],

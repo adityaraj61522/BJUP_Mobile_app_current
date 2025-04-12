@@ -201,7 +201,7 @@ class DownloadVillageDataController extends GetxController {
                 .first,
           );
           await downloadedStorageManager.saveDownloadedVillageData(
-              interviewId:
+              villageInterviewId:
                   '${beneficieryCBOData.selectedVillages.first.villageId}-$interviewTypeId',
               downloadedVillageData: beneficieryCBOData);
           final downloadedData =

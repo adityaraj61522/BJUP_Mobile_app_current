@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'download_question_set_response.g.dart';
 
 @HiveType(typeId: 22)
-class SurveyModel extends HiveObject {
+class DownloadedQuestionSetResponse extends HiveObject {
   @HiveField(0)
   final int responseCode;
 
@@ -13,20 +13,46 @@ class SurveyModel extends HiveObject {
   @HiveField(2)
   final List<FormQuestion> formQuestions;
 
-  SurveyModel({
+  @HiveField(3)
+  final List<dynamic> oldSurvey;
+
+  @HiveField(4)
+  final String questionSetId;
+
+  @HiveField(5)
+  final String reportTypeId;
+
+  @HiveField(6)
+  final String interviewTypeId;
+
+  @HiveField(7)
+  final String language;
+
+  DownloadedQuestionSetResponse({
     required this.responseCode,
     required this.message,
     required this.formQuestions,
+    required this.oldSurvey,
+    required this.questionSetId,
+    required this.reportTypeId,
+    required this.interviewTypeId,
+    required this.language,
   });
 
-  factory SurveyModel.fromMap(Map<String, dynamic> json) {
-    return SurveyModel(
+  factory DownloadedQuestionSetResponse.fromMap(Map<String, dynamic> json) {
+    final data = json['data'] ?? {};
+    return DownloadedQuestionSetResponse(
       responseCode: json['response_code'] ?? 0,
       message: json['message'] ?? '',
-      formQuestions: (json['data']['form_questions'] as List?)
+      formQuestions: (data['form_questions'] as List?)
               ?.map((q) => FormQuestion.fromMap(q))
               .toList() ??
           [],
+      oldSurvey: data['old_survey'] ?? [],
+      questionSetId: data['question_set_id'] ?? '',
+      reportTypeId: data['report_type_id'] ?? '',
+      interviewTypeId: data['interview_type_id'] ?? '',
+      language: data['language'] ?? '',
     );
   }
 
@@ -36,6 +62,11 @@ class SurveyModel extends HiveObject {
       'message': message,
       'data': {
         'form_questions': formQuestions.map((q) => q.toJson()).toList(),
+        'old_survey': oldSurvey,
+        'question_set_id': questionSetId,
+        'report_type_id': reportTypeId,
+        'interview_type_id': interviewTypeId,
+        'language': language,
       },
     };
   }

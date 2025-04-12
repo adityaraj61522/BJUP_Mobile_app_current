@@ -8,7 +8,7 @@ part of 'question_set_response.dart';
 
 class QuestionSetResponseAdapter extends TypeAdapter<QuestionSetResponse> {
   @override
-  final int typeId = 0;
+  final int typeId = 91;
 
   @override
   QuestionSetResponse read(BinaryReader reader) {
@@ -33,7 +33,7 @@ class QuestionSetResponseAdapter extends TypeAdapter<QuestionSetResponse> {
 
 class QuestionSetAdapter extends TypeAdapter<QuestionSet> {
   @override
-  final int typeId = 1;
+  final int typeId = 92;
 
   @override
   QuestionSet read(BinaryReader reader) {
@@ -58,7 +58,7 @@ class QuestionSetAdapter extends TypeAdapter<QuestionSet> {
 
 class ReportTypeAdapter extends TypeAdapter<ReportType> {
   @override
-  final int typeId = 2;
+  final int typeId = 93;
 
   @override
   ReportType read(BinaryReader reader) {
@@ -77,7 +77,7 @@ class ReportTypeAdapter extends TypeAdapter<ReportType> {
 
 class LanguageAdapter extends TypeAdapter<Language> {
   @override
-  final int typeId = 3;
+  final int typeId = 94;
 
   @override
   Language read(BinaryReader reader) {
