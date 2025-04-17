@@ -2,7 +2,7 @@ part of 'download_question_set_response.dart';
 
 class SurveyModelAdapter extends TypeAdapter<DownloadedQuestionSetResponse> {
   @override
-  final int typeId = 22;
+  final int typeId = 155;
 
   @override
   DownloadedQuestionSetResponse read(BinaryReader reader) {
@@ -48,7 +48,7 @@ class SurveyModelAdapter extends TypeAdapter<DownloadedQuestionSetResponse> {
 
 class FormQuestionAdapter extends TypeAdapter<FormQuestion> {
   @override
-  final int typeId = 33;
+  final int typeId = 156;
 
   @override
   FormQuestion read(BinaryReader reader) {
@@ -91,7 +91,7 @@ class FormQuestionAdapter extends TypeAdapter<FormQuestion> {
 
 class QuestionOptionAdapter extends TypeAdapter<QuestionOption> {
   @override
-  final int typeId = 44;
+  final int typeId = 157;
 
   @override
   QuestionOption read(BinaryReader reader) {

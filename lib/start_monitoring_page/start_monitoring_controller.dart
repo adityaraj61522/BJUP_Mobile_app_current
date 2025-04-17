@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/models/user_model.dart';
+import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
 import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
 import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
@@ -31,14 +32,13 @@ class StartMonitoringController extends GetxController {
 
   final selectedVillage = ''.obs;
 
+  final selectedQuestionSet = ''.obs;
+
+  final selectedBeneficiary = ''.obs;
+
   final errorText = ''.obs;
 
   final isLoading = false.obs;
-
-  final SessionManager _sessionManager = SessionManager();
-
-  List<Village>? villages = [];
-  List<InterviewType>? interviewTypes = [];
 
   String projectId = '';
   String projectTitle = '';
@@ -48,6 +48,7 @@ class StartMonitoringController extends GetxController {
 
   final villageList = <Village>[].obs;
   final questionSetList = <QuestionSet>[].obs;
+  final beneficiaryList = <Beneficiary>[].obs;
   final showSelector = false.obs;
 
   @override
@@ -61,7 +62,6 @@ class StartMonitoringController extends GetxController {
     officeName = userData!.office.officeTitle;
     selectedOfficeId.value = userData!.office.id;
     selectedAnamitorId.value = userData!.userId;
-    await fetchVillageData();
   }
 
   void onExistingInterviewClicked() async {
@@ -71,100 +71,56 @@ class StartMonitoringController extends GetxController {
   }
 
   Future<void> getVillageList() async {
-    downloadedVillageStorageManager.getVillageData().then((value) {
-      if (value.isNotEmpty) {
-        villageList.addAll(value);
-      }
+    List<Village> villageListData = [];
+    await downloadedVillageStorageManager.getVillageData().then((value) {
+      final seenIds = <String>{};
+      villageListData = value.where((item) {
+        return seenIds.add(item.villageId);
+      }).toList();
       update();
     });
+    villageList.addAll(villageListData.toSet().toList());
   }
 
   Future<void> getQuestionSetList() async {
-    downloadedQuestionSetStorageManager.getQuestionSetData().then((value) {
-      if (value.isNotEmpty) {
-        questionSetList.addAll(value);
-      }
+    List<QuestionSet> questionSetListData = [];
+    await downloadedQuestionSetStorageManager
+        .getQuestionSetData()
+        .then((value) {
+      final seenIds = <String>{};
+      questionSetListData = value.where((item) {
+        return seenIds.add(item.id);
+      }).toList();
       update();
     });
+    questionSetList.addAll(questionSetListData.toSet().toList());
   }
 
-  Future<void> fetchVillageData() async {
-    String anamitorId = selectedAnamitorId.value;
-    String projectId = selectedProject.value;
-
-    if (projectId.isEmpty || projectId.isEmpty) {
-      errorText.value = "Project Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-    if (anamitorId.isEmpty || anamitorId.isEmpty) {
-      errorText.value = "Animator Not Selected".tr;
-      handleErrorReported(error: errorText.value);
-      return;
-    }
-
-    try {
-      isLoading.value = true;
-      errorText.value = '';
-
-      var formData = FormData.fromMap({
-        'animator_id': anamitorId,
-        'project_id': projectId,
-      });
-
-      var response = await apiService.post(
-        "/getVillages.php",
-        formData,
-        options: Options(
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Accept': '*/*',
-          },
-        ),
-      );
-
-      if (response != null) {
-        var data = response.data;
-
-        if (data['response_code'] == 200) {
-          var villageData = DownloadVillageDataResponse.fromMap(data);
-          villages = villageData.villages;
-          interviewTypes = villageData.interviewTypes;
-          // await _sessionManager.saveValidSession();
-          // await _sessionManager.saveProjectList(projects: userData.projects);
-          errorText.value = '';
-          // Get.offAllNamed('/moduleSelection');
-        } else if (data['response_code'] == 100) {
-          handleErrorReported(error: "something_went_wrong".tr);
-          await _sessionManager.logout();
-        } else if (data['response_code'] == 300) {
-          await _sessionManager.checkSession();
-        } else {
-          errorText.value = data['message'] ?? "something_went_wrong".tr;
-
-          handleErrorReported(error: errorText.value);
-          await _sessionManager.logout();
-        }
-      } else {
-        handleErrorReported(error: "something_went_wrong".tr);
-        await _sessionManager.logout();
-      }
-    } catch (e) {
-      print('Login error: $e');
-      handleErrorReported(error: "something_went_wrong".tr);
-      await _sessionManager.logout();
-    } finally {
-      isLoading.value = false;
-    }
+  Future<void> getBeneficieryList({required String interviewId}) async {
+    // villageList.add(Village(villageId: '-11', villageName: 'Select an item'));
+    List<Beneficiary> beneficiaryListData = [];
+    await downloadedVillageStorageManager
+        .getDownloadedVillageData(interviewId: interviewId)
+        .then((value) {
+      final seenIds = <String>{};
+      beneficiaryListData = value!.beneficiaries.where((item) {
+        return seenIds.add(item.beneficiaryId);
+      }).toList();
+      update();
+    });
+    beneficiaryList.addAll(beneficiaryListData.toSet().toList());
   }
 
-  void changeVillage(String village) {
+  void changeVillage(String village) async {
     selectedVillage.value = village;
+    final selectedVillageObj =
+        villageList.firstWhere((element) => element.villageId == village);
+    await getBeneficieryList(interviewId: '${selectedVillage.value}-44');
     update();
   }
 
-  void changeInterviewType(String interviewType) {
-    selectedInterviewType.value = interviewType;
+  void changeQuestionSetType(String questionSetType) {
+    selectedQuestionSet.value = questionSetType;
     update();
   }
 }

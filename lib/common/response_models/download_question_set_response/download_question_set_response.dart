@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'download_question_set_response.g.dart';
 
-@HiveType(typeId: 22)
+@HiveType(typeId: 155)
 class DownloadedQuestionSetResponse extends HiveObject {
   @HiveField(0)
   final int responseCode;
@@ -72,7 +72,7 @@ class DownloadedQuestionSetResponse extends HiveObject {
   }
 }
 
-@HiveType(typeId: 33)
+@HiveType(typeId: 156)
 class FormQuestion extends HiveObject {
   @HiveField(0)
   final String questionId;
@@ -133,7 +133,7 @@ class FormQuestion extends HiveObject {
   }
 }
 
-@HiveType(typeId: 44)
+@HiveType(typeId: 157)
 class QuestionOption extends HiveObject {
   @HiveField(0)
   final String optionId;

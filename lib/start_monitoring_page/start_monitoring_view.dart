@@ -93,8 +93,6 @@ class StartMonitoringView extends StatelessWidget {
                         ),
                         Obx(() => buildInterviewTypeSelector()),
                         Obx(() => Text(controller.selectedInterviewType.value)),
-                        buildVillageSelector(),
-                        Obx(() => Text(controller.selectedVillage.value)),
                         SizedBox(height: 200),
                       ],
                     );
@@ -111,17 +109,24 @@ class StartMonitoringView extends StatelessWidget {
   Widget buildInterviewTypeSelector() {
     final Widget questionSetDropdown = controller.questionSetList.isNotEmpty
         ? Expanded(
+            flex: 2,
             child: DropdownButton<String>(
-              // value: selectedValue,
+              value: controller.selectedQuestionSet.value.isEmpty
+                  ? null
+                  : controller.selectedQuestionSet.value,
               hint: const Text('Select an item'),
               items: controller.questionSetList.map((item) {
                 return DropdownMenuItem(
                   value: item.id,
-                  child: Text(item.title),
+                  child: Text(
+                    item.title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
-                // if (value != null) onChanged(value);
+                if (value != null) controller.changeQuestionSetType(value);
               },
             ),
           )
@@ -133,17 +138,61 @@ class StartMonitoringView extends StatelessWidget {
           );
     final Widget villageDropdown = controller.villageList.isNotEmpty
         ? Expanded(
+            flex: 2,
             child: DropdownButton<String>(
-              // value: selectedValue,
+              value: controller.selectedVillage.value.isEmpty
+                  ? null
+                  : controller.selectedVillage.value,
               hint: const Text('Select an item'),
               items: controller.villageList.map((item) {
                 return DropdownMenuItem(
                   value: item.villageId,
-                  child: Text(item.villageName),
+                  child: Column(
+                    children: [
+                      Text(
+                        item.villageName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
-                // if (value != null) onChanged(value);
+                if (value != null) controller.changeVillage(value);
+              },
+            ),
+          )
+        : Center(
+            child: Text(
+              'No interview type List Exist',
+              style: TextStyle(color: AppColors.gray),
+            ),
+          );
+    final Widget beneficiaryDropdown = controller.beneficiaryList.isNotEmpty
+        ? Expanded(
+            flex: 2,
+            child: DropdownButton<String>(
+              value: controller.selectedBeneficiary.value.isEmpty
+                  ? null
+                  : controller.selectedBeneficiary.value,
+              hint: const Text('Select an item'),
+              items: controller.beneficiaryList.map((item) {
+                return DropdownMenuItem(
+                  value: item.beneficiaryId,
+                  child: Column(
+                    children: [
+                      Text(
+                        item.beneficiaryName!,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) controller.changeVillage(value);
               },
             ),
           )
@@ -159,6 +208,7 @@ class StartMonitoringView extends StatelessWidget {
         Row(
           children: [
             Expanded(
+              flex: 1,
               child: Text(
                 "Question Set: ",
                 style: TextStyle(color: AppColors.gray),
@@ -170,6 +220,7 @@ class StartMonitoringView extends StatelessWidget {
         Row(
           children: [
             Expanded(
+              flex: 1,
               child: Text(
                 "Village: ",
                 style: TextStyle(color: AppColors.gray),
@@ -178,44 +229,18 @@ class StartMonitoringView extends StatelessWidget {
             villageDropdown,
           ],
         ),
-      ],
-    );
-  }
-
-  Widget buildVillageSelector() {
-    final List<Widget> villageTypeList =
-        controller.villages != null && controller.villages!.isNotEmpty
-            ? controller.villages!
-                .map(
-                  (village) => RadioListTile<String>(
-                    title: Text(village.villageName),
-                    value: village.villageId,
-                    groupValue: controller.selectedVillage.value,
-                    onChanged: (value) => controller.changeVillage(value!),
-                  ),
-                )
-                .toList()
-            : [
-                Center(
-                  child: Text(
-                    'No village List Exist',
-                    style: TextStyle(color: AppColors.gray),
-                  ),
-                ),
-              ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Village's",
-          style: TextStyle(color: AppColors.gray),
-        ),
-        Wrap(
+        Row(
           children: [
-            ...villageTypeList,
+            Expanded(
+              flex: 1,
+              child: Text(
+                "Beneficary: ",
+                style: TextStyle(color: AppColors.gray),
+              ),
+            ),
+            beneficiaryDropdown,
           ],
-        )
+        ),
       ],
     );
   }

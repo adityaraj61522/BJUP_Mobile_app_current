@@ -16,7 +16,7 @@ class DownloadQuestionSetStorage {
   Future<void> init() async {
     if (!_isInitialized) {
       try {
-        if (!Hive.isAdapterRegistered(22)) {
+        if (!Hive.isAdapterRegistered(155)) {
           Hive.registerAdapter(SurveyModelAdapter());
           Hive.registerAdapter(FormQuestionAdapter());
           Hive.registerAdapter(QuestionOptionAdapter());
