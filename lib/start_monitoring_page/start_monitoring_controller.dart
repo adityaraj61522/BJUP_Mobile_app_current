@@ -6,11 +6,11 @@ import 'package:bjup_application/common/models/user_model.dart';
 import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
 import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
 import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
 import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
-import 'package:dio/dio.dart';
 
 class StartMonitoringController extends GetxController {
   final SessionManager sessionManager = SessionManager();
@@ -68,6 +68,18 @@ class StartMonitoringController extends GetxController {
     await getQuestionSetList();
     await getVillageList();
     showSelector.value = true;
+  }
+
+  void onAddBeneficeryClicked() async {
+    Get.toNamed(AppRoutes.addBeneficery, arguments: {
+      'projectId': selectedProject.value,
+      'projectTitle': projectTitle,
+      'officeName': officeName,
+      'interviewType': selectedInterviewType.value,
+      'villageId': selectedVillage.value,
+      'questionSetId': selectedQuestionSet.value,
+      'beneficiaryId': selectedBeneficiary.value
+    });
   }
 
   Future<void> getVillageList() async {

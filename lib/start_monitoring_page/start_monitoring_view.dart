@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/start_monitoring_page/start_monitoring_Controller.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +86,26 @@ class StartMonitoringView extends StatelessWidget {
                             ),
                             child: Text(
                               "Existing Interview",
+                              style: TextStyle(
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: ElevatedButton(
+                            // onPressed: () =>
+                            //     controller.onAddBeneficeryClicked(),
+                            onPressed: () =>
+                                Get.toNamed(AppRoutes.addBeneficery),
+                            iconAlignment: IconAlignment.end,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.green,
+                              minimumSize: Size(double.infinity, 50),
+                            ),
+                            child: Text(
+                              "Add Beneficery",
                               style: TextStyle(
                                   color: AppColors.white,
                                   fontWeight: FontWeight.bold),
