@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bjup_application/common/api_config/api_config.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:dio/dio.dart';
@@ -19,15 +21,13 @@ class ApiService {
     // Attach authentication token if available
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        // var box = Hive.box('session');
-        // var token = box.get('token'); // Retrieve stored token
-        // if (token != null) {
-        //   options.headers['Authorization'] = 'Bearer $token';
-        // }
         return handler.next(options);
       },
       onResponse: (response, handler) async {
         // Check for force logout response code
+        if (response.data is String) {
+          response.data = jsonDecode(response.data);
+        }
         if (response.data != null && response.data['response_code'] == 300) {
           await _sessionManager.checkSession();
         }
@@ -52,11 +52,12 @@ class ApiService {
   Future<Response?> post(String endpoint, dynamic data,
       {Options? options}) async {
     try {
-      return await _dio.post(
+      final res = await _dio.post(
         endpoint,
         data: data,
         options: options,
       );
+      return res;
     } catch (e) {
       print("POST Error: $e");
       return null;
