@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
-import 'package:bjup_application/common/models/user_model.dart';
-import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
-import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
-import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
-import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
+import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
+import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
+import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
+import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
+import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
 import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -45,14 +45,14 @@ class StartMonitoringController extends GetxController {
   String projectTitle = '';
   String officeName = '';
 
-  UserModel? userData;
+  UserLoginResponse? userData;
 
-  final villageList = <Village>[].obs;
-  final questionSetList = <QuestionSet>[].obs;
-  final beneficiaryList = <Beneficiary>[].obs;
+  final villageList = <VillagesList>[].obs;
+  final questionSetList = <QuestionSetList>[].obs;
+  final beneficiaryList = <BeneficiaryData>[].obs;
   final showSelector = false.obs;
 
-  final selectedQuestionFormSet = <FormQuestion>[].obs;
+  final selectedQuestionFormSet = <FormQuestionData>[].obs;
 
   @override
   void onInit() async {
@@ -86,7 +86,7 @@ class StartMonitoringController extends GetxController {
   }
 
   Future<void> getVillageList() async {
-    List<Village> villageListData = [];
+    List<VillagesList> villageListData = [];
     await downloadedVillageStorageManager.getVillageData().then((value) {
       final seenIds = <String>{};
       villageListData = value.where((item) {
@@ -98,7 +98,7 @@ class StartMonitoringController extends GetxController {
   }
 
   Future<void> getQuestionSetList() async {
-    List<QuestionSet> questionSetListData = [];
+    List<QuestionSetList> questionSetListData = [];
     await downloadedQuestionSetStorageManager
         .getQuestionSetData()
         .then((value) {
@@ -113,7 +113,7 @@ class StartMonitoringController extends GetxController {
   }
 
   Future<void> getQuestionFormSetList() async {
-    List<FormQuestion> questionSetListData = [];
+    List<FormQuestionData> questionSetListData = [];
     await downloadedQuestionSetStorageManager
         .getDownloadedQuestionSet()
         .then((value) {
@@ -131,7 +131,7 @@ class StartMonitoringController extends GetxController {
 
   Future<void> getBeneficieryList({required String interviewId}) async {
     // villageList.add(Village(villageId: '-11', villageName: 'Select an item'));
-    List<Beneficiary> beneficiaryListData = [];
+    List<BeneficiaryData> beneficiaryListData = [];
     await downloadedVillageStorageManager
         .getDownloadedVillageData(interviewId: interviewId)
         .then((value) {
@@ -146,8 +146,8 @@ class StartMonitoringController extends GetxController {
 
   void changeVillage(String village) async {
     selectedVillage.value = village;
-    final selectedVillageObj =
-        villageList.firstWhere((element) => element.villageId == village);
+    // final selectedVillageObj =
+    //     villageList.firstWhere((element) => element.villageId == village);
     await getBeneficieryList(interviewId: '${selectedVillage.value}-44');
     update();
   }

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
-import 'package:bjup_application/common/models/user_model.dart';
-import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
-import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
+import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
+import 'package:bjup_application/common/response_models/user_response/user_response.dart';
+import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -15,7 +15,7 @@ class DownloadQuestionSetController extends GetxController {
   final DownloadQuestionSetStorage downloadedStorageManager =
       DownloadQuestionSetStorage();
 
-  final projectList = <Project>[].obs;
+  final projectList = <ProjectList>[].obs;
 
   final ApiService apiService = ApiService();
 
@@ -37,15 +37,15 @@ class DownloadQuestionSetController extends GetxController {
 
   final SessionManager _sessionManager = SessionManager();
 
-  List<Language>? languages = [];
-  List<ReportType>? reportType = [];
-  List<QuestionSet>? questionSet = [];
+  List<LanguageList>? languages = [];
+  List<ReportTypeList>? reportType = [];
+  List<QuestionSetList>? questionSet = [];
 
   String projectId = '';
   String projectTitle = '';
   String officeName = '';
 
-  UserModel? userData;
+  UserLoginResponse? userData;
 
   @override
   void onInit() async {
@@ -114,7 +114,7 @@ class DownloadQuestionSetController extends GetxController {
         var data = response.data;
 
         if (data['response_code'] == 200) {
-          var questionSetData = QuestionSetResponse.fromMap(data);
+          var questionSetData = GetQuestionSetResponse.fromMap(data);
           languages = questionSetData.language;
           reportType = questionSetData.reportType;
           questionSet = questionSetData.questionSet;
@@ -227,7 +227,7 @@ class DownloadQuestionSetController extends GetxController {
         var data = response.data;
 
         if (data['response_code'] == 200) {
-          var questionSetData = DownloadedQuestionSetResponse.fromMap(data);
+          var questionSetData = GetQuestionFormResponse.fromMap(data);
 
           await downloadedStorageManager.saveQuestionSetData(
             questionSetData: questionSet!

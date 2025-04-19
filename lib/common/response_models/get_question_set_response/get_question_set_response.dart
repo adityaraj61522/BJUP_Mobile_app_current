@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'question_set_response.g.dart';
+part 'get_question_set_response.g.dart';
 
 @HiveType(typeId: 91)
-class QuestionSetResponse {
+class GetQuestionSetResponse {
   @HiveField(0)
   final int responseCode;
 
@@ -11,15 +11,15 @@ class QuestionSetResponse {
   final String message;
 
   @HiveField(2)
-  final List<QuestionSet> questionSet;
+  final List<QuestionSetList> questionSet;
 
   @HiveField(3)
-  final List<ReportType> reportType;
+  final List<ReportTypeList> reportType;
 
   @HiveField(4)
-  final List<Language> language;
+  final List<LanguageList> language;
 
-  QuestionSetResponse({
+  GetQuestionSetResponse({
     required this.responseCode,
     required this.message,
     required this.questionSet,
@@ -27,25 +27,25 @@ class QuestionSetResponse {
     required this.language,
   });
 
-  factory QuestionSetResponse.fromMap(Map<String, dynamic> json) {
-    return QuestionSetResponse(
+  factory GetQuestionSetResponse.fromMap(Map<String, dynamic> json) {
+    return GetQuestionSetResponse(
       responseCode: json['response_code'],
       message: json['message'],
       questionSet: (json['data']['question_set'] as List)
-          .map((item) => QuestionSet.fromMap(item))
+          .map((item) => QuestionSetList.fromMap(item))
           .toList(),
       reportType: (json['data']['report_type'] as List)
-          .map((item) => ReportType.fromMap(item))
+          .map((item) => ReportTypeList.fromMap(item))
           .toList(),
       language: (json['data']['language'] as List)
-          .map((item) => Language.fromMap(item))
+          .map((item) => LanguageList.fromMap(item))
           .toList(),
     );
   }
 }
 
 @HiveType(typeId: 92)
-class QuestionSet {
+class QuestionSetList {
   @HiveField(0)
   final String id;
 
@@ -61,7 +61,7 @@ class QuestionSet {
   @HiveField(4)
   final String reportType;
 
-  QuestionSet({
+  QuestionSetList({
     required this.id,
     required this.title,
     required this.interviewTypeId,
@@ -69,8 +69,8 @@ class QuestionSet {
     required this.reportType,
   });
 
-  factory QuestionSet.fromMap(Map<String, dynamic> json) {
-    return QuestionSet(
+  factory QuestionSetList.fromMap(Map<String, dynamic> json) {
+    return QuestionSetList(
       id: json['question_set_id'],
       title: json['question_set_title'],
       interviewTypeId: json['interview_type_id'],
@@ -81,17 +81,17 @@ class QuestionSet {
 }
 
 @HiveType(typeId: 93)
-class ReportType {
+class ReportTypeList {
   @HiveField(0)
   final String id;
 
   @HiveField(1)
   final String type;
 
-  ReportType({required this.id, required this.type});
+  ReportTypeList({required this.id, required this.type});
 
-  factory ReportType.fromMap(Map<String, dynamic> json) {
-    return ReportType(
+  factory ReportTypeList.fromMap(Map<String, dynamic> json) {
+    return ReportTypeList(
       id: json['id'],
       type: json['type'],
     );
@@ -99,29 +99,31 @@ class ReportType {
 }
 
 @HiveType(typeId: 94)
-class Language {
+class LanguageList {
   @HiveField(0)
   final String key;
 
   @HiveField(1)
   final String language;
 
-  Language({required this.key, required this.language});
+  LanguageList({required this.key, required this.language});
 
-  factory Language.fromMap(Map<String, dynamic> json) {
-    return Language(
+  factory LanguageList.fromMap(Map<String, dynamic> json) {
+    return LanguageList(
       key: json['key'],
       language: json['language'],
     );
   }
 }
 
-Future<void> saveQuestionSetResponse(QuestionSetResponse response) async {
-  var box = await Hive.openBox<QuestionSetResponse>('questionSetResponseBox');
+Future<void> saveQuestionSetResponse(GetQuestionSetResponse response) async {
+  var box =
+      await Hive.openBox<GetQuestionSetResponse>('questionSetResponseBox');
   await box.put('response', response);
 }
 
-Future<QuestionSetResponse?> getQuestionSetResponse() async {
-  var box = await Hive.openBox<QuestionSetResponse>('questionSetResponseBox');
+Future<GetQuestionSetResponse?> getQuestionSetResponse() async {
+  var box =
+      await Hive.openBox<GetQuestionSetResponse>('questionSetResponseBox');
   return box.get('response');
 }

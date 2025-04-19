@@ -1,20 +1,21 @@
-part of 'download_question_set_response.dart';
+part of 'get_question_form_response.dart';
 
-class SurveyModelAdapter extends TypeAdapter<DownloadedQuestionSetResponse> {
+class GetQuestionFormResponseAdapter
+    extends TypeAdapter<GetQuestionFormResponse> {
   @override
   final int typeId = 155;
 
   @override
-  DownloadedQuestionSetResponse read(BinaryReader reader) {
+  GetQuestionFormResponse read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return DownloadedQuestionSetResponse(
+    return GetQuestionFormResponse(
       responseCode: fields[0] as int,
       message: fields[1] as String,
-      formQuestions: (fields[2] as List).cast<FormQuestion>(),
+      formQuestions: (fields[2] as List).cast<FormQuestionData>(),
       oldSurvey: fields[3] as List,
       questionSetId: fields[4] as String,
       reportTypeId: fields[5] as String,
@@ -24,7 +25,7 @@ class SurveyModelAdapter extends TypeAdapter<DownloadedQuestionSetResponse> {
   }
 
   @override
-  void write(BinaryWriter writer, DownloadedQuestionSetResponse obj) {
+  void write(BinaryWriter writer, GetQuestionFormResponse obj) {
     writer
       ..writeByte(8)
       ..writeByte(0)
@@ -46,31 +47,31 @@ class SurveyModelAdapter extends TypeAdapter<DownloadedQuestionSetResponse> {
   }
 }
 
-class FormQuestionAdapter extends TypeAdapter<FormQuestion> {
+class FormQuestionDataAdapter extends TypeAdapter<FormQuestionData> {
   @override
   final int typeId = 156;
 
   @override
-  FormQuestion read(BinaryReader reader) {
+  FormQuestionData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return FormQuestion(
+    return FormQuestionData(
       questionId: fields[0] as String,
       questionText: fields[1] as String,
       questionType: fields[2] as String,
       parentQuestion: fields[3] as String,
       parentQuestionOption: fields[4] as String,
       mandatory: fields[5] as bool,
-      questionOptions: (fields[6] as List).cast<QuestionOption>(),
+      questionOptions: (fields[6] as List).cast<QuestionDropdownOption>(),
       questionTypeEnum: fields[7] as QuestionType,
     );
   }
 
   @override
-  void write(BinaryWriter writer, FormQuestion obj) {
+  void write(BinaryWriter writer, FormQuestionData obj) {
     writer
       ..writeByte(8) // Corrected: Now writing 8 fields
       ..writeByte(0)
@@ -92,25 +93,26 @@ class FormQuestionAdapter extends TypeAdapter<FormQuestion> {
   }
 }
 
-class QuestionOptionAdapter extends TypeAdapter<QuestionOption> {
+class QuestionDropdownOptionAdapter
+    extends TypeAdapter<QuestionDropdownOption> {
   @override
   final int typeId = 157;
 
   @override
-  QuestionOption read(BinaryReader reader) {
+  QuestionDropdownOption read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return QuestionOption(
+    return QuestionDropdownOption(
       optionId: fields[0] as String,
       optionText: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, QuestionOption obj) {
+  void write(BinaryWriter writer, QuestionDropdownOption obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)

@@ -1,5 +1,5 @@
-import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
-import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
+import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
+import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:hive/hive.dart';
 
 class DownloadVillageDataStorage {
@@ -17,13 +17,13 @@ class DownloadVillageDataStorage {
     if (!_isInitialized) {
       try {
         if (!Hive.isAdapterRegistered(170)) {
-          Hive.registerAdapter(CBOBeneficiaryResponseAdapter());
-          Hive.registerAdapter(VillageAdapter());
-          Hive.registerAdapter(BeneficiaryAdapter());
-          Hive.registerAdapter(CBOAdapter());
+          Hive.registerAdapter(GetBeneficeryResponseAdapter());
+          Hive.registerAdapter(SelectedVillagesDataAdapter());
+          Hive.registerAdapter(BeneficiaryDataAdapter());
+          Hive.registerAdapter(CBODataAdapter());
         }
         _storageVillageBox =
-            await Hive.openBox<CBOBeneficiaryResponse>('downloadedVillageData');
+            await Hive.openBox<GetBeneficeryResponse>('downloadedVillageData');
         _isInitialized = true;
       } catch (e) {
         print('downloadedVillageData initialization error: $e');
@@ -35,7 +35,7 @@ class DownloadVillageDataStorage {
   // Store user session
   Future<void> saveDownloadedVillageData({
     required String villageInterviewId,
-    required CBOBeneficiaryResponse downloadedVillageData,
+    required GetBeneficeryResponse downloadedVillageData,
   }) async {
     await init();
     try {
@@ -47,13 +47,13 @@ class DownloadVillageDataStorage {
   }
 
   // Get current user
-  Future<CBOBeneficiaryResponse?> getDownloadedVillageData(
+  Future<GetBeneficeryResponse?> getDownloadedVillageData(
       {required String interviewId}) async {
     await init();
     try {
       final downloadedVillageData = await _storageVillageBox?.get(interviewId);
       print(downloadedVillageData);
-      return downloadedVillageData as CBOBeneficiaryResponse;
+      return downloadedVillageData as GetBeneficeryResponse;
     } catch (e) {
       print('downloadedVillageData read error: $e');
       return null;
@@ -64,11 +64,11 @@ class DownloadVillageDataStorage {
     if (!_isVillageInitialized) {
       try {
         if (!Hive.isAdapterRegistered(222)) {
-          Hive.registerAdapter(DownloadVillageDataResponseAdapter());
-          Hive.registerAdapter(VillageResAdapter());
-          Hive.registerAdapter(InterviewTypeAdapter());
+          Hive.registerAdapter(GetVillageListResponseAdapter());
+          Hive.registerAdapter(VillagesListAdapter());
+          Hive.registerAdapter(InterviewTypeListAdapter());
         }
-        _storageBox = await Hive.openBox<Village>('villageData');
+        _storageBox = await Hive.openBox<VillagesList>('villageData');
         _isVillageInitialized = true;
       } catch (e) {
         print('villageData initialization error: $e');
@@ -79,7 +79,7 @@ class DownloadVillageDataStorage {
 
   // Store user session
   Future<void> saveVillageData({
-    required Village villageData,
+    required VillagesList villageData,
   }) async {
     await initVillageData();
     try {
@@ -91,18 +91,18 @@ class DownloadVillageDataStorage {
   }
 
   // Get current user
-  Future<List<Village>> getVillageData() async {
+  Future<List<VillagesList>> getVillageData() async {
     try {
-      final boxData = await Hive.box<Village>('villageData');
+      final boxData = await Hive.box<VillagesList>('villageData');
       final villageData = boxData.values.toList();
       if (villageData.isEmpty) {
-        return <Village>[];
+        return <VillagesList>[];
       }
       print(villageData);
       return villageData;
     } catch (e) {
       print('villageData read error: $e');
-      return <Village>[];
+      return <VillagesList>[];
     }
   }
 }

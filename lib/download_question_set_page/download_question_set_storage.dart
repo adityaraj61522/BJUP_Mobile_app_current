@@ -1,5 +1,5 @@
-import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
-import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
+import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
+import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
 import 'package:bjup_application/survey_form/survey_form_enum.g.dart';
 import 'package:hive/hive.dart';
 
@@ -18,12 +18,12 @@ class DownloadQuestionSetStorage {
     if (!_isInitialized) {
       try {
         if (!Hive.isAdapterRegistered(155)) {
-          Hive.registerAdapter(SurveyModelAdapter());
-          Hive.registerAdapter(FormQuestionAdapter());
-          Hive.registerAdapter(QuestionOptionAdapter());
+          Hive.registerAdapter(GetQuestionFormResponseAdapter());
+          Hive.registerAdapter(FormQuestionDataAdapter());
+          Hive.registerAdapter(QuestionDropdownOptionAdapter());
           Hive.registerAdapter(QuestionTypeAdapter());
         }
-        _storageBox = await Hive.openBox<DownloadedQuestionSetResponse>(
+        _storageBox = await Hive.openBox<GetQuestionFormResponse>(
             'downloadedQuestionSet');
         _isInitialized = true;
       } catch (e) {
@@ -35,7 +35,7 @@ class DownloadQuestionSetStorage {
 
   // Store user session
   Future<void> saveDownloadedQuestionSet(
-      {required DownloadedQuestionSetResponse downloadedQuestionSet}) async {
+      {required GetQuestionFormResponse downloadedQuestionSet}) async {
     await init();
     try {
       if (_storageBox == null) {
@@ -51,19 +51,19 @@ class DownloadQuestionSetStorage {
   }
 
   // Get current user
-  Future<List<DownloadedQuestionSetResponse>> getDownloadedQuestionSet() async {
+  Future<List<GetQuestionFormResponse>> getDownloadedQuestionSet() async {
     try {
-      final boxData = await Hive.box<DownloadedQuestionSetResponse>(
-          'downloadedQuestionSet');
+      final boxData =
+          await Hive.box<GetQuestionFormResponse>('downloadedQuestionSet');
       final questionSetData = boxData.values.toList();
       if (questionSetData.isEmpty) {
-        return <DownloadedQuestionSetResponse>[];
+        return <GetQuestionFormResponse>[];
       }
       print(questionSetData);
       return questionSetData;
     } catch (e) {
       print('downloadedQuestionSet read error: $e');
-      return <DownloadedQuestionSetResponse>[];
+      return <GetQuestionFormResponse>[];
     }
   }
 
@@ -71,13 +71,13 @@ class DownloadQuestionSetStorage {
     if (!_isQuestionInitialized) {
       try {
         if (!Hive.isAdapterRegistered(91)) {
-          Hive.registerAdapter(QuestionSetResponseAdapter());
-          Hive.registerAdapter(QuestionSetAdapter());
-          Hive.registerAdapter(ReportTypeAdapter());
-          Hive.registerAdapter(LanguageAdapter());
+          Hive.registerAdapter(GetQuestionSetResponseAdapter());
+          Hive.registerAdapter(QuestionSetListAdapter());
+          Hive.registerAdapter(ReportTypeListAdapter());
+          Hive.registerAdapter(LanguageListAdapter());
         }
         _storageQuestionBox =
-            await Hive.openBox<QuestionSet>('questionSetData');
+            await Hive.openBox<QuestionSetList>('questionSetData');
         _isQuestionInitialized = true;
       } catch (e) {
         print('Session initialization error: $e');
@@ -88,7 +88,7 @@ class DownloadQuestionSetStorage {
 
   // Store user session
   Future<void> saveQuestionSetData(
-      {required QuestionSet questionSetData}) async {
+      {required QuestionSetList questionSetData}) async {
     await initQuestionSet();
     try {
       await _storageQuestionBox?.add(questionSetData);
@@ -99,18 +99,18 @@ class DownloadQuestionSetStorage {
   }
 
   // Get current user
-  Future<List<QuestionSet>> getQuestionSetData() async {
+  Future<List<QuestionSetList>> getQuestionSetData() async {
     try {
-      final boxData = await Hive.box<QuestionSet>('questionSetData');
+      final boxData = await Hive.box<QuestionSetList>('questionSetData');
       final questionSetData = boxData.values.toList();
       if (questionSetData.isEmpty) {
-        return <QuestionSet>[];
+        return <QuestionSetList>[];
       }
       print(questionSetData);
       return questionSetData;
     } catch (e) {
       print('questionSetData read error: $e');
-      return <QuestionSet>[];
+      return <QuestionSetList>[];
     }
   }
 }

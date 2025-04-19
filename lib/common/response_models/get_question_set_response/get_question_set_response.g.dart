@@ -1,18 +1,19 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'question_set_response.dart';
+part of 'get_question_set_response.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class QuestionSetResponseAdapter extends TypeAdapter<QuestionSetResponse> {
+class GetQuestionSetResponseAdapter
+    extends TypeAdapter<GetQuestionSetResponse> {
   @override
   final int typeId = 91;
 
   @override
-  QuestionSetResponse read(BinaryReader reader) {
-    return QuestionSetResponse(
+  GetQuestionSetResponse read(BinaryReader reader) {
+    return GetQuestionSetResponse(
       responseCode: reader.read(),
       message: reader.read(),
       questionSet: reader.read(),
@@ -22,7 +23,7 @@ class QuestionSetResponseAdapter extends TypeAdapter<QuestionSetResponse> {
   }
 
   @override
-  void write(BinaryWriter writer, QuestionSetResponse obj) {
+  void write(BinaryWriter writer, GetQuestionSetResponse obj) {
     writer.write(obj.responseCode);
     writer.write(obj.message);
     writer.write(obj.questionSet);
@@ -31,13 +32,13 @@ class QuestionSetResponseAdapter extends TypeAdapter<QuestionSetResponse> {
   }
 }
 
-class QuestionSetAdapter extends TypeAdapter<QuestionSet> {
+class QuestionSetListAdapter extends TypeAdapter<QuestionSetList> {
   @override
   final int typeId = 92;
 
   @override
-  QuestionSet read(BinaryReader reader) {
-    return QuestionSet(
+  QuestionSetList read(BinaryReader reader) {
+    return QuestionSetList(
       id: reader.read(),
       title: reader.read(),
       interviewTypeId: reader.read(),
@@ -47,7 +48,7 @@ class QuestionSetAdapter extends TypeAdapter<QuestionSet> {
   }
 
   @override
-  void write(BinaryWriter writer, QuestionSet obj) {
+  void write(BinaryWriter writer, QuestionSetList obj) {
     writer.write(obj.id);
     writer.write(obj.title);
     writer.write(obj.interviewTypeId);
@@ -56,39 +57,39 @@ class QuestionSetAdapter extends TypeAdapter<QuestionSet> {
   }
 }
 
-class ReportTypeAdapter extends TypeAdapter<ReportType> {
+class ReportTypeListAdapter extends TypeAdapter<ReportTypeList> {
   @override
   final int typeId = 93;
 
   @override
-  ReportType read(BinaryReader reader) {
-    return ReportType(
+  ReportTypeList read(BinaryReader reader) {
+    return ReportTypeList(
       id: reader.read(),
       type: reader.read(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, ReportType obj) {
+  void write(BinaryWriter writer, ReportTypeList obj) {
     writer.write(obj.id);
     writer.write(obj.type);
   }
 }
 
-class LanguageAdapter extends TypeAdapter<Language> {
+class LanguageListAdapter extends TypeAdapter<LanguageList> {
   @override
   final int typeId = 94;
 
   @override
-  Language read(BinaryReader reader) {
-    return Language(
+  LanguageList read(BinaryReader reader) {
+    return LanguageList(
       key: reader.read(),
       language: reader.read(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, Language obj) {
+  void write(BinaryWriter writer, LanguageList obj) {
     writer.write(obj.key);
     writer.write(obj.language);
   }

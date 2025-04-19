@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'download_CBO_response.g.dart';
+part 'get_beneficiary_response.g.dart';
 
 @HiveType(typeId: 170)
-class CBOBeneficiaryResponse extends HiveObject {
+class GetBeneficeryResponse extends HiveObject {
   @HiveField(0)
   final int responseCode;
 
@@ -11,18 +11,18 @@ class CBOBeneficiaryResponse extends HiveObject {
   final String message;
 
   @HiveField(2)
-  final List<VillageResponseData> selectedVillages;
+  final List<SelectedVillagesData> selectedVillages;
 
   @HiveField(3)
-  final List<Beneficiary> beneficiaries;
+  final List<BeneficiaryData> beneficiaries;
 
   @HiveField(4)
-  final List<CBO> cbo;
+  final List<CBOData> cbo;
 
   @HiveField(5)
-  final List<CBO> others;
+  final List<CBOData> others;
 
-  CBOBeneficiaryResponse({
+  GetBeneficeryResponse({
     required this.responseCode,
     required this.message,
     required this.selectedVillages,
@@ -31,23 +31,24 @@ class CBOBeneficiaryResponse extends HiveObject {
     required this.others,
   });
 
-  factory CBOBeneficiaryResponse.fromMap(Map<String, dynamic> json) {
-    return CBOBeneficiaryResponse(
+  factory GetBeneficeryResponse.fromMap(Map<String, dynamic> json) {
+    return GetBeneficeryResponse(
       responseCode: json['response_code'] ?? 0,
       message: json['message'] ?? '',
       selectedVillages: (json['data']['selected_villages'] as List?)
-              ?.map((v) => VillageResponseData.fromMap(v))
+              ?.map((v) => SelectedVillagesData.fromMap(v))
               .toList() ??
           [],
       beneficiaries: (json['data']['benificiary'] as List?)
-              ?.map((b) => Beneficiary.fromMap(b))
+              ?.map((b) => BeneficiaryData.fromMap(b))
               .toList() ??
           [],
-      cbo:
-          (json['data']['cbo'] as List?)?.map((c) => CBO.fromMap(c)).toList() ??
-              [],
+      cbo: (json['data']['cbo'] as List?)
+              ?.map((c) => CBOData.fromMap(c))
+              .toList() ??
+          [],
       others: (json['data']['others'] as List?)
-              ?.map((o) => CBO.fromMap(o))
+              ?.map((o) => CBOData.fromMap(o))
               .toList() ??
           [],
     );
@@ -66,20 +67,20 @@ class CBOBeneficiaryResponse extends HiveObject {
 }
 
 @HiveType(typeId: 23)
-class VillageResponseData extends HiveObject {
+class SelectedVillagesData extends HiveObject {
   @HiveField(0)
   final String villageId;
 
   @HiveField(1)
   final String villageName;
 
-  VillageResponseData({
+  SelectedVillagesData({
     required this.villageId,
     required this.villageName,
   });
 
-  factory VillageResponseData.fromMap(Map<String, dynamic> json) =>
-      VillageResponseData(
+  factory SelectedVillagesData.fromMap(Map<String, dynamic> json) =>
+      SelectedVillagesData(
         villageId: json['village_id'] ?? '',
         villageName: json['village_name'] ?? '',
       );
@@ -91,7 +92,7 @@ class VillageResponseData extends HiveObject {
 }
 
 @HiveType(typeId: 24)
-class Beneficiary extends HiveObject {
+class BeneficiaryData extends HiveObject {
   @HiveField(0)
   final String beneficiaryId;
 
@@ -179,7 +180,7 @@ class Beneficiary extends HiveObject {
   @HiveField(28)
   final String? bstatus;
 
-  Beneficiary({
+  BeneficiaryData({
     required this.beneficiaryId,
     required this.villageCode,
     required this.panchayat,
@@ -211,7 +212,7 @@ class Beneficiary extends HiveObject {
     required this.bstatus,
   });
 
-  factory Beneficiary.fromMap(Map<String, dynamic> json) => Beneficiary(
+  factory BeneficiaryData.fromMap(Map<String, dynamic> json) => BeneficiaryData(
         beneficiaryId: json['beneficiaryid'] ?? '',
         villageCode: json['villagecode'] ?? '',
         panchayat: json['Panchayat'] ?? '',
@@ -277,7 +278,7 @@ class Beneficiary extends HiveObject {
 }
 
 @HiveType(typeId: 25)
-class CBO extends HiveObject {
+class CBOData extends HiveObject {
   @HiveField(0)
   final String cboid;
 
@@ -341,7 +342,7 @@ class CBO extends HiveObject {
   @HiveField(20)
   final String ipaddress;
 
-  CBO({
+  CBOData({
     required this.cboid,
     required this.partnerid,
     required this.projectid,
@@ -365,7 +366,7 @@ class CBO extends HiveObject {
     required this.ipaddress,
   });
 
-  factory CBO.fromMap(Map<String, dynamic> json) => CBO(
+  factory CBOData.fromMap(Map<String, dynamic> json) => CBOData(
         cboid: json['cboid'] ?? '',
         partnerid: json['partnerid'] ?? '',
         projectid: json['projectid'] ?? '',

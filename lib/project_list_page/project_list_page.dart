@@ -1,5 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
-import 'package:bjup_application/common/models/user_model.dart';
+import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/project_list_page/project_list_controller.dart';
@@ -79,7 +79,7 @@ class ProjectMonitoringListView extends StatelessWidget {
     );
   }
 
-  Widget _buildProjectMonitoringCard({required Project projectItem}) {
+  Widget _buildProjectMonitoringCard({required ProjectList projectItem}) {
     return InkWell(
       onTap: () => Get.toNamed(AppRoutes.projectActionList, arguments: {
         "projectId": projectItem.projectId,

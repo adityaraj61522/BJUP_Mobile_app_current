@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'download_village_data_response.g.dart';
+part 'get_village_list_response.g.dart';
 
 @HiveType(typeId: 222)
-class DownloadVillageDataResponse extends HiveObject {
+class GetVillageListResponse extends HiveObject {
   @HiveField(0)
   final int responseCode;
 
@@ -11,28 +11,28 @@ class DownloadVillageDataResponse extends HiveObject {
   final String message;
 
   @HiveField(2)
-  final List<Village> villages;
+  final List<VillagesList> villages;
 
   @HiveField(3)
-  final List<InterviewType> interviewTypes;
+  final List<InterviewTypeList> interviewTypes;
 
-  DownloadVillageDataResponse({
+  GetVillageListResponse({
     required this.responseCode,
     required this.message,
     required this.villages,
     required this.interviewTypes,
   });
 
-  factory DownloadVillageDataResponse.fromMap(Map<String, dynamic> json) {
-    return DownloadVillageDataResponse(
+  factory GetVillageListResponse.fromMap(Map<String, dynamic> json) {
+    return GetVillageListResponse(
       responseCode: json['response_code'] ?? 0,
       message: json['message'] ?? '',
       villages: (json['data']['villages'] as List?)
-              ?.map((v) => Village.fromMap(v))
+              ?.map((v) => VillagesList.fromMap(v))
               .toList() ??
           [],
       interviewTypes: (json['data']['interview_type'] as List?)
-              ?.map((i) => InterviewType.fromMap(i))
+              ?.map((i) => InterviewTypeList.fromMap(i))
               .toList() ??
           [],
     );
@@ -51,20 +51,20 @@ class DownloadVillageDataResponse extends HiveObject {
 }
 
 @HiveType(typeId: 333)
-class Village extends HiveObject {
+class VillagesList extends HiveObject {
   @HiveField(0)
   final String villageId;
 
   @HiveField(1)
   final String villageName;
 
-  Village({
+  VillagesList({
     required this.villageId,
     required this.villageName,
   });
 
-  factory Village.fromMap(Map<String, dynamic> json) {
-    return Village(
+  factory VillagesList.fromMap(Map<String, dynamic> json) {
+    return VillagesList(
       villageId: json['village_id'] ?? '',
       villageName: json['village_name'] ?? '',
     );
@@ -79,20 +79,20 @@ class Village extends HiveObject {
 }
 
 @HiveType(typeId: 444)
-class InterviewType extends HiveObject {
+class InterviewTypeList extends HiveObject {
   @HiveField(0)
   final String id;
 
   @HiveField(1)
   final String type;
 
-  InterviewType({
+  InterviewTypeList({
     required this.id,
     required this.type,
   });
 
-  factory InterviewType.fromMap(Map<String, dynamic> json) {
-    return InterviewType(
+  factory InterviewTypeList.fromMap(Map<String, dynamic> json) {
+    return InterviewTypeList(
       id: json['id'] ?? '',
       type: json['type'] ?? '',
     );

@@ -1,12 +1,11 @@
-part of 'download_CBO_response.dart';
+part of 'get_beneficiary_response.dart';
 
-class CBOBeneficiaryResponseAdapter
-    extends TypeAdapter<CBOBeneficiaryResponse> {
+class GetBeneficeryResponseAdapter extends TypeAdapter<GetBeneficeryResponse> {
   @override
   final int typeId = 170;
 
   @override
-  CBOBeneficiaryResponse read(BinaryReader reader) {
+  GetBeneficeryResponse read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = Map.fromEntries(
       List.generate(
@@ -14,18 +13,18 @@ class CBOBeneficiaryResponseAdapter
         (_) => MapEntry(reader.readByte(), reader.read()),
       ),
     );
-    return CBOBeneficiaryResponse(
+    return GetBeneficeryResponse(
       responseCode: fields[0] as int,
       message: fields[1] as String,
-      selectedVillages: (fields[2] as List).cast<VillageResponseData>(),
-      beneficiaries: (fields[3] as List).cast<Beneficiary>(),
-      cbo: (fields[4] as List).cast<CBO>(),
-      others: (fields[5] as List).cast<CBO>(),
+      selectedVillages: (fields[2] as List).cast<SelectedVillagesData>(),
+      beneficiaries: (fields[3] as List).cast<BeneficiaryData>(),
+      cbo: (fields[4] as List).cast<CBOData>(),
+      others: (fields[5] as List).cast<CBOData>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, CBOBeneficiaryResponse obj) {
+  void write(BinaryWriter writer, GetBeneficeryResponse obj) {
     writer
       ..writeByte(6)
       ..writeByte(0)
@@ -43,12 +42,12 @@ class CBOBeneficiaryResponseAdapter
   }
 }
 
-class VillageAdapter extends TypeAdapter<VillageResponseData> {
+class SelectedVillagesDataAdapter extends TypeAdapter<SelectedVillagesData> {
   @override
   final int typeId = 23;
 
   @override
-  VillageResponseData read(BinaryReader reader) {
+  SelectedVillagesData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = Map.fromEntries(
       List.generate(
@@ -56,14 +55,14 @@ class VillageAdapter extends TypeAdapter<VillageResponseData> {
         (_) => MapEntry(reader.readByte(), reader.read()),
       ),
     );
-    return VillageResponseData(
+    return SelectedVillagesData(
       villageId: fields[0] as String,
       villageName: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, VillageResponseData obj) {
+  void write(BinaryWriter writer, SelectedVillagesData obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -73,12 +72,12 @@ class VillageAdapter extends TypeAdapter<VillageResponseData> {
   }
 }
 
-class BeneficiaryAdapter extends TypeAdapter<Beneficiary> {
+class BeneficiaryDataAdapter extends TypeAdapter<BeneficiaryData> {
   @override
   final int typeId = 24;
 
   @override
-  Beneficiary read(BinaryReader reader) {
+  BeneficiaryData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = Map.fromEntries(
       List.generate(
@@ -86,7 +85,7 @@ class BeneficiaryAdapter extends TypeAdapter<Beneficiary> {
         (_) => MapEntry(reader.readByte(), reader.read()),
       ),
     );
-    return Beneficiary(
+    return BeneficiaryData(
       beneficiaryId: fields[0] as String,
       villageCode: fields[1] as String,
       panchayat: fields[2] as String,
@@ -120,7 +119,7 @@ class BeneficiaryAdapter extends TypeAdapter<Beneficiary> {
   }
 
   @override
-  void write(BinaryWriter writer, Beneficiary obj) {
+  void write(BinaryWriter writer, BeneficiaryData obj) {
     writer
       ..writeByte(29)
       ..writeByte(0)
@@ -184,12 +183,12 @@ class BeneficiaryAdapter extends TypeAdapter<Beneficiary> {
   }
 }
 
-class CBOAdapter extends TypeAdapter<CBO> {
+class CBODataAdapter extends TypeAdapter<CBOData> {
   @override
   final int typeId = 25;
 
   @override
-  CBO read(BinaryReader reader) {
+  CBOData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = Map.fromEntries(
       List.generate(
@@ -197,7 +196,7 @@ class CBOAdapter extends TypeAdapter<CBO> {
         (_) => MapEntry(reader.readByte(), reader.read()),
       ),
     );
-    return CBO(
+    return CBOData(
       cboid: fields[0] as String,
       partnerid: fields[1] as String,
       projectid: fields[2] as String,
@@ -223,7 +222,7 @@ class CBOAdapter extends TypeAdapter<CBO> {
   }
 
   @override
-  void write(BinaryWriter writer, CBO obj) {
+  void write(BinaryWriter writer, CBOData obj) {
     writer
       ..writeByte(21)
       ..writeByte(0)

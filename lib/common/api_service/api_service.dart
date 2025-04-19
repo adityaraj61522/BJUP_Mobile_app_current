@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:bjup_application/common/api_config/api_config.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:dio/dio.dart';
-import 'package:hive/hive.dart';
 
 class ApiService {
   late Dio _dio;

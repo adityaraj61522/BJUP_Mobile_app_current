@@ -1,5 +1,5 @@
 import 'package:bjup_application/common/api_service/api_service.dart';
-import 'package:bjup_application/common/models/user_model.dart';
+import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -62,7 +62,7 @@ class LoginController extends GetxController {
         var data = response.data;
 
         if (data['response_code'] == 200) {
-          var userData = UserModel.fromMap(data['data']);
+          var userData = UserLoginResponse.fromMap(data['data']);
           await _sessionManager.saveValidSession();
           await _sessionManager.saveUserSession(userData: userData);
           await _sessionManager.saveProjectList(projects: userData.projects);

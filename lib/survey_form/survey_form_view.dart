@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
+import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
 import 'package:date_field/date_field.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
 
 class SurveyPage extends StatefulWidget {
-  final List<FormQuestion> formQuestions;
+  final List<FormQuestionData> formQuestions;
 
   const SurveyPage({super.key, required this.formQuestions});
 
@@ -23,7 +23,7 @@ class SurveyPage extends StatefulWidget {
 }
 
 class _SurveyPageState extends State<SurveyPage> {
-  List<FormQuestion> _questions = [];
+  List<FormQuestionData> _questions = [];
   Map<String, dynamic> _answers = {}; // To store the answers
   final ImagePicker _picker = ImagePicker();
   final SignatureController _signatureController = SignatureController(
@@ -40,7 +40,7 @@ class _SurveyPageState extends State<SurveyPage> {
     _questions = widget.formQuestions;
   }
 
-  Widget _buildQuestionWidget(FormQuestion question, int questionIndex) {
+  Widget _buildQuestionWidget(FormQuestionData question, int questionIndex) {
     Widget questionWidget;
     switch (question.questionTypeEnum) {
       // Use questionTypeEnum here
@@ -123,7 +123,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget buildDateField(FormQuestion question) {
+  Widget buildDateField(FormQuestionData question) {
     return DateTimeFormField(
       decoration: InputDecoration(
         labelText: question.questionText,
@@ -140,7 +140,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildCheckboxField(FormQuestion question) {
+  Widget _buildCheckboxField(FormQuestionData question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -177,7 +177,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildRadioField(FormQuestion question) {
+  Widget _buildRadioField(FormQuestionData question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -198,7 +198,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildMultiSelectField(FormQuestion question) {
+  Widget _buildMultiSelectField(FormQuestionData question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -224,7 +224,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildSelectField(FormQuestion question) {
+  Widget _buildSelectField(FormQuestionData question) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: question.questionText,
@@ -245,7 +245,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildFileUploadField(FormQuestion question) {
+  Widget _buildFileUploadField(FormQuestionData question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -276,7 +276,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildCameraField(FormQuestion question) {
+  Widget _buildCameraField(FormQuestionData question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -306,7 +306,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildGpsLocationField(FormQuestion question) {
+  Widget _buildGpsLocationField(FormQuestionData question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -348,7 +348,7 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildSignatureField(FormQuestion question) {
+  Widget _buildSignatureField(FormQuestionData question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

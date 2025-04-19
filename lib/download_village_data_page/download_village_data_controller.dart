@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
-import 'package:bjup_application/common/models/user_model.dart';
-import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
-import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
+import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
+import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
+import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -15,7 +15,7 @@ class DownloadVillageDataController extends GetxController {
   final DownloadVillageDataStorage downloadedStorageManager =
       DownloadVillageDataStorage();
 
-  final projectList = <Project>[].obs;
+  final projectList = <ProjectList>[].obs;
 
   final ApiService apiService = ApiService();
 
@@ -35,14 +35,14 @@ class DownloadVillageDataController extends GetxController {
 
   final SessionManager _sessionManager = SessionManager();
 
-  List<Village>? villages = [];
-  List<InterviewType>? interviewTypes = [];
+  List<VillagesList>? villages = [];
+  List<InterviewTypeList>? interviewTypes = [];
 
   String projectId = '';
   String projectTitle = '';
   String officeName = '';
 
-  UserModel? userData;
+  UserLoginResponse? userData;
 
   @override
   void onInit() async {
@@ -104,7 +104,7 @@ class DownloadVillageDataController extends GetxController {
         var data = response.data;
 
         if (data['response_code'] == 200) {
-          var villageData = DownloadVillageDataResponse.fromMap(data);
+          var villageData = GetVillageListResponse.fromMap(data);
           villages = villageData.villages;
           interviewTypes = villageData.interviewTypes;
           // await _sessionManager.saveValidSession();
@@ -194,7 +194,7 @@ class DownloadVillageDataController extends GetxController {
       if (response != null) {
         var data = response.data;
         if (data['response_code'] == 200) {
-          var beneficieryCBOData = CBOBeneficiaryResponse.fromMap(data);
+          var beneficieryCBOData = GetBeneficeryResponse.fromMap(data);
           await downloadedStorageManager.saveVillageData(
             villageData: villages!
                 .where((e) => e.villageId == selectedVillage.value)

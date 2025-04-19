@@ -1,26 +1,26 @@
-part of 'download_village_data_response.dart';
+part of 'get_village_list_response.dart';
 
-class DownloadVillageDataResponseAdapter
-    extends TypeAdapter<DownloadVillageDataResponse> {
+class GetVillageListResponseAdapter
+    extends TypeAdapter<GetVillageListResponse> {
   @override
   final int typeId = 222;
 
   @override
-  DownloadVillageDataResponse read(BinaryReader reader) {
+  GetVillageListResponse read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return DownloadVillageDataResponse(
+    return GetVillageListResponse(
       responseCode: fields[0] as int,
       message: fields[1] as String,
-      villages: (fields[2] as List).cast<Village>(),
-      interviewTypes: (fields[3] as List).cast<InterviewType>(),
+      villages: (fields[2] as List).cast<VillagesList>(),
+      interviewTypes: (fields[3] as List).cast<InterviewTypeList>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, DownloadVillageDataResponse obj) {
+  void write(BinaryWriter writer, GetVillageListResponse obj) {
     writer
       ..writeByte(4)
       ..writeByte(0)
@@ -34,24 +34,24 @@ class DownloadVillageDataResponseAdapter
   }
 }
 
-class VillageResAdapter extends TypeAdapter<Village> {
+class VillagesListAdapter extends TypeAdapter<VillagesList> {
   @override
   final int typeId = 223;
 
   @override
-  Village read(BinaryReader reader) {
+  VillagesList read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Village(
+    return VillagesList(
       villageId: fields[0] as String,
       villageName: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Village obj) {
+  void write(BinaryWriter writer, VillagesList obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -61,24 +61,24 @@ class VillageResAdapter extends TypeAdapter<Village> {
   }
 }
 
-class InterviewTypeAdapter extends TypeAdapter<InterviewType> {
+class InterviewTypeListAdapter extends TypeAdapter<InterviewTypeList> {
   @override
   final int typeId = 70;
 
   @override
-  InterviewType read(BinaryReader reader) {
+  InterviewTypeList read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return InterviewType(
+    return InterviewTypeList(
       id: fields[0] as String,
       type: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, InterviewType obj) {
+  void write(BinaryWriter writer, InterviewTypeList obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)

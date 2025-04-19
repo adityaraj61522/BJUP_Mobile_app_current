@@ -1,10 +1,10 @@
 import 'package:bjup_application/survey_form/survey_form_enum.dart';
 import 'package:hive/hive.dart';
 
-part 'download_question_set_response.g.dart';
+part 'get_question_form_response.g.dart';
 
 @HiveType(typeId: 155)
-class DownloadedQuestionSetResponse extends HiveObject {
+class GetQuestionFormResponse extends HiveObject {
   @HiveField(0)
   final int responseCode;
 
@@ -12,7 +12,7 @@ class DownloadedQuestionSetResponse extends HiveObject {
   final String message;
 
   @HiveField(2)
-  final List<FormQuestion> formQuestions;
+  final List<FormQuestionData> formQuestions;
 
   @HiveField(3)
   final List<dynamic> oldSurvey;
@@ -29,7 +29,7 @@ class DownloadedQuestionSetResponse extends HiveObject {
   @HiveField(7)
   final String language;
 
-  DownloadedQuestionSetResponse({
+  GetQuestionFormResponse({
     required this.responseCode,
     required this.message,
     required this.formQuestions,
@@ -40,13 +40,13 @@ class DownloadedQuestionSetResponse extends HiveObject {
     required this.language,
   });
 
-  factory DownloadedQuestionSetResponse.fromMap(Map<String, dynamic> json) {
+  factory GetQuestionFormResponse.fromMap(Map<String, dynamic> json) {
     final data = json['data'] ?? {};
-    return DownloadedQuestionSetResponse(
+    return GetQuestionFormResponse(
       responseCode: json['response_code'] ?? 0,
       message: json['message'] ?? '',
       formQuestions: (data['form_questions'] as List?)
-              ?.map((q) => FormQuestion.fromMap(q))
+              ?.map((q) => FormQuestionData.fromMap(q))
               .toList() ??
           [],
       oldSurvey: data['old_survey'] ?? [],
@@ -74,7 +74,7 @@ class DownloadedQuestionSetResponse extends HiveObject {
 }
 
 @HiveType(typeId: 156)
-class FormQuestion extends HiveObject {
+class FormQuestionData extends HiveObject {
   @HiveField(0)
   final String questionId;
 
@@ -94,12 +94,12 @@ class FormQuestion extends HiveObject {
   final bool mandatory;
 
   @HiveField(6)
-  final List<QuestionOption> questionOptions;
+  final List<QuestionDropdownOption> questionOptions;
 
   @HiveField(7)
   final QuestionType questionTypeEnum;
 
-  FormQuestion({
+  FormQuestionData({
     required this.questionId,
     required this.questionText,
     required this.questionType,
@@ -110,8 +110,8 @@ class FormQuestion extends HiveObject {
     required this.questionTypeEnum,
   });
 
-  factory FormQuestion.fromMap(Map<String, dynamic> json) {
-    return FormQuestion(
+  factory FormQuestionData.fromMap(Map<String, dynamic> json) {
+    return FormQuestionData(
         questionId: json['question_id'] ?? '',
         questionText: json['question_text'] ?? '',
         questionType: json['question_type'] ?? '',
@@ -119,7 +119,7 @@ class FormQuestion extends HiveObject {
         parentQuestionOption: json['parent_question_option'] ?? '0',
         mandatory: json['mandatory'] == '1',
         questionOptions: (json['question_options'] as List?)
-                ?.map((o) => QuestionOption.fromMap(o))
+                ?.map((o) => QuestionDropdownOption.fromMap(o))
                 .toList() ??
             [],
         questionTypeEnum: json['question_type'].toString().toQuestionType());
@@ -140,20 +140,20 @@ class FormQuestion extends HiveObject {
 }
 
 @HiveType(typeId: 157)
-class QuestionOption extends HiveObject {
+class QuestionDropdownOption extends HiveObject {
   @HiveField(0)
   final String optionId;
 
   @HiveField(1)
   final String optionText;
 
-  QuestionOption({
+  QuestionDropdownOption({
     required this.optionId,
     required this.optionText,
   });
 
-  factory QuestionOption.fromMap(Map<String, dynamic> json) {
-    return QuestionOption(
+  factory QuestionDropdownOption.fromMap(Map<String, dynamic> json) {
+    return QuestionDropdownOption(
       optionId: json['option_id'] ?? '',
       optionText: json['option_text']?.trim() ?? '',
     );

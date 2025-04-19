@@ -1,18 +1,18 @@
-part of 'user_model.dart';
+part of 'user_response.dart';
 
 // Generated code - do not modify by hand
 
-class UserModelAdapter extends TypeAdapter<UserModel> {
+class UserLoginResponseAdapter extends TypeAdapter<UserLoginResponse> {
   @override
   final int typeId = 1;
 
   @override
-  UserModel read(BinaryReader reader) {
+  UserLoginResponse read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return UserModel(
+    return UserLoginResponse(
       userId: fields[0] as String,
       username: fields[1] as String,
       mobileNo: fields[2] as String?,
@@ -21,15 +21,15 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       accessTypes: (fields[5] as List).cast<String>(),
       userTypeId: fields[6] as int,
       userTypeLabel: fields[7] as String,
-      userAccess: fields[8] as UserAccess,
-      projects: (fields[9] as List).map((e) => e as Project).toList(),
-      office: fields[10] as Office,
+      userAccess: fields[8] as UserAccessData,
+      projects: (fields[9] as List).map((e) => e as ProjectList).toList(),
+      office: fields[10] as OfficeData,
       plan: fields[11] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, UserModel obj) {
+  void write(BinaryWriter writer, UserLoginResponse obj) {
     writer
       ..writeByte(12)
       ..writeByte(0)
@@ -59,17 +59,17 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
   }
 }
 
-class UserAccessAdapter extends TypeAdapter<UserAccess> {
+class UserAccessDataAdapter extends TypeAdapter<UserAccessData> {
   @override
   final int typeId = 2;
 
   @override
-  UserAccess read(BinaryReader reader) {
+  UserAccessData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return UserAccess(
+    return UserAccessData(
       observationReport: fields[0] as int,
       attendance: fields[1] as int,
       projectMonitoring: fields[2] as int,
@@ -77,7 +77,7 @@ class UserAccessAdapter extends TypeAdapter<UserAccess> {
   }
 
   @override
-  void write(BinaryWriter writer, UserAccess obj) {
+  void write(BinaryWriter writer, UserAccessData obj) {
     writer
       ..writeByte(3)
       ..writeByte(0)
@@ -89,24 +89,24 @@ class UserAccessAdapter extends TypeAdapter<UserAccess> {
   }
 }
 
-class ProjectAdapter extends TypeAdapter<Project> {
+class ProjectListAdapter extends TypeAdapter<ProjectList> {
   @override
   final int typeId = 3;
 
   @override
-  Project read(BinaryReader reader) {
+  ProjectList read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Project(
+    return ProjectList(
       projectId: fields[0] as String,
       projectTitle: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Project obj) {
+  void write(BinaryWriter writer, ProjectList obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -116,24 +116,24 @@ class ProjectAdapter extends TypeAdapter<Project> {
   }
 }
 
-class OfficeAdapter extends TypeAdapter<Office> {
+class OfficeDataAdapter extends TypeAdapter<OfficeData> {
   @override
   final int typeId = 4;
 
   @override
-  Office read(BinaryReader reader) {
+  OfficeData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Office(
+    return OfficeData(
       id: fields[0] as String,
       officeTitle: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Office obj) {
+  void write(BinaryWriter writer, OfficeData obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)

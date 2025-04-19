@@ -1,6 +1,6 @@
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
-import 'package:bjup_application/common/models/user_model.dart';
+import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/response_models/add_beneficery_request/add_beneficery_request.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:dio/dio.dart';
@@ -28,7 +28,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   String projectId = '';
   String projectTitle = '';
   String officeName = '';
-  UserModel? userData;
+  UserLoginResponse? userData;
 
   // Form controllers
   TextEditingController _villageController = TextEditingController();
@@ -44,7 +44,6 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   String? _category;
   TextEditingController _idTypeController = TextEditingController();
   TextEditingController _idNameController = TextEditingController();
-  String? _idType;
 
   // Dropdown options (replace with your actual data)
   List<String> _villageOptions = ['Village A', 'Village B', 'Village C'];

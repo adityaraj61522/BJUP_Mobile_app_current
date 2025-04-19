@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
-import 'package:bjup_application/common/response_models/user_response.dart';
+import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -126,7 +126,7 @@ class AttendenceListController extends GetxController {
 
     if (response != null && response.statusCode == 200) {
       var data = response.data;
-      UserModel user = UserModel.fromJson(data['user']);
+      UserLoginResponse user = UserLoginResponse.fromMap(data['user']);
 
       // Store user session info in Hive
       var box = await Hive.openBox('session');
