@@ -1,7 +1,10 @@
 import 'dart:async';
-
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/hive_storage_controllers/beneficery_list_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/question_form_data_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/question_set_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
 import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
 import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
 import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
@@ -9,161 +12,206 @@ import 'package:bjup_application/common/response_models/get_village_list_respons
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
-import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
-import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 
 class StartMonitoringController extends GetxController {
+  // Dependencies (use Get.find for better testability)
   final SessionManager sessionManager = SessionManager();
-  final DownloadVillageDataStorage downloadedVillageStorageManager =
-      DownloadVillageDataStorage();
-
-  final DownloadQuestionSetStorage downloadedQuestionSetStorageManager =
-      DownloadQuestionSetStorage();
-
+  final VillageStorageService villageStorageService = VillageStorageService();
+  final BeneficiaryStorageService beneficiaryStorageService =
+      BeneficiaryStorageService();
+  final QuestionSetStorageService questionSetStorageService =
+      QuestionSetStorageService();
+  final QuestionFormStorageService questionFormStorageService =
+      QuestionFormStorageService();
   final ApiService apiService = ApiService();
 
+  // Reactive variables
   final selectedProject = ''.obs;
-
   final selectedAnamitorId = ''.obs;
-
   final selectedOfficeId = ''.obs;
-
-  final selectedInterviewType = ''.obs;
-
+  final selectedInterviewId = ''.obs;
   final selectedVillage = ''.obs;
-
   final selectedQuestionSet = ''.obs;
-
   final selectedBeneficiary = ''.obs;
-
   final errorText = ''.obs;
-
   final isLoading = false.obs;
+  final showSelector = false.obs;
 
+  // Non-reactive variables
   String projectId = '';
   String projectTitle = '';
   String officeName = '';
-
   UserLoginResponse? userData;
 
+  // Lists
   final villageList = <VillagesList>[].obs;
   final questionSetList = <QuestionSetList>[].obs;
   final beneficiaryList = <BeneficiaryData>[].obs;
-  final showSelector = false.obs;
-
   final selectedQuestionFormSet = <FormQuestionData>[].obs;
+
+  // Error handling function
+  Future<void> _handleError(String message) async {
+    errorText.value = message; // Update errorText
+    Get.snackbar(
+      'Error', //Consistent title
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: AppColors.red,
+      colorText: AppColors.white,
+    );
+  }
 
   @override
   void onInit() async {
     super.onInit();
     final args = Get.arguments;
-    print(args);
-    selectedProject.value = args['projectId'];
-    projectTitle = args['projectTitle'];
-    userData = await sessionManager.getUserData();
-    officeName = userData!.office.officeTitle;
-    selectedOfficeId.value = userData!.office.id;
-    selectedAnamitorId.value = userData!.userId;
+    if (args == null) {
+      _handleError('Arguments are null in StartMonitoringController');
+      return; // Important: Stop execution if arguments are missing
+    }
+    selectedProject.value = args['projectId'] ?? '';
+    projectTitle = args['projectTitle'] ?? '';
+    try {
+      userData = await sessionManager.getUserData();
+      officeName = userData?.office.officeTitle ?? '';
+      selectedOfficeId.value = userData?.office.id ?? '';
+      selectedAnamitorId.value = userData?.userId ?? '';
+    } catch (e) {
+      _handleError('Failed to load user data: $e');
+      return; // Stop if user data fails to load
+    }
   }
 
   void onExistingInterviewClicked() async {
-    await getQuestionSetList();
-    await getVillageList();
-    showSelector.value = true;
+    try {
+      await getQuestionSetList();
+      showSelector.value = true;
+    } catch (e) {
+      _handleError('Failed to load question sets: $e'); // Use the error handler
+    }
   }
 
-  void onAddBeneficeryClicked() async {
-    Get.toNamed(AppRoutes.addBeneficery, arguments: {
-      'projectId': selectedProject.value,
-      'projectTitle': projectTitle,
-      'officeName': officeName,
-      'interviewType': selectedInterviewType.value,
-      'villageId': selectedVillage.value,
-      'questionSetId': selectedQuestionSet.value,
-      'beneficiaryId': selectedBeneficiary.value
-    });
+  void onAddBeneficeryClicked() {
+    Get.toNamed(
+      AppRoutes.addBeneficery,
+      arguments: {
+        'projectId': selectedProject.value,
+        'projectTitle': projectTitle,
+        'officeName': officeName,
+        'interviewType': selectedInterviewId.value,
+        'villageId': selectedVillage.value,
+        'questionSetId': selectedQuestionSet.value,
+        'beneficiaryId': selectedBeneficiary.value,
+      },
+    );
   }
 
-  Future<void> getVillageList() async {
-    List<VillagesList> villageListData = [];
-    await downloadedVillageStorageManager.getVillageData().then((value) {
+  Future<void> getVillageList({required String selectedInterviewId}) async {
+    try {
+      final villageListData = await villageStorageService.getVillageData(
+        projectId: selectedProject.value,
+        interviewId: selectedInterviewId,
+      );
       final seenIds = <String>{};
-      villageListData = value.where((item) {
+      villageList.clear(); //Clear before adding
+      villageList.addAll(villageListData.where((item) {
         return seenIds.add(item.villageId);
-      }).toList();
-      update();
-    });
-    villageList.addAll(villageListData.toSet().toList());
+      }));
+    } catch (e) {
+      _handleError('Failed to load village list: $e');
+    }
   }
 
   Future<void> getQuestionSetList() async {
-    List<QuestionSetList> questionSetListData = [];
-    await downloadedQuestionSetStorageManager
-        .getQuestionSetData()
-        .then((value) {
-      final seenIds = <String>{};
-      questionSetListData = value.where((item) {
-        return seenIds.add(item.id);
-      }).toList();
+    try {
+      final storedQuestionSets =
+          await questionSetStorageService.getQuestionSetData(
+        projectId: selectedProject.value,
+      );
+      final Set<String> existingIds =
+          questionSetList.map((item) => item.id).toSet();
+      final List<QuestionSetList> uniqueNewQuestionSets = storedQuestionSets
+          .where((item) => !existingIds.contains(item.id))
+          .toList();
+
+      questionSetList.addAll(uniqueNewQuestionSets);
       update();
-    });
-    questionSetList.addAll(questionSetListData.toSet().toList());
-    await getQuestionFormSetList();
+      await getQuestionFormSetList();
+    } catch (e) {
+      _handleError('Failed to load question set list: $e');
+    }
   }
 
   Future<void> getQuestionFormSetList() async {
-    List<FormQuestionData> questionSetListData = [];
-    await downloadedQuestionSetStorageManager
-        .getDownloadedQuestionSet()
-        .then((value) {
-      final seenIds = <String>{};
-      questionSetListData = value
-          .where((item) {
-            return seenIds.add(item.questionSetId);
-          })
-          .expand((item) => item.formQuestions)
-          .toList();
-      update();
-    });
-    selectedQuestionFormSet.addAll(questionSetListData.toSet().toList());
+    try {
+      // 1. Fetch question form data from the storage service.
+      final List<FormQuestionData> questionFormData =
+          await questionFormStorageService.getQuestionFormData(
+        questionSetId: selectedQuestionSet.value,
+        projectId: selectedProject.value,
+      );
+
+      selectedQuestionFormSet.clear();
+
+      selectedQuestionFormSet.addAll(questionFormData);
+    } catch (e) {
+      _handleError('Failed to load question form set list: $e');
+    }
   }
 
-  Future<void> getBeneficieryList({required String interviewId}) async {
-    // villageList.add(Village(villageId: '-11', villageName: 'Select an item'));
-    List<BeneficiaryData> beneficiaryListData = [];
-    await downloadedVillageStorageManager
-        .getDownloadedVillageData(interviewId: interviewId)
-        .then((value) {
+  Future<void> getBeneficieryList(
+      {required String interviewId, required String villageId}) async {
+    try {
+      final beneficiaryListData =
+          await beneficiaryStorageService.getBeneficiaryData(
+        interviewId: interviewId,
+        villageId: villageId,
+        projectId: selectedProject.value,
+      );
       final seenIds = <String>{};
-      beneficiaryListData = value!.beneficiaries.where((item) {
+      beneficiaryList.clear(); // Clear before adding
+      beneficiaryList.addAll(beneficiaryListData.where((item) {
         return seenIds.add(item.beneficiaryId);
-      }).toList();
-      update();
-    });
-    beneficiaryList.addAll(beneficiaryListData.toSet().toList());
+      }));
+    } catch (e) {
+      _handleError('Failed to load beneficiary list: $e');
+    }
   }
 
   void changeVillage(String village) async {
     selectedVillage.value = village;
-    // final selectedVillageObj =
-    //     villageList.firstWhere((element) => element.villageId == village);
-    await getBeneficieryList(interviewId: '${selectedVillage.value}-44');
+    try {
+      await getBeneficieryList(
+          interviewId: selectedInterviewId.value, villageId: village);
+    } catch (e) {
+      _handleError("Failed to update beneficiary list: $e");
+    }
     update();
   }
 
-  void changeQuestionSetType(String questionSetType) {
+  void changeQuestionSetType(String questionSetType) async {
     selectedQuestionSet.value = questionSetType;
+    try {
+      final selectedQuestionSetItem = questionSetList.firstWhereOrNull(
+        (element) => element.id == questionSetType,
+      );
+      selectedInterviewId.value =
+          selectedQuestionSetItem?.interviewTypeId ?? '';
+      await getVillageList(selectedInterviewId: selectedInterviewId.value);
+    } catch (e) {
+      _handleError("Failed to update question set type: $e");
+    }
     update();
   }
-}
 
-Future<void> handleErrorReported({required String error}) async {
-  Get.snackbar(
-    error,
-    'something_went_wrong'.tr,
-    snackPosition: SnackPosition.BOTTOM,
-    backgroundColor: AppColors.red,
-    colorText: AppColors.white,
-  );
+  void changeBeneficery(String beneficeryId) async {
+    selectedBeneficiary.value = beneficeryId;
+    try {
+      await getQuestionFormSetList();
+    } catch (e) {
+      _handleError("Failed to update beneficiary list: $e");
+    }
+    update();
+  }
 }

@@ -1,5 +1,4 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
-import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/start_monitoring_page/start_monitoring_Controller.dart';
 import 'package:bjup_application/survey_form/survey_form_view.dart';
@@ -75,46 +74,45 @@ class StartMonitoringView extends StatelessWidget {
                       children: [
                         buildProjectDetails(),
                         Divider(),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: ElevatedButton(
-                            onPressed: () =>
-                                controller.onExistingInterviewClicked(),
-                            iconAlignment: IconAlignment.end,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.green,
-                              minimumSize: Size(double.infinity, 50),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    controller.onExistingInterviewClicked(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.green,
+                                  minimumSize: Size(double.infinity, 50),
+                                ),
+                                child: Text(
+                                  "Existing Interview",
+                                  style: TextStyle(
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
-                            child: Text(
-                              "Existing Interview",
-                              style: TextStyle(
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.bold),
+                            SizedBox(width: 15),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    controller.onAddBeneficeryClicked(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.green,
+                                  minimumSize: Size(double.infinity, 50),
+                                ),
+                                child: Text(
+                                  "Add Beneficery",
+                                  style: TextStyle(
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: ElevatedButton(
-                            // onPressed: () =>
-                            //     controller.onAddBeneficeryClicked(),
-                            onPressed: () =>
-                                Get.toNamed(AppRoutes.addBeneficery),
-                            iconAlignment: IconAlignment.end,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.green,
-                              minimumSize: Size(double.infinity, 50),
-                            ),
-                            child: Text(
-                              "Add Beneficery",
-                              style: TextStyle(
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                          ],
                         ),
                         Obx(() => buildInterviewTypeSelector()),
-                        Obx(() => Text(controller.selectedInterviewType.value)),
+                        // Obx(() => Text(controller.selectedInterviewType.value)),
                         SizedBox(height: 200),
                       ],
                     );
@@ -205,7 +203,7 @@ class StartMonitoringView extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        item.beneficiaryName!,
+                        item.beneficiaryName ?? 'no name',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -214,7 +212,7 @@ class StartMonitoringView extends StatelessWidget {
                 );
               }).toList(),
               onChanged: (value) {
-                if (value != null) controller.changeVillage(value);
+                if (value != null) controller.changeBeneficery(value);
               },
             ),
           )

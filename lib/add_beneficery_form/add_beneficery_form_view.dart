@@ -9,6 +9,8 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'dart:convert';
 
 class AddBeneficiaryScreen extends StatefulWidget {
+  const AddBeneficiaryScreen({super.key});
+
   @override
   _AddBeneficiaryScreenState createState() => _AddBeneficiaryScreenState();
 }

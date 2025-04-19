@@ -90,9 +90,9 @@ class BeneficiaryRequest {
   }
 
   // You can also provide a method to encode the object to a JSON string
-  String toJsonString() {
-    return json.encode(this.toJson());
-  }
+  // String toJsonString() {
+  //   return json.encode(this.toJson());
+  // }
 
   // Method to create a BeneficiaryRequest from a JSON string
   factory BeneficiaryRequest.fromJsonString(String jsonString) {
