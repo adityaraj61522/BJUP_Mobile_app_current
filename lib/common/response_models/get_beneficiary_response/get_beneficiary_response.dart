@@ -1,3 +1,4 @@
+import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:hive/hive.dart';
 
 part 'get_beneficiary_response.g.dart';
@@ -11,7 +12,7 @@ class GetBeneficeryResponse extends HiveObject {
   final String message;
 
   @HiveField(2)
-  final List<SelectedVillagesData> selectedVillages;
+  final List<VillagesList> selectedVillages;
 
   @HiveField(3)
   final List<BeneficiaryData> beneficiaries;
@@ -36,7 +37,7 @@ class GetBeneficeryResponse extends HiveObject {
       responseCode: json['response_code'] ?? 0,
       message: json['message'] ?? '',
       selectedVillages: (json['data']['selected_villages'] as List?)
-              ?.map((v) => SelectedVillagesData.fromMap(v))
+              ?.map((v) => VillagesList.fromMap(v))
               .toList() ??
           [],
       beneficiaries: (json['data']['benificiary'] as List?)

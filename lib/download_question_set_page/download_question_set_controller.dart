@@ -2,18 +2,26 @@ import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/hive_storage_controllers/question_form_data_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/question_set_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
 import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
-import 'package:bjup_application/download_question_set_page/download_question_set_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 
 class DownloadQuestionSetController extends GetxController {
   final SessionManager sessionManager = SessionManager();
-  final DownloadQuestionSetStorage downloadedStorageManager =
-      DownloadQuestionSetStorage();
+  // final DownloadQuestionSetStorage downloadedStorageManager =
+  //     DownloadQuestionSetStorage();
+
+  final VillageStorageService villageStorageService = VillageStorageService();
+  final QuestionSetStorageService questionSetStorageService =
+      QuestionSetStorageService();
+  final QuestionFormStorageService questionFormStorageService =
+      QuestionFormStorageService();
 
   final projectList = <ProjectList>[].obs;
 
@@ -44,6 +52,9 @@ class DownloadQuestionSetController extends GetxController {
   String projectId = '';
   String projectTitle = '';
   String officeName = '';
+
+  String selectedVillages = '';
+  String selectedInterviewId = '';
 
   UserLoginResponse? userData;
 
@@ -156,23 +167,26 @@ class DownloadQuestionSetController extends GetxController {
     update();
   }
 
-  void changeQuestionSet(String questionSet) {
-    selectedQuestionSet.value = questionSet;
+  void changeQuestionSet(String questionSetId) async {
+    selectedQuestionSet.value = questionSetId;
+    selectedInterviewId =
+        questionSet!.firstWhere((e) => e.id == questionSetId).interviewTypeId;
+    await villageStorageService
+        .getVillageData(
+            interviewId: selectedInterviewId, projectId: selectedProject.value)
+        .then((value) => {
+              selectedVillages =
+                  value.map((e) => e.villageId).join(',').toString()
+            });
     update();
   }
 
   void onDownloadQuestionSetClicked() async {
-    // String language = selectedLanguage.value;
-    // String reportTypeId = selectedReportType.value;
-    // String questionSetId = selectedQuestionSet.value;
-    // String interviewTypeId = selectedQuestionSet.value;
-    // String villageId = selectedQuestionSet.value;
-
-    String language = 'question';
-    String reportTypeId = '6';
-    String questionSetId = '5';
-    String interviewTypeId = '44';
-    String villageId = '236017,236017,236016';
+    String language = selectedLanguage.value;
+    String reportTypeId = selectedReportType.value;
+    String questionSetId = selectedQuestionSet.value;
+    String interviewTypeId = selectedInterviewId;
+    String villageId = selectedVillages;
 
     if (language.isEmpty) {
       errorText.value = "Language Not Selected".tr;
@@ -229,26 +243,59 @@ class DownloadQuestionSetController extends GetxController {
         if (data['response_code'] == 200) {
           var questionSetData = GetQuestionFormResponse.fromMap(data);
 
-          await downloadedStorageManager.saveQuestionSetData(
-            questionSetData: questionSet!
-                .where((e) => e.id == selectedQuestionSet.value)
-                .first,
-          );
+          await questionSetStorageService
+              .addQuestionSetData(
+                  questionSetDataList: questionSet!
+                      .where(((e) => e.id == questionSetId))
+                      .toList(),
+                  projectId: selectedProject.value)
+              .then((value) => {
+                    print("Question Set Data saved successfully!!"),
+                    Get.snackbar(
+                      "Success",
+                      'Question Set Data saved successfully!!'.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: AppColors.green,
+                      colorText: AppColors.white,
+                    ),
+                  });
 
-          await downloadedStorageManager.saveDownloadedQuestionSet(
-              downloadedQuestionSet: questionSetData);
+          await questionFormStorageService
+              .addQuestionFormData(
+                  questionFormDataList: questionSetData.formQuestions,
+                  questionSetId: questionSetId,
+                  projectId: selectedProject.value)
+              .then((value) => {
+                    print("Question Form Data saved successfully!!"),
+                    Get.snackbar(
+                      "Success",
+                      'Question Form Data saved successfully!!'.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: AppColors.green,
+                      colorText: AppColors.white,
+                    ),
+                  });
 
-          Get.snackbar(
-            "Success",
-            'Question Set Data saved successfully!!'.tr,
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.green,
-            colorText: AppColors.white,
-          );
+          // await downloadedStorageManager.saveQuestionSetData(
+          //   questionSetData: questionSet!
+          //       .where((e) => e.id == selectedQuestionSet.value)
+          //       .first,
+          // );
 
-          final downloadedData =
-              await downloadedStorageManager.getDownloadedQuestionSet();
-          print(downloadedData);
+          // await downloadedStorageManager.saveDownloadedQuestionSet(
+          //     downloadedQuestionSet: questionSetData);
+
+          // Get.snackbar(
+          //   "Success",
+          //   'Question Set Data saved successfully!!'.tr,
+          //   snackPosition: SnackPosition.BOTTOM,
+          //   backgroundColor: AppColors.green,
+          //   colorText: AppColors.white,
+          // );
+
+          // final downloadedData =
+          //     await downloadedStorageManager.getDownloadedQuestionSet();
+          // print(downloadedData);
           // await _sessionManager.saveProjectList(projects: userData.projects);
           errorText.value = '';
           // Get.offAllNamed('/moduleSelection');

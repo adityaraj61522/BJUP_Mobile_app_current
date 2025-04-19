@@ -1,6 +1,11 @@
+import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
+import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
+import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
+import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/translations/translations_localization.dart';
 import 'package:bjup_application/login_page/login_controller.dart';
+import 'package:bjup_application/survey_form/survey_form_enum.g.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,21 +15,26 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(dir.path);
-  Get.put(LoginController()); // Initialize controller
+  Hive.registerAdapter(VillagesListAdapter());
+  Hive.registerAdapter(BeneficiaryDataAdapter());
+  Hive.registerAdapter(FormQuestionDataAdapter());
+  Hive.registerAdapter(QuestionSetListAdapter());
+  Hive.registerAdapter(QuestionDropdownOptionAdapter());
+  Hive.registerAdapter(QuestionTypeAdapter());
+  Get.put(LoginController());
 
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key}); // Add constructor with key
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'BJUP Application', // Add app title
+      title: 'BJUP Application',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // Add theme configuration
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),

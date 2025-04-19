@@ -16,7 +16,7 @@ class GetBeneficeryResponseAdapter extends TypeAdapter<GetBeneficeryResponse> {
     return GetBeneficeryResponse(
       responseCode: fields[0] as int,
       message: fields[1] as String,
-      selectedVillages: (fields[2] as List).cast<SelectedVillagesData>(),
+      selectedVillages: (fields[2] as List).cast<VillagesList>(),
       beneficiaries: (fields[3] as List).cast<BeneficiaryData>(),
       cbo: (fields[4] as List).cast<CBOData>(),
       others: (fields[5] as List).cast<CBOData>(),

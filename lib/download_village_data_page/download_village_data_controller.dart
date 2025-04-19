@@ -2,18 +2,21 @@ import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/hive_storage_controllers/beneficery_list_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
 import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
 import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
-import 'package:bjup_application/download_village_data_page/download_village_data_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 
 class DownloadVillageDataController extends GetxController {
   final SessionManager sessionManager = SessionManager();
-  final DownloadVillageDataStorage downloadedStorageManager =
-      DownloadVillageDataStorage();
+
+  final VillageStorageService villageStorageService = VillageStorageService();
+  final BeneficiaryStorageService beneficiaryStorageService =
+      BeneficiaryStorageService();
 
   final projectList = <ProjectList>[].obs;
 
@@ -195,20 +198,45 @@ class DownloadVillageDataController extends GetxController {
         var data = response.data;
         if (data['response_code'] == 200) {
           var beneficieryCBOData = GetBeneficeryResponse.fromMap(data);
-          await downloadedStorageManager.saveVillageData(
-            villageData: villages!
-                .where((e) => e.villageId == selectedVillage.value)
-                .first,
-          );
-          await downloadedStorageManager.saveDownloadedVillageData(
-              villageInterviewId:
-                  '${beneficieryCBOData.selectedVillages.first.villageId}-$interviewTypeId',
-              downloadedVillageData: beneficieryCBOData);
-          final downloadedData =
-              await downloadedStorageManager.getDownloadedVillageData(
-                  interviewId:
-                      '${beneficieryCBOData.selectedVillages.first.villageId}-$interviewTypeId');
-          print(downloadedData);
+          await villageStorageService
+              .addVillageData(
+                villageDataList: beneficieryCBOData.selectedVillages,
+                interviewId: interviewTypeId,
+                projectId: selectedProject.value,
+              )
+              .then((value) => {
+                    print("Villlage List Data saved successfully!!"),
+                    Get.snackbar(
+                      "Success",
+                      'Villlage Data saved successfully!!'.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: AppColors.green,
+                      colorText: AppColors.white,
+                    ),
+                  });
+          for (var village in beneficieryCBOData.selectedVillages) {
+            List<BeneficiaryData> beneficiaryDataList = beneficieryCBOData
+                .beneficiaries
+                .where((element) => element.villageCode == village.villageId)
+                .toList();
+            await beneficiaryStorageService
+                .addBeneficiaryData(
+                  beneficiaryDataList: beneficiaryDataList,
+                  interviewId: interviewTypeId,
+                  villageId: village.villageId,
+                  projectId: selectedProject.value,
+                )
+                .then((value) => {
+                      print("Beneficiary Data saved successfully!!"),
+                      Get.snackbar(
+                        "Success",
+                        'Beneficiary Data saved successfully!!'.tr,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: AppColors.green,
+                        colorText: AppColors.white,
+                      ),
+                    });
+          }
           errorText.value = '';
         } else if (data['response_code'] == 100) {
           handleErrorReported(error: "Data not available!!".tr);
