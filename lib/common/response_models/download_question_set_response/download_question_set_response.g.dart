@@ -65,13 +65,14 @@ class FormQuestionAdapter extends TypeAdapter<FormQuestion> {
       parentQuestionOption: fields[4] as String,
       mandatory: fields[5] as bool,
       questionOptions: (fields[6] as List).cast<QuestionOption>(),
+      questionTypeEnum: fields[7] as QuestionType,
     );
   }
 
   @override
   void write(BinaryWriter writer, FormQuestion obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8) // Corrected: Now writing 8 fields
       ..writeByte(0)
       ..write(obj.questionId)
       ..writeByte(1)
@@ -85,7 +86,9 @@ class FormQuestionAdapter extends TypeAdapter<FormQuestion> {
       ..writeByte(5)
       ..write(obj.mandatory)
       ..writeByte(6)
-      ..write(obj.questionOptions);
+      ..write(obj.questionOptions)
+      ..writeByte(7)
+      ..write(obj.questionTypeEnum);
   }
 }
 

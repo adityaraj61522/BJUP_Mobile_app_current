@@ -4,6 +4,7 @@ import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/models/user_model.dart';
 import 'package:bjup_application/common/response_models/download_CBO_response/download_CBO_response.dart';
+import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
 import 'package:bjup_application/common/response_models/download_village_data_response/download_village_data_response.dart';
 import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
@@ -50,6 +51,8 @@ class StartMonitoringController extends GetxController {
   final questionSetList = <QuestionSet>[].obs;
   final beneficiaryList = <Beneficiary>[].obs;
   final showSelector = false.obs;
+
+  final selectedQuestionFormSet = <FormQuestion>[].obs;
 
   @override
   void onInit() async {
@@ -106,6 +109,24 @@ class StartMonitoringController extends GetxController {
       update();
     });
     questionSetList.addAll(questionSetListData.toSet().toList());
+    await getQuestionFormSetList();
+  }
+
+  Future<void> getQuestionFormSetList() async {
+    List<FormQuestion> questionSetListData = [];
+    await downloadedQuestionSetStorageManager
+        .getDownloadedQuestionSet()
+        .then((value) {
+      final seenIds = <String>{};
+      questionSetListData = value
+          .where((item) {
+            return seenIds.add(item.questionSetId);
+          })
+          .expand((item) => item.formQuestions)
+          .toList();
+      update();
+    });
+    selectedQuestionFormSet.addAll(questionSetListData.toSet().toList());
   }
 
   Future<void> getBeneficieryList({required String interviewId}) async {

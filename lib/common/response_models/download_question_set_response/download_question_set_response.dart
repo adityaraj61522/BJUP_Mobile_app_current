@@ -1,3 +1,4 @@
+import 'package:bjup_application/survey_form/survey_form_enum.dart';
 import 'package:hive/hive.dart';
 
 part 'download_question_set_response.g.dart';
@@ -95,6 +96,9 @@ class FormQuestion extends HiveObject {
   @HiveField(6)
   final List<QuestionOption> questionOptions;
 
+  @HiveField(7)
+  final QuestionType questionTypeEnum;
+
   FormQuestion({
     required this.questionId,
     required this.questionText,
@@ -103,21 +107,22 @@ class FormQuestion extends HiveObject {
     required this.parentQuestionOption,
     required this.mandatory,
     required this.questionOptions,
+    required this.questionTypeEnum,
   });
 
   factory FormQuestion.fromMap(Map<String, dynamic> json) {
     return FormQuestion(
-      questionId: json['question_id'] ?? '',
-      questionText: json['question_text'] ?? '',
-      questionType: json['question_type'] ?? '',
-      parentQuestion: json['parent_question'] ?? '0',
-      parentQuestionOption: json['parent_question_option'] ?? '0',
-      mandatory: json['mandatory'] == '1',
-      questionOptions: (json['question_options'] as List?)
-              ?.map((o) => QuestionOption.fromMap(o))
-              .toList() ??
-          [],
-    );
+        questionId: json['question_id'] ?? '',
+        questionText: json['question_text'] ?? '',
+        questionType: json['question_type'] ?? '',
+        parentQuestion: json['parent_question'] ?? '0',
+        parentQuestionOption: json['parent_question_option'] ?? '0',
+        mandatory: json['mandatory'] == '1',
+        questionOptions: (json['question_options'] as List?)
+                ?.map((o) => QuestionOption.fromMap(o))
+                .toList() ??
+            [],
+        questionTypeEnum: json['question_type'].toString().toQuestionType());
   }
 
   Map<String, dynamic> toJson() {
@@ -129,6 +134,7 @@ class FormQuestion extends HiveObject {
       'parent_question_option': parentQuestionOption,
       'mandatory': mandatory ? '1' : '0',
       'question_options': questionOptions.map((o) => o.toJson()).toList(),
+      'question_type_enum': questionTypeEnum.toName(),
     };
   }
 }

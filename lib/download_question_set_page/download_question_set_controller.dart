@@ -169,10 +169,10 @@ class DownloadQuestionSetController extends GetxController {
     // String villageId = selectedQuestionSet.value;
 
     String language = 'question';
-    String reportTypeId = '7';
-    String questionSetId = '2';
+    String reportTypeId = '6';
+    String questionSetId = '5';
     String interviewTypeId = '44';
-    String villageId = '236017';
+    String villageId = '236017,236017,236016';
 
     if (language.isEmpty) {
       errorText.value = "Language Not Selected".tr;

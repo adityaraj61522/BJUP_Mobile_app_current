@@ -1,5 +1,5 @@
+import 'package:bjup_application/add_beneficery_form/add_beneficery_form_view.dart';
 import 'package:bjup_application/attendence_list_page/attendence_list_view.dart';
-import 'package:bjup_application/common/add_beneficery_form/add_beneficery_form_view.dart';
 import 'package:bjup_application/download_village_data_page/download_village_data_view.dart';
 import 'package:bjup_application/login_page/login_view.dart';
 import 'package:bjup_application/module_selection_page/module_selection_view.dart';

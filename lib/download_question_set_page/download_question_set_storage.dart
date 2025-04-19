@@ -1,5 +1,6 @@
 import 'package:bjup_application/common/response_models/download_question_set_response/download_question_set_response.dart';
 import 'package:bjup_application/common/response_models/question_set_response/question_set_response.dart';
+import 'package:bjup_application/survey_form/survey_form_enum.g.dart';
 import 'package:hive/hive.dart';
 
 class DownloadQuestionSetStorage {
@@ -20,6 +21,7 @@ class DownloadQuestionSetStorage {
           Hive.registerAdapter(SurveyModelAdapter());
           Hive.registerAdapter(FormQuestionAdapter());
           Hive.registerAdapter(QuestionOptionAdapter());
+          Hive.registerAdapter(QuestionTypeAdapter());
         }
         _storageBox = await Hive.openBox<DownloadedQuestionSetResponse>(
             'downloadedQuestionSet');

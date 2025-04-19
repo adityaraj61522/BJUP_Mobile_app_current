@@ -2,6 +2,7 @@ import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/start_monitoring_page/start_monitoring_Controller.dart';
+import 'package:bjup_application/survey_form/survey_form_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -225,6 +226,7 @@ class StartMonitoringView extends StatelessWidget {
           );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -261,6 +263,17 @@ class StartMonitoringView extends StatelessWidget {
             ),
             beneficiaryDropdown,
           ],
+        ),
+        Divider(),
+        Obx(
+          () {
+            if (controller.selectedQuestionFormSet.isNotEmpty) {
+              return SurveyPage(
+                formQuestions: controller.selectedQuestionFormSet,
+              );
+            }
+            return SizedBox.shrink();
+          },
         ),
       ],
     );
