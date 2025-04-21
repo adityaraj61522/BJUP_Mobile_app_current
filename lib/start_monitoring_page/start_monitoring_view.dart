@@ -111,7 +111,14 @@ class StartMonitoringView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Obx(() => buildInterviewTypeSelector()),
+                        Divider(),
+                        Obx(() => Column(
+                              children: [
+                                if (controller.showSelector.value) ...{
+                                  buildInterviewTypeSelector(),
+                                },
+                              ],
+                            )),
                         // Obx(() => Text(controller.selectedInterviewType.value)),
                         SizedBox(height: 200),
                       ],
@@ -150,10 +157,13 @@ class StartMonitoringView extends StatelessWidget {
               },
             ),
           )
-        : Center(
-            child: Text(
-              'No interview type List Exist',
-              style: TextStyle(color: AppColors.gray),
+        : Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                'No Question Set List Exist',
+                style: TextStyle(color: AppColors.gray),
+              ),
             ),
           );
     final Widget villageDropdown = controller.villageList.isNotEmpty
@@ -183,10 +193,13 @@ class StartMonitoringView extends StatelessWidget {
               },
             ),
           )
-        : Center(
-            child: Text(
-              'No interview type List Exist',
-              style: TextStyle(color: AppColors.gray),
+        : Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                'No Village List Exist',
+                style: TextStyle(color: AppColors.gray),
+              ),
             ),
           );
     final Widget beneficiaryDropdown = controller.beneficiaryList.isNotEmpty
@@ -216,10 +229,13 @@ class StartMonitoringView extends StatelessWidget {
               },
             ),
           )
-        : Center(
-            child: Text(
-              'No interview type List Exist',
-              style: TextStyle(color: AppColors.gray),
+        : Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                'No Beneficery List Exist',
+                style: TextStyle(color: AppColors.gray),
+              ),
             ),
           );
     return Column(

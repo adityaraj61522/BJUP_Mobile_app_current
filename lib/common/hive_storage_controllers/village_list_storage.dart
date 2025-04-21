@@ -70,6 +70,43 @@ class VillageStorageService {
     }
   }
 
+  // New function to get all stored villages based on projectId
+  Future<List<VillagesList>> getAllVillagesForProject({
+    required String projectId,
+  }) async {
+    try {
+      final projectBox = await _getProjectBox(projectId: projectId);
+      final List<VillagesList> allVillages = [];
+
+      for (var key in projectBox.keys) {
+        if (key is String && key.startsWith('villageData_')) {
+          final List<VillagesList> villageList =
+              (projectBox.get(key) as List<dynamic>?)?.cast<VillagesList>() ??
+                  <VillagesList>[];
+          allVillages.addAll(villageList);
+        }
+      }
+
+      // Remove duplicate villages based on villageId (in case the same village
+      // was added under different interviewIds)
+      final Set<String> seenVillageIds = {};
+      final List<VillagesList> uniqueVillages = [];
+      for (var village in allVillages) {
+        if (seenVillageIds.add(village.villageId)) {
+          uniqueVillages.add(village);
+        }
+      }
+
+      return uniqueVillages;
+    } on HiveError catch (e) {
+      throw HiveError(
+          'Failed to get all village data for project $projectId: $e');
+    } catch (e) {
+      throw HiveError(
+          'An unexpected error occurred while getting all village data for project $projectId: $e');
+    }
+  }
+
   static Future<void> closeBox({required String projectId}) async {
     try {
       if (_projectBoxes.containsKey(projectId)) {

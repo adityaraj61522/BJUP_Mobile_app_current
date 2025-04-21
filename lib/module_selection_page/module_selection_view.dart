@@ -1,12 +1,15 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
+import 'package:bjup_application/module_selection_page/module_selection_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ModuleSelectionView extends StatelessWidget {
   ModuleSelectionView({super.key});
   final sessionManager = SessionManager();
+
+  final controller = Get.put(ModuleSelectionController());
 
   @override
   Widget build(BuildContext context) {

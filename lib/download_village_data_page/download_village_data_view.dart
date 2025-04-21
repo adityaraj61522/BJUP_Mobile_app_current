@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/download_village_data_page/download_village_data_controller.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,13 @@ class DownloadVillageDataView extends StatelessWidget {
             color: AppColors.white,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Get.toNamed(
+              AppRoutes.projectActionList,
+              arguments: {
+                "projectId": controller.selectedProject.value,
+                "projectTitle": controller.projectTitle,
+              },
+            );
           },
         ),
         actions: [

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bjup_application/attendence_list_page/attendence_list_controller.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/response_models/attendence_record_model/attendence_record_model.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,7 +23,7 @@ class AttendenceListView extends StatelessWidget {
       backgroundColor: AppColors.white,
       appBar: AppBar(
         title: const Text(
-          "Attendence List",
+          "Attendence",
           style: TextStyle(
             color: AppColors.white,
           ),
@@ -80,6 +81,9 @@ class AttendenceListView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              SizedBox(
+                                height: 15,
+                              ),
                               Text(
                                 'Punch In Time',
                                 style: TextStyle(
@@ -90,11 +94,21 @@ class AttendenceListView extends StatelessWidget {
                               SizedBox(
                                 height: 5,
                               ),
-                              Text(
-                                '{time}',
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w700,
+                              Obx(
+                                () => Text(
+                                  controller.isPunchActive.value == true &&
+                                          controller.attendanceRecord != null &&
+                                          controller.attendanceRecord!
+                                                  .inDateTime !=
+                                              null &&
+                                          controller.attendanceRecord!
+                                              .inDateTime!.isNotEmpty
+                                      ? controller.attendanceRecord!.inDateTime!
+                                      : '--',
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
                             ],
@@ -104,6 +118,9 @@ class AttendenceListView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              SizedBox(
+                                height: 15,
+                              ),
                               Text(
                                 'Punch Out Time',
                                 style: TextStyle(
@@ -115,7 +132,7 @@ class AttendenceListView extends StatelessWidget {
                                 height: 5,
                               ),
                               Text(
-                                '{time}',
+                                '--',
                                 style: TextStyle(
                                   color: AppColors.white,
                                   fontWeight: FontWeight.w700,
@@ -160,104 +177,128 @@ class AttendenceListView extends StatelessWidget {
                   ),
                   SizedBox(height: 15),
                   SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                8), // Optional: Adds rounded corners
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.gray.withOpacity(
-                                    0.5), // Shadow color with opacity
-                                spreadRadius: 2, // How much the shadow spreads
-                                blurRadius: 5, // Softness of the shadow
-                                offset: Offset(2, 4), // Shadow position (X, Y)
-                              ),
-                            ],
-                            color: AppColors.white,
+                    child: Obx(() {
+                      // The builder function starts here
+                      return Column(
+                        children: [
+                          ...List.generate(
+                            controller.attendanceDataList.length,
+                            (index) {
+                              final attendanceRecord =
+                                  controller.attendanceDataList[index];
+                              return Column(
+                                children: [
+                                  buildAttendenceCard(
+                                      attendanceRecord: attendanceRecord),
+                                  SizedBox(
+                                    height: 15,
+                                  )
+                                ],
+                              );
+                            },
                           ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: Text(
-                                    'Date',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  )),
-                                  Expanded(
-                                      child: Text(
-                                    '{date}',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  ))
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: Text(
-                                    'Punch In Time',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  )),
-                                  Expanded(
-                                      child: Text(
-                                    '{time}',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  ))
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: Text(
-                                    'Punch Out Time',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  )),
-                                  Expanded(
-                                      child: Text(
-                                    '{time}',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  ))
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: Text(
-                                    'Location',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  )),
-                                  Expanded(
-                                      child: Text(
-                                    '{location}',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
-                                  ))
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        ],
+                      );
+                    }), // The builder function ends here
+                  )
                 ],
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAttendenceCard({required AttendanceRecord attendanceRecord}) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius:
+            BorderRadius.circular(8), // Optional: Adds rounded corners
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.gray.withOpacity(0.5), // Shadow color with opacity
+            spreadRadius: 2, // How much the shadow spreads
+            blurRadius: 5, // Softness of the shadow
+            offset: Offset(2, 4), // Shadow position (X, Y)
+          ),
+        ],
+        color: AppColors.white,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
+                'Date',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              )),
+              Expanded(
+                  child: Text(
+                DateFormat('yyyy-MM-dd')
+                    .format(DateTime.parse(attendanceRecord.inDateTime!)),
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ))
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
+                'Punch In Time',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              )),
+              Expanded(
+                  child: Text(
+                DateFormat('hh:mm a').format(
+                  DateTime.parse(attendanceRecord.inDateTime!),
+                ),
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ))
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
+                'Punch Out Time',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              )),
+              Expanded(
+                  child: Text(
+                attendanceRecord.outDateTime != null &&
+                        attendanceRecord.outDateTime!.isNotEmpty
+                    ? DateFormat('hh:mm a').format(
+                        DateTime.parse(attendanceRecord.outDateTime!),
+                      )
+                    : '--',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ))
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
+                'Location',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              )),
+              Expanded(
+                  child: Text(
+                attendanceRecord.inLocationName != null &&
+                        attendanceRecord.inLocationName!.isNotEmpty
+                    ? attendanceRecord.inLocationName!
+                    : '--',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ))
+            ],
+          ),
+          SizedBox(height: 10),
         ],
       ),
     );
@@ -270,198 +311,164 @@ class AttendenceListView extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(20),
-          height: 700,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Date Picker Row
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Date',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            height: 700,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Date Picker Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Date',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Obx(() => Text(
-                          DateFormat('yyyy-MM-dd')
-                              .format(controller.selectedDate.value),
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        )),
-                  ),
-                  GestureDetector(
-                    onTap: () => controller.selectDate(context),
-                    child: Icon(
-                      Icons.calendar_month_outlined,
-                      color: Colors.blue,
-                      size: 40,
+                    Expanded(
+                      child: Obx(() => Text(
+                            DateFormat('yyyy-MM-dd')
+                                .format(controller.selectedDate.value),
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          )),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () => controller.changeDate(context),
+                      child: Icon(
+                        Icons.calendar_month_outlined,
+                        color: Colors.blue,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
 
-              // Time Picker Row
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Punch In Time',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                // Time Picker Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Punch In Time',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Obx(
-                      () => Text(
-                        controller.selectedTime.value.format(context),
+                    Expanded(
+                      child: Obx(
+                        () => Text(
+                          controller.selectedTime.value.format(context),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => controller.changeTime(context),
+                      child:
+                          Icon(Icons.access_time, color: Colors.blue, size: 40),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 20),
+                // Location Picker Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text('Current Location',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ),
+                    Expanded(
+                      child: Obx(() => Text(
+                            controller.currentLocation.value,
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                    ),
+                    GestureDetector(
+                      onTap: () => controller.getCurrentLocation(),
+                      child: Icon(Icons.my_location,
+                          color: Colors.green, size: 40),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Location:",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Obx(() => RadioListTile<String>(
+                                title: Text("Office"),
+                                value: "Office",
+                                groupValue: controller.selectedLocation.value,
+                                onChanged: (value) =>
+                                    controller.changeLocation(value!),
+                              )),
+                        ),
+                        Expanded(
+                          child: Obx(() => RadioListTile<String>(
+                                title: Text("Field"),
+                                value: "Field",
+                                groupValue: controller.selectedLocation.value,
+                                onChanged: (value) =>
+                                    controller.changeLocation(value!),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Center(
+                  child: ImagePickerWidget(),
+                ),
+                SizedBox(height: 9),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Close"),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.blue,
+                      ),
+                      onPressed: () =>
+                          controller.saveattendence(context: context),
+                      child: Text(
+                        controller.isPunchActive.isTrue
+                            ? "Punch Out"
+                            : "Punch In",
                         style: TextStyle(
-                            fontWeight: FontWeight.w700, color: Colors.blue),
+                          color: AppColors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () => controller.selectTime(context),
-                    child:
-                        Icon(Icons.access_time, color: Colors.blue, size: 40),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 20),
-              // Location Picker Row
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Current Location',
-                        style: TextStyle(fontWeight: FontWeight.w700)),
-                  ),
-                  Expanded(
-                    child: Obx(() => Text(
-                          controller.currentLocation.value,
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                          overflow: TextOverflow.ellipsis,
-                        )),
-                  ),
-                  GestureDetector(
-                    onTap: () => controller.getCurrentLocation(),
-                    child:
-                        Icon(Icons.my_location, color: Colors.green, size: 40),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "Location:",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Obx(() => RadioListTile<String>(
-                              title: Text("Office"),
-                              value: "Office",
-                              groupValue: controller.selectedLocation.value,
-                              onChanged: (value) =>
-                                  controller.changeLocation(value!),
-                            )),
-                      ),
-                      Expanded(
-                        child: Obx(() => RadioListTile<String>(
-                              title: Text("Field"),
-                              value: "Field",
-                              groupValue: controller.selectedLocation.value,
-                              onChanged: (value) =>
-                                  controller.changeLocation(value!),
-                            )),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Center(
-                child: ImagePickerWidget(),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context), // Close bottom sheet
-                child: Text("Close"),
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
-  // void _showBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     builder: (BuildContext context) {
-  //       return Container(
-  //         padding: EdgeInsets.all(20),
-  //         height: 250,
-  //         child: Expanded(
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.max,
-  //             children: [
-  //               Row(
-  //                 children: [
-  //                   Expanded(
-  //                       child: Text(
-  //                     'Date',
-  //                     style: TextStyle(fontWeight: FontWeight.w700),
-  //                   )),
-  //                   Expanded(
-  //                       child: Text(
-  //                     '{date}',
-  //                     style: TextStyle(fontWeight: FontWeight.w700),
-  //                   )),
-  //                   const Icon(
-  //                     Icons.calendar_month_outlined,
-  //                     color: AppColors.blue,
-  //                     size: 40,
-  //                   ),
-  //                 ],
-  //               ),
-  //               SizedBox(height: 10),
-  //               Row(
-  //                 children: [
-  //                   Expanded(
-  //                       child: Text(
-  //                     'Punch In Time',
-  //                     style: TextStyle(fontWeight: FontWeight.w700),
-  //                   )),
-  //                   Expanded(
-  //                       child: Text(
-  //                     '{time}',
-  //                     style: TextStyle(fontWeight: FontWeight.w700),
-  //                   ))
-  //                 ],
-  //               ),
-  //               SizedBox(height: 20),
-  //               ElevatedButton(
-  //                 onPressed: () {
-  //                   Navigator.pop(context); // Close the bottom sheet
-  //                 },
-  //                 child: Text("Close"),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }
 
 class ImagePickerWidget extends StatelessWidget {

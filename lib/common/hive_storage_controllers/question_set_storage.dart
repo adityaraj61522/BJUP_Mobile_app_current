@@ -70,6 +70,30 @@ class QuestionSetStorageService {
     }
   }
 
+  // Function to get all stored questions based on projectId
+  Future<List<QuestionSetList>> getAllQuestionsForProject({
+    required String projectId,
+  }) async {
+    try {
+      final projectBox = await _getProjectBox(projectId: projectId);
+      final List<QuestionSetList> allQuestions = [];
+      const String boxKey = 'questionSets'; // Consistent box key
+
+      final List<QuestionSetList> questionSets =
+          (projectBox.get(boxKey) as List<dynamic>?)?.cast<QuestionSetList>() ??
+              <QuestionSetList>[];
+
+      allQuestions.addAll(questionSets);
+
+      return allQuestions;
+    } on HiveError catch (e) {
+      throw HiveError('Failed to get all questions for project $projectId: $e');
+    } catch (e) {
+      throw HiveError(
+          'An unexpected error occurred while getting all questions for project $projectId: $e');
+    }
+  }
+
   static Future<void> closeBox({required String projectId}) async {
     try {
       if (_projectBoxes.containsKey(projectId)) {

@@ -7,7 +7,8 @@ import 'package:get/get.dart';
 class ProjectMonitoringActionListView extends StatelessWidget {
   ProjectMonitoringActionListView({super.key});
 
-  final controller = Get.put(ProjectMonitoringActionListController());
+  final controller = Get.put(ProjectMonitoringActionListController(),
+      permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
 
   @override
   Widget build(BuildContext context) {

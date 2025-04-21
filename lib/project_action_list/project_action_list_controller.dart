@@ -1,9 +1,19 @@
+import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/hive_storage_controllers/question_set_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 
 class ProjectMonitoringActionListController extends GetxController {
   final SessionManager sessionManager = SessionManager();
+
+  final VillageStorageService villageStorageService = VillageStorageService();
+  final QuestionSetStorageService questionSetStorageService =
+      QuestionSetStorageService();
+
+  final villageExists = false.obs;
+  final questionSetsExists = false.obs;
 
   String projectId = '';
   String projectTitle = '';
@@ -15,10 +25,45 @@ class ProjectMonitoringActionListController extends GetxController {
     print(args);
     projectId = args['projectId'];
     projectTitle = args['projectTitle'];
+    checkVillageData();
+    checkQuestionSetData();
     // await fetchQuestionSet();
   }
 
+  void checkVillageData() async {
+    final villages = await villageStorageService.getAllVillagesForProject(
+      projectId: projectId,
+    );
+    if (villages.isNotEmpty) {
+      villageExists.value = true;
+    } else {
+      villageExists.value = false;
+    }
+  }
+
+  void checkQuestionSetData() async {
+    final questionSets =
+        await questionSetStorageService.getAllQuestionsForProject(
+      projectId: projectId,
+    );
+    if (questionSets.isNotEmpty) {
+      questionSetsExists.value = true;
+    } else {
+      questionSetsExists.value = false;
+    }
+  }
+
   void routeToDownloadQuestionSet() async {
+    if (villageExists.value == false) {
+      Get.snackbar(
+        "Please Download Villages.",
+        'Village Data required'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.orange,
+        colorText: AppColors.white,
+      );
+      return;
+    }
     await Get.toNamed(AppRoutes.downlaodQuestionSet, arguments: {
       "projectId": projectId,
       "projectTitle": projectTitle,
@@ -33,6 +78,26 @@ class ProjectMonitoringActionListController extends GetxController {
   }
 
   void routeToStartMonitoring() async {
+    if (villageExists.value == false) {
+      Get.snackbar(
+        "Please Download Villages.",
+        'Village Data required'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.orange,
+        colorText: AppColors.white,
+      );
+      return;
+    }
+    if (questionSetsExists.value == false) {
+      Get.snackbar(
+        "Please Download Question Sets.",
+        'Question Set Data required'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.orange,
+        colorText: AppColors.white,
+      );
+      return;
+    }
     await Get.toNamed(AppRoutes.startMonitoring, arguments: {
       "projectId": projectId,
       "projectTitle": projectTitle,
