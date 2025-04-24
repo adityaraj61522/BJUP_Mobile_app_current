@@ -7,6 +7,7 @@ import 'package:bjup_application/project_action_list/project_action_list_page.da
 import 'package:bjup_application/download_question_set_page/download_question_set_view.dart';
 import 'package:bjup_application/project_list_page/project_list_page.dart';
 import 'package:bjup_application/start_monitoring_page/start_monitoring_view.dart';
+import 'package:bjup_application/sync_survey_page/sync_survey_view.dart';
 import 'package:get/get.dart';
 
 class AppRoutes {
@@ -20,6 +21,7 @@ class AppRoutes {
   static const String downlaodVillageData = '/downlaodVillageData';
   static const String startMonitoring = '/startMonitoring';
   static const String addBeneficery = '/addBeneficery';
+  static const String syncSurvey = '/syncSurvey';
 
   static final routes = [
     GetPage(
@@ -65,6 +67,11 @@ class AppRoutes {
     GetPage(
       name: addBeneficery,
       page: () => AddBeneficiaryScreen(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: syncSurvey,
+      page: () => SyncSurveyView(),
       transition: Transition.fadeIn,
     ),
   ];

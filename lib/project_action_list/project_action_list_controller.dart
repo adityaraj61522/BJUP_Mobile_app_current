@@ -103,4 +103,11 @@ class ProjectMonitoringActionListController extends GetxController {
       "projectTitle": projectTitle,
     });
   }
+
+  void routeToSyncSurvey() async {
+    await Get.toNamed(AppRoutes.syncSurvey, arguments: {
+      "projectId": projectId,
+      "projectTitle": projectTitle,
+    });
+  }
 }

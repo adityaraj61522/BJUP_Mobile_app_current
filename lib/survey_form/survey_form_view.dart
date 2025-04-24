@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bjup_application/common/api_service/api_service.dart';
+import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/hive_storage_controllers/survey_storage.dart';
 import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:date_field/date_field.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +16,25 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 
 class SurveyPage extends StatefulWidget {
   final List<FormQuestionData> formQuestions;
+  final String beneficeryId;
+  final String userId;
+  final String questionSetId;
+  final String projectId;
+  final String questionSetName;
 
-  const SurveyPage({super.key, required this.formQuestions});
+  const SurveyPage({
+    super.key,
+    required this.formQuestions,
+    required this.beneficeryId,
+    required this.userId,
+    required this.questionSetId,
+    required this.projectId,
+    required this.questionSetName,
+  });
 
   @override
   State<SurveyPage> createState() => _SurveyPageState();
@@ -31,6 +49,10 @@ class _SurveyPageState extends State<SurveyPage> {
     penColor: Colors.black,
     exportBackgroundColor: Colors.white,
   );
+  final isLoading = false.obs;
+  final ApiService apiService = ApiService();
+
+  final SurveyStorageService surveyStorageService = SurveyStorageService();
 
   @override
   void initState() {
@@ -38,6 +60,63 @@ class _SurveyPageState extends State<SurveyPage> {
     // final decodedResponse = jsonDecode(widget.apiResponse);
     // final List<dynamic> formQuestionsJson = decodedResponse['form_questions'];
     _questions = widget.formQuestions;
+  }
+
+  onSaveFormClicked() async {
+    // Prepare the answer data here
+    List<Map<String, dynamic>> savedSurveyQuestions =
+        _questions.map((question) {
+      return {
+        "question_id": question.questionId,
+        "question_type": question.questionTypeEnum
+            .toName(), // Use the enum to get the API string
+        "answer": _answers[question.questionId] ?? "",
+        "answerId": (question.questionTypeEnum == QuestionType.checkboxField ||
+                    question.questionTypeEnum ==
+                        QuestionType.multiSelectField) &&
+                _answers.containsKey(question.questionId)
+            ? (_answers[question.questionId] as List).join(',')
+            : "", // Adjust logic for answerId if needed for other types
+      };
+    }).toList();
+
+    print(jsonEncode(savedSurveyQuestions));
+    final formToSave = {
+      'animator_id': widget.userId,
+      'savedSurveyQuestions': savedSurveyQuestions.toString(),
+      'surveyId': "1",
+      'questionSetId': widget.questionSetId,
+      'beneficiaryId': widget.beneficeryId,
+      'questionSetName': widget.questionSetName,
+      'isSynced': false,
+    };
+    await surveyStorageService
+        .saveSurveyFormData(
+            projectId: widget.projectId,
+            questionSetId: widget.questionSetId,
+            beneficiaryId: widget.beneficeryId,
+            savedSurveyQuestions: formToSave)
+        .then((value) {
+      print("Survey Saved Locally successfully!");
+      Get.snackbar(
+        "Success",
+        "Survey Saved Locally successfully!",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.green,
+        colorText: AppColors.white,
+      );
+      Get.toNamed(AppRoutes.projectActionList);
+    }).catchError((error) {
+      print("Error saving survey locally: $error");
+      Get.snackbar(
+        "Error",
+        "Failed to save survey locally.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
+    });
+    ;
   }
 
   Widget _buildQuestionWidget(FormQuestionData question, int questionIndex) {
@@ -419,40 +498,31 @@ class _SurveyPageState extends State<SurveyPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
-        children: _questions
-            .asMap() // Convert the list to a map with index
-            .entries
-            .map((entry) => _buildQuestionWidget(
-                entry.value, entry.key)) // Pass both question and index
-            .toList(),
+        children: [
+          ..._questions
+              .asMap() // Convert the list to a map with index
+              .entries
+              .map((entry) => _buildQuestionWidget(
+                  entry.value, entry.key)) // Pass both question and index
+              .toList(),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ElevatedButton(
+              onPressed: () => onSaveFormClicked(),
+              iconAlignment: IconAlignment.end,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.green,
+                minimumSize: Size(double.infinity, 50),
+              ),
+              child: Text(
+                "Save Survey",
+                style: TextStyle(
+                    color: AppColors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
       ),
     );
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: () {
-    //       // Prepare the answer data here
-    //       List<Map<String, dynamic>> savedSurveyQuestions =
-    //           _questions.map((question) {
-    //         return {
-    //           "question_id": question.questionId,
-    //           "question_type": question.questionTypeEnum
-    //               .toApiString(), // Use the enum to get the API string
-    //           "answer": _answers[question.questionId] ?? "",
-    //           "answerId": (question.questionTypeEnum ==
-    //                           QuestionType.checkboxField ||
-    //                       question.questionTypeEnum ==
-    //                           QuestionType.multiSelectField) &&
-    //                   _answers.containsKey(question.questionId)
-    //               ? (_answers[question.questionId] as List).join(',')
-    //               : "", // Adjust logic for answerId if needed for other types
-    //         };
-    //       }).toList();
-
-    //       print(jsonEncode(savedSurveyQuestions));
-
-    //       // You would then send this data to your API
-    //     },
-    //     child: const Icon(Icons.check),
-    //   ),
-    // );
   }
 }

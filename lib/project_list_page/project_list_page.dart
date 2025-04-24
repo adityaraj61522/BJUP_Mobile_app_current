@@ -31,7 +31,9 @@ class ProjectMonitoringListView extends StatelessWidget {
             color: AppColors.white,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Get.toNamed(
+              AppRoutes.moduleSelection,
+            );
           },
         ),
         actions: [

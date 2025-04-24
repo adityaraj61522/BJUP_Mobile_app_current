@@ -284,6 +284,14 @@ class StartMonitoringView extends StatelessWidget {
             if (controller.selectedQuestionFormSet.isNotEmpty) {
               return SurveyPage(
                 formQuestions: controller.selectedQuestionFormSet,
+                questionSetId: controller.selectedQuestionSet.value,
+                userId: controller.userData!.userId,
+                beneficeryId: controller.selectedBeneficiary.value,
+                projectId: controller.selectedProject.value,
+                questionSetName: controller.questionSetList
+                    .firstWhere((element) =>
+                        element.id == controller.selectedQuestionSet.value)
+                    .title,
               );
             }
             return SizedBox.shrink();

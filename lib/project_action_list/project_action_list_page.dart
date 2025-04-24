@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/project_action_list/project_action_list_controller.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,13 @@ class ProjectMonitoringActionListView extends StatelessWidget {
             color: AppColors.white,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Get.toNamed(
+              AppRoutes.projectList,
+              arguments: {
+                "projectId": controller.projectId,
+                "projectTitle": controller.projectTitle,
+              },
+            );
           },
         ),
         actions: [
@@ -87,7 +94,7 @@ class ProjectMonitoringActionListView extends StatelessWidget {
                     _buildDashboardButton(
                       icon: Icons.save_as_rounded,
                       label: "Local Saved Surveys",
-                      onTap: () => {},
+                      onTap: () => controller.routeToSyncSurvey(),
                       tileColor: AppColors.green,
                       // onTap: () => Get.to(() => const ProjectMonitoringScreen()),
                     ),
