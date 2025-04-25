@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bjup_application/attendence_list_page/attendence_list_view.dart';
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/hive_storage_controllers/attendence_list_storage.dart';
 import 'package:bjup_application/common/response_models/attendence_record_model/attendence_record_model.dart';
@@ -42,6 +43,8 @@ class AttendenceListController extends GetxController {
 
   final obscureText = true.obs;
   final errorText = ''.obs;
+
+  final RxList<Widget> attendanceCardList = <Widget>[].obs;
 
   final ApiService apiService = ApiService();
 
@@ -179,46 +182,96 @@ class AttendenceListController extends GetxController {
   }
 
   // Function to mark attendance
-
   Future<void> saveattendence({required BuildContext context}) async {
     final newAttendanceRecord = AttendanceRecord();
-    // Create a new AttendanceRecord instance
     newAttendanceRecord.attendenceType =
         isPunchActive.value ? "logout" : "login";
     newAttendanceRecord.locationType = selectedLocation.value;
     newAttendanceRecord.gpsLatitude = selectedLatitude.value;
     newAttendanceRecord.gpsLongitude = selectedLongitude.value;
+
     if (!isPunchActive.value) {
       newAttendanceRecord.inDateTime = selectedDateTime.value.toString();
       newAttendanceRecord.inLocationName = currentLocation.value;
-      newAttendanceRecord.punchedOut = isPunchActive.value;
-      newAttendanceRecord.attendenceIndex = attendanceDataList.length + 1;
-    }
-    if (isPunchActive.value) {
+      newAttendanceRecord.punchedOut = false;
+    } else {
       newAttendanceRecord.outDateTime = selectedDateTime.value.toString();
       newAttendanceRecord.outLocationName = currentLocation.value;
+      newAttendanceRecord.punchedOut = true;
     }
+
     newAttendanceRecord.picture = capturedImage.value != null
         ? await capturedImage.value!.readAsBytes()
         : null;
-    newAttendanceRecord.attendenceIndex = attendanceDataList.length + 1;
+    newAttendanceRecord.attendenceIndex = attendanceDataList.length +
+        DateTime.now().millisecondsSinceEpoch.toInt();
 
     bool attendenceMarked = await markAttendance(
-        // ignore: use_build_context_synchronously
-        context: context,
-        newAttendanceRecord: newAttendanceRecord);
+      // ignore: use_build_context_synchronously
+      context: context,
+      newAttendanceRecord: newAttendanceRecord,
+    );
+
     if (attendenceMarked) {
-      attendanceDataList.add(newAttendanceRecord);
-
-      await attendenceStorageService.storeAttendanceData(newAttendanceRecord);
+      try {
+        if (!isPunchActive.value) {
+          attendanceDataList.add(newAttendanceRecord);
+          await attendenceStorageService
+              .storeAttendanceData(newAttendanceRecord);
+          attendanceCardList.value = List.generate(
+            attendanceDataList.length,
+            (index) {
+              final attendanceRecord = attendanceDataList[index];
+              return Column(
+                children: [
+                  AttendenceCard(attendanceRecord: attendanceRecord),
+                  SizedBox(
+                    height: 15,
+                  )
+                ],
+              );
+            },
+          ).toList();
+        } else {
+          attendanceDataList.removeWhere(
+              (e) => e.attendenceType == "login" && e.punchedOut == false);
+          attendanceDataList.add(newAttendanceRecord);
+          await attendenceStorageService
+              .replaceAllAttendanceData(attendanceDataList);
+          attendanceCardList.value = List.generate(
+            attendanceDataList.length,
+            (index) {
+              final attendanceRecord = attendanceDataList[index];
+              return Column(
+                children: [
+                  AttendenceCard(attendanceRecord: attendanceRecord),
+                  SizedBox(
+                    height: 15,
+                  )
+                ],
+              );
+            },
+          ).toList();
+        }
+        isPunchActive.value = !isPunchActive.value;
+      } catch (e) {
+        Get.snackbar("Local Storage Error",
+            "Failed to save attendance data locally: $e");
+        // Optionally revert the isPunchActive state if local storage fails
+        // isPunchActive.value = !isPunchActive.value;
+      } finally {
+        capturedImage.value = null;
+      }
+    } else {
+      // If markAttendance failed, no need to update local storage or toggle state
+      capturedImage.value = null;
     }
-
-    capturedImage.value = null;
   }
 
-  Future<bool> markAttendance(
-      {required BuildContext context,
-      required AttendanceRecord newAttendanceRecord}) async {
+  Future<bool> markAttendance({
+    required BuildContext context,
+    required AttendanceRecord newAttendanceRecord,
+  }) async {
     isMarkingAttendance.value = true;
 
     var formData = FormData.fromMap({
@@ -233,12 +286,19 @@ class AttendenceListController extends GetxController {
     });
 
     if (capturedImage.value != null) {
-      formData.files.add(MapEntry(
-        'picture',
-        await MultipartFile.fromFile(capturedImage.value!.path,
-            filename:
-                'attendance_${DateTime.now().millisecondsSinceEpoch}.png'),
-      ));
+      try {
+        formData.files.add(MapEntry(
+          'picture',
+          await MultipartFile.fromFile(capturedImage.value!.path,
+              filename:
+                  'attendance_${DateTime.now().millisecondsSinceEpoch}.png'),
+        ));
+      } catch (e) {
+        print('Error creating multipart file: $e');
+        Get.snackbar("File Error", "Failed to attach the captured image.");
+        isMarkingAttendance.value = false;
+        return false;
+      }
     }
 
     try {
@@ -247,18 +307,38 @@ class AttendenceListController extends GetxController {
       if (response != null && response.statusCode == 200) {
         print('Attendance marked successfully: ${response.data}');
         Get.snackbar("Success", "Attendance marked successfully!");
-        capturedImage.value = null;
         closeBottomSheet(context: context);
         return true;
       } else {
         print(
             'Failed to mark attendance: ${response?.statusCode} - ${response?.data}');
-        Get.snackbar("Error", "Failed to mark attendance.");
+        String errorMessage = "Failed to mark attendance.";
+        if (response?.data != null &&
+            response!.data is Map &&
+            response.data.containsKey('message')) {
+          errorMessage = response.data['message'];
+        } else if (response?.data != null) {
+          errorMessage = 'Failed to mark attendance: ${response!.data}';
+        }
+        Get.snackbar("Error", errorMessage);
         return false;
       }
+    } on DioException catch (e) {
+      print('Dio error marking attendance: $e');
+      String errorMessage = "Something went wrong while marking attendance.";
+      if (e.response != null &&
+          e.response?.data != null &&
+          e.response?.data is Map &&
+          e.response?.data.containsKey('message')) {
+        errorMessage = e.response!.data['message'];
+      } else if (e.message != null) {
+        errorMessage = 'Network error: ${e.message}';
+      }
+      Get.snackbar("Network Error", errorMessage);
+      return false;
     } catch (e) {
-      print('Error marking attendance: $e');
-      Get.snackbar("Error", "Something went wrong while marking attendance.");
+      print('Unexpected error marking attendance: $e');
+      Get.snackbar("Unexpected Error", "Something went wrong: $e");
       return false;
     } finally {
       isMarkingAttendance.value = false;

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 part 'attendence_record_model.g.dart'; // Run 'flutter pub run build_runner build'
 
-@HiveType(typeId: 1) // Choose a unique typeId
+@HiveType(typeId: 78) // Choose a unique typeId
 class AttendanceRecord extends HiveObject {
   @HiveField(0)
   int? attendenceIndex;

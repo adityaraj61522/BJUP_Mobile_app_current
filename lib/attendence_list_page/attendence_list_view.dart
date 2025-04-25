@@ -176,129 +176,22 @@ class AttendenceListView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 15),
-                  SingleChildScrollView(
-                    child: Obx(() {
-                      // The builder function starts here
-                      return Column(
-                        children: [
-                          ...List.generate(
-                            controller.attendanceDataList.length,
-                            (index) {
-                              final attendanceRecord =
-                                  controller.attendanceDataList[index];
-                              return Column(
-                                children: [
-                                  buildAttendenceCard(
-                                      attendanceRecord: attendanceRecord),
-                                  SizedBox(
-                                    height: 15,
-                                  )
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    }), // The builder function ends here
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Obx(() {
+                        // The builder function starts here
+                        return Column(
+                          children: [
+                            ...controller.attendanceCardList,
+                          ],
+                        );
+                      }), // The builder function ends here
+                    ),
                   )
                 ],
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildAttendenceCard({required AttendanceRecord attendanceRecord}) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius:
-            BorderRadius.circular(8), // Optional: Adds rounded corners
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.gray.withOpacity(0.5), // Shadow color with opacity
-            spreadRadius: 2, // How much the shadow spreads
-            blurRadius: 5, // Softness of the shadow
-            offset: Offset(2, 4), // Shadow position (X, Y)
-          ),
-        ],
-        color: AppColors.white,
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                  child: Text(
-                'Date',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              )),
-              Expanded(
-                  child: Text(
-                DateFormat('yyyy-MM-dd')
-                    .format(DateTime.parse(attendanceRecord.inDateTime!)),
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ))
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                  child: Text(
-                'Punch In Time',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              )),
-              Expanded(
-                  child: Text(
-                DateFormat('hh:mm a').format(
-                  DateTime.parse(attendanceRecord.inDateTime!),
-                ),
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ))
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                  child: Text(
-                'Punch Out Time',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              )),
-              Expanded(
-                  child: Text(
-                attendanceRecord.outDateTime != null &&
-                        attendanceRecord.outDateTime!.isNotEmpty
-                    ? DateFormat('hh:mm a').format(
-                        DateTime.parse(attendanceRecord.outDateTime!),
-                      )
-                    : '--',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ))
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                  child: Text(
-                'Location',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              )),
-              Expanded(
-                  child: Text(
-                attendanceRecord.inLocationName != null &&
-                        attendanceRecord.inLocationName!.isNotEmpty
-                    ? attendanceRecord.inLocationName!
-                    : '--',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ))
-            ],
-          ),
-          SizedBox(height: 10),
         ],
       ),
     );
@@ -584,6 +477,118 @@ class ImagePickerWidget extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class AttendenceCard extends StatelessWidget {
+  final AttendanceRecord attendanceRecord;
+
+  const AttendenceCard({super.key, required this.attendanceRecord});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.gray.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(2, 4),
+          ),
+        ],
+        color: AppColors.white,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Date',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  attendanceRecord.inDateTime != null
+                      ? DateFormat('yyyy-MM-dd')
+                          .format(DateTime.parse(attendanceRecord.inDateTime!))
+                      : '--',
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Punch In Time',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  attendanceRecord.inDateTime != null
+                      ? DateFormat('hh:mm a').format(
+                          DateTime.parse(attendanceRecord.inDateTime!),
+                        )
+                      : '--',
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Punch Out Time',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  attendanceRecord.outDateTime != null &&
+                          attendanceRecord.outDateTime!.isNotEmpty
+                      ? DateFormat('hh:mm a').format(
+                          DateTime.parse(attendanceRecord.outDateTime!),
+                        )
+                      : '--',
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Location',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  attendanceRecord.inLocationName != null &&
+                          attendanceRecord.inLocationName!.isNotEmpty
+                      ? attendanceRecord.inLocationName!
+                      : '--',
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
     );
   }
 }

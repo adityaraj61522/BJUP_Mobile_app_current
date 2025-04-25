@@ -31,6 +31,7 @@ class DownloadVillageDataController extends GetxController {
   final selectedInterviewType = ''.obs;
 
   final selectedVillage = ''.obs;
+  final selectedVillageList = [].obs;
 
   final errorText = ''.obs;
 
@@ -152,7 +153,7 @@ class DownloadVillageDataController extends GetxController {
     String partnerId = selectedOfficeId.value;
     String projectsId = selectedProject.value;
     String interviewTypeId = selectedInterviewType.value;
-    String villageId = selectedVillage.value;
+    String villageId = selectedVillageList.join(',').toString();
 
     if (projectsId.isEmpty) {
       errorText.value = "Project Not Selected".tr;

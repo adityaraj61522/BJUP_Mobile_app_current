@@ -2,7 +2,7 @@ part of 'attendence_record_model.dart';
 
 class AttendanceRecordAdapter extends TypeAdapter<AttendanceRecord> {
   @override
-  final int typeId = 1; // Must match the typeId in your @HiveType annotation
+  final int typeId = 78; // Must match the typeId in your @HiveType annotation
 
   @override
   AttendanceRecord read(BinaryReader reader) {

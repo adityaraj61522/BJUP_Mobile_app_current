@@ -1,3 +1,4 @@
+import 'package:bjup_application/common/response_models/attendence_record_model/attendence_record_model.dart';
 import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
 import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
 import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
@@ -21,6 +22,7 @@ void main() async {
   Hive.registerAdapter(QuestionSetListAdapter());
   Hive.registerAdapter(QuestionDropdownOptionAdapter());
   Hive.registerAdapter(QuestionTypeAdapter());
+  Hive.registerAdapter(AttendanceRecordAdapter());
   Get.put(LoginController());
 
   runApp(MyApp());

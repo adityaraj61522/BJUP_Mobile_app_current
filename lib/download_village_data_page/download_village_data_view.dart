@@ -151,26 +151,35 @@ class DownloadVillageDataView extends StatelessWidget {
   }
 
   Widget buildVillageSelector() {
-    final List<Widget> villageTypeList =
-        controller.villages != null && controller.villages!.isNotEmpty
-            ? controller.villages!
-                .map(
-                  (village) => RadioListTile<String>(
-                    title: Text(village.villageName),
-                    value: village.villageId,
-                    groupValue: controller.selectedVillage.value,
-                    onChanged: (value) => controller.changeVillage(value!),
-                  ),
-                )
-                .toList()
-            : [
-                Center(
-                  child: Text(
-                    'No village List Exist',
-                    style: TextStyle(color: AppColors.gray),
-                  ),
-                ),
-              ];
+    final List<Widget> villageCheckboxes = controller.villages != null &&
+            controller.villages!.isNotEmpty
+        ? controller.villages!
+            .map(
+              (village) => Obx(() {
+                return CheckboxListTile(
+                  title: Text(village.villageName),
+                  value: controller.selectedVillageList
+                      .contains(village.villageId),
+                  onChanged: (bool? value) {
+                    if (value != null) {
+                      if (value) {
+                        controller.selectedVillageList.add(village.villageId);
+                      }
+                    }
+                  },
+                  visualDensity: VisualDensity.compact,
+                );
+              }),
+            )
+            .toList()
+        : [
+            Center(
+              child: Text(
+                'No village List Exist',
+                style: TextStyle(color: AppColors.gray),
+              ),
+            ),
+          ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,8 +189,11 @@ class DownloadVillageDataView extends StatelessWidget {
           style: TextStyle(color: AppColors.gray),
         ),
         Wrap(
+          spacing: 8.0, // Optional: Add spacing between checkboxes horizontally
+          runSpacing:
+              4.0, // Optional: Add spacing between rows of checkboxes vertically
           children: [
-            ...villageTypeList,
+            ...villageCheckboxes,
           ],
         )
       ],
