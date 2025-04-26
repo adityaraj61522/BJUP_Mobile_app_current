@@ -28,18 +28,14 @@ class LoginScreen extends GetView<LoginController> {
                 _buildLogoAndLanguageSwitcher(),
                 Expanded(
                   flex: 2,
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Form(
-                        key: _formKey,
-                        child: _buildLoginForm(),
-                      ),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: _buildLoginForm(),
                     ),
                   ),
                 ),
-                Spacer(),
-                const SizedBox(height: 50), // Added spacing at the bottom
               ],
             ),
           ),

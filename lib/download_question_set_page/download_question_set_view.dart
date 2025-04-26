@@ -4,10 +4,11 @@ import 'package:bjup_application/download_question_set_page/download_question_se
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class DownloadQuestionSetView extends GetView<DownloadQuestionSetController> {
-  final sessionManager = Get.find<SessionManager>();
-
+class DownloadQuestionSetView extends StatelessWidget {
   DownloadQuestionSetView({super.key});
+
+  final sessionManager = SessionManager();
+  final controller = Get.put(DownloadQuestionSetController());
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +46,15 @@ class DownloadQuestionSetView extends GetView<DownloadQuestionSetController> {
               }),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _buildDownloadButton(),
+          Row(
+            children: [
+              Spacer(),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: _buildDownloadButton(),
+              ),
+              Spacer(),
+            ],
           ),
         ],
       ),
