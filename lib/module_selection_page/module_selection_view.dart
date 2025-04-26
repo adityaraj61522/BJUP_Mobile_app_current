@@ -5,59 +5,80 @@ import 'package:bjup_application/module_selection_page/module_selection_view_con
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ModuleSelectionView extends StatelessWidget {
-  ModuleSelectionView({super.key});
+class ModuleSelectionView extends GetView<ModuleSelectionController> {
   final sessionManager = SessionManager();
 
-  final controller = Get.put(ModuleSelectionController());
+  ModuleSelectionView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => {
-              sessionManager.forceLogout(),
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    "lib/assets/images/bjup_logo_zoom.png"), // Your logo as background
-                fit: BoxFit.fitWidth, // Covers the entire screen
-                opacity: 0.3,
+      appBar: _buildAppBar(),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            _buildLogoAndLanguageSwitcher(),
+            Spacer(),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildDashboardButton(
+                    icon: Icons.calendar_month_rounded,
+                    label: "Attendance".tr,
+                    onTap: () => Get.toNamed(AppRoutes.attendenceList),
+                    tileColor: AppColors.blue,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildDashboardButton(
+                    icon: Icons.screenshot_monitor_rounded,
+                    label: "Monitoring".tr,
+                    onTap: () => Get.toNamed(AppRoutes.projectList),
+                    tileColor: const Color.fromARGB(255, 25, 107, 25),
+                  ),
+                ],
               ),
             ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildDashboardButton(
-                  icon: Icons.calendar_month_rounded,
-                  label: "Field Attendance",
-                  onTap: () => Get.toNamed(AppRoutes.attendenceList),
-                  tileColor: AppColors.blue,
-                ),
-                const SizedBox(height: 20),
-                _buildDashboardButton(
-                    icon: Icons.analytics,
-                    label: "Project Monitoring",
-                    onTap: () => Get.toNamed(AppRoutes.projectList),
-                    tileColor: const Color.fromARGB(255, 25, 107, 25)),
-              ],
-            ),
-          ),
+            Spacer(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      toolbarHeight: 0,
+      backgroundColor: AppColors.white,
+      centerTitle: true,
+    );
+  }
+
+  Widget _buildLogoAndLanguageSwitcher() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0, bottom: 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildLogo("lib/assets/images/bjup_logo_zoom.png"),
+          _buildLanguageSwitcher(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLogo(String logoPath) {
+    return Container(
+      height: 150,
+      width: 150,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(logoPath),
+          alignment: Alignment.topLeft,
+        ),
       ),
     );
   }
@@ -88,16 +109,65 @@ class ModuleSelectionView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.white, size: 40),
+            Icon(icon, color: AppColors.white, size: 70),
             const SizedBox(height: 10),
             Text(
               label,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                   fontSize: 18,
                   color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageSwitcher() {
+    return Align(
+      alignment: Alignment.topRight,
+      child: InkWell(
+        onTap: () {
+          final isEnglish = Get.locale?.languageCode == 'en';
+          Get.updateLocale(
+              isEnglish ? const Locale('hi', 'IN') : const Locale('en', 'US'));
+        },
+        child: Container(
+          height: 50,
+          width: 150,
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: AppColors.black),
+          ),
+          child: Row(
+            children: [
+              _buildLanguageButton("English", 'en'),
+              _buildLanguageButton("Hindi", 'hi'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageButton(String text, String languageCode) {
+    final isSelected = Get.locale?.languageCode == languageCode;
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.black : AppColors.white,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: isSelected ? AppColors.white : AppColors.black,
+            ),
+          ),
         ),
       ),
     );

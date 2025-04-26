@@ -11,136 +11,91 @@ class ProjectMonitoringListView extends StatelessWidget {
 
   final ProjectMonitoringListController controller =
       Get.put(ProjectMonitoringListController());
-
+  final sessionManager = SessionManager();
   @override
   Widget build(BuildContext context) {
-    final sessionManager = SessionManager();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Project List",
-          style: TextStyle(
-            color: AppColors.white,
+      appBar: _buildAppBar(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Obx(
+          () => Column(
+            children: controller.projectList
+                .map((projectItem) => _buildProjectMonitoringCard(
+                      projectItem: projectItem,
+                    ))
+                .toList(),
           ),
         ),
-        backgroundColor: AppColors.green,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.white,
-          ),
-          onPressed: () {
-            Get.toNamed(
-              AppRoutes.moduleSelection,
-            );
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.logout,
-              color: AppColors.white,
-            ),
-            onPressed: () => {
-              sessionManager.forceLogout(),
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    "lib/assets/images/bjup_logo_zoom.png"), // Your logo as background
-                fit: BoxFit.fitWidth, // Covers the entire screen
-                opacity: 0.3,
-              ),
-            ),
-          ),
-          SingleChildScrollView(
-            padding: EdgeInsets.all(20),
-            child: Obx(
-              () => Column(
-                children: [
-                  ...List.generate(
-                    controller.projectList.length,
-                    (index) => _buildProjectMonitoringCard(
-                      projectItem: controller.projectList[index],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildProjectMonitoringCard({required ProjectList projectItem}) {
-    return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.projectActionList, arguments: {
-        "projectId": projectItem.projectId,
-        "projectTitle": projectItem.projectTitle,
-      }),
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color:
-                  AppColors.gray.withOpacity(0.5), // Shadow color with opacity
-              spreadRadius: 2, // How much the shadow spreads
-              blurRadius: 5, // Softness of the shadow
-              offset: Offset(2, 4), // Shadow position (X, Y)
-            ),
-          ],
-          color: AppColors.white,
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: const Text(
+        "Project List",
+        style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: AppColors.green,
+      centerTitle: true,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: AppColors.white),
+        onPressed: () => Get.back(),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.logout, color: AppColors.white),
+          onPressed: () => sessionManager.forceLogout(),
         ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Project Id :',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    )),
-                Expanded(
-                    flex: 2,
-                    child: Text(
-                      projectItem.projectId,
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ))
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Project Name :',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    )),
-                Expanded(
-                    flex: 2,
-                    child: Text(
-                      projectItem.projectTitle,
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ))
-              ],
-            ),
-            SizedBox(height: 10),
-          ],
+      ],
+    );
+  }
+
+  Widget _buildProjectMonitoringCard({required ProjectList projectItem}) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: InkWell(
+        onTap: () => Get.toNamed(AppRoutes.projectActionList, arguments: {
+          "projectId": projectItem.projectId,
+          "projectTitle": projectItem.projectTitle,
+        }),
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildProjectDetailRow('Project Id', projectItem.projectId),
+              const SizedBox(height: 10),
+              _buildProjectDetailRow('Project Name', projectItem.projectTitle),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildProjectDetailRow(String label, String value) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            '$label :',
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
     );
   }
 }

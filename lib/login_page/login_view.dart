@@ -27,6 +27,7 @@ class LoginScreen extends GetView<LoginController> {
               children: [
                 _buildLogoAndLanguageSwitcher(),
                 Expanded(
+                  flex: 2,
                   child: Center(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(24.0),
@@ -37,6 +38,7 @@ class LoginScreen extends GetView<LoginController> {
                     ),
                   ),
                 ),
+                Spacer(),
                 const SizedBox(height: 50), // Added spacing at the bottom
               ],
             ),
