@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class AttendenceListView extends StatelessWidget {
   final AttendenceListController controller =
-      Get.put(AttendenceListController());
+      Get.put(AttendenceListController(), permanent: false);
   final sessionManager = SessionManager();
 
   AttendenceListView({super.key});
@@ -93,21 +93,22 @@ class AttendenceListView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _buildPunchTimeColumn(
-                'Punch In Time', controller.attendanceRecord?.inDateTime),
+            child: Obx(() => _buildPunchTimeColumn(
+                'Punch In Time', controller.activeInTime.value)),
           ),
           Expanded(
-            child: _buildPunchTimeColumn('Punch Out Time', '--'),
+            child: Obx(() => _buildPunchTimeColumn(
+                'Punch Out Time', controller.activeOutTime.value)),
           ),
           Expanded(
-            child: _buildPunchInButton(context),
+            child: Obx(() => _buildPunchButton(context)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPunchTimeColumn(String title, String? time) {
+  Widget _buildPunchTimeColumn(String title, String time) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -120,24 +121,18 @@ class AttendenceListView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        Obx(
-          () => Text(
-            controller.isPunchActive.value == true &&
-                    time != null &&
-                    time.isNotEmpty
-                ? time
-                : '--',
-            style: const TextStyle(
-              color: AppColors.white,
-              fontWeight: FontWeight.w700,
-            ),
+        Text(
+          time,
+          style: const TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildPunchInButton(BuildContext context) {
+  Widget _buildPunchButton(BuildContext context) {
     return InkWell(
       onTap: () => _showBottomSheet(context),
       child: Container(
@@ -148,17 +143,19 @@ class AttendenceListView extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Column(
+        child: Column(
           children: [
             Icon(
-              Icons.login_outlined,
+              controller.isPunchActive.value
+                  ? Icons.logout_outlined
+                  : Icons.login_outlined,
               color: AppColors.white,
               size: 40,
             ),
-            Spacer(),
+            const Spacer(),
             Text(
-              'Punch In',
-              style: TextStyle(
+              controller.isPunchActive.value ? 'Punch Out' : 'Punch In',
+              style: const TextStyle(
                 color: AppColors.white,
                 fontWeight: FontWeight.w700,
               ),
@@ -174,7 +171,7 @@ class AttendenceListView extends StatelessWidget {
       SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20),
-          constraints: BoxConstraints(maxHeight: 700),
+          constraints: const BoxConstraints(maxHeight: 700),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -230,10 +227,10 @@ class AttendenceListView extends StatelessWidget {
   Widget _buildTimePickerRow(BuildContext context) {
     return Row(
       children: [
-        const Expanded(
+        Expanded(
           child: Text(
-            'Punch In Time',
-            style: TextStyle(fontWeight: FontWeight.w700),
+            controller.isPunchActive.value ? 'Punch Out Time' : 'Punch In Time',
+            style: const TextStyle(fontWeight: FontWeight.w700),
           ),
         ),
         Expanded(
@@ -344,6 +341,16 @@ class ImagePickerWidget extends StatefulWidget {
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   File? _image;
+  final AttendenceListController controller =
+      Get.find<AttendenceListController>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (controller.capturedImage.value != null) {
+      _image = controller.capturedImage.value;
+    }
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -352,10 +359,8 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
-        print("Picked Image Path: ${pickedFile.path}"); // Debugging
+        controller.capturedImage.value = _image;
       });
-    } else {
-      print("Image picking cancelled.");
     }
   }
 
@@ -394,11 +399,11 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _image != null
+        Obx(() => controller.capturedImage.value != null
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.file(
-                  _image!,
+                  controller.capturedImage.value!,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -407,7 +412,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                   },
                 ),
               )
-            : _buildImagePlaceholder(Icons.image),
+            : _buildImagePlaceholder(Icons.image)),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -491,6 +496,13 @@ class AttendenceCard extends StatelessWidget {
           const SizedBox(height: 10),
           _buildAttendanceDetailRow(
               'Location', attendanceRecord.inLocationName ?? '--'),
+          const SizedBox(height: 10),
+          _buildAttendanceDetailRow(
+              'Status',
+              attendanceRecord.punchedOut != null &&
+                      attendanceRecord.punchedOut == true
+                  ? 'Completed'
+                  : 'Active'),
         ],
       ),
     );

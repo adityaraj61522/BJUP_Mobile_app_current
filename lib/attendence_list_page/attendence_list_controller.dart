@@ -12,24 +12,25 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
-import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class AttendenceListController extends GetxController {
   final SessionManager sessionManager = SessionManager();
   AttendenceStorageService attendenceStorageService =
       AttendenceStorageService();
 
-  AttendanceRecord? attendanceRecord;
   final attendanceDataList = <AttendanceRecord>[].obs;
+  Rx<AttendanceRecord?> activeAttendanceRecord = Rx<AttendanceRecord?>(null);
 
   UserLoginResponse? userData;
 
   final selectedDate = DateTime.now().obs;
   final selectedTime = TimeOfDay.now().obs;
-
   final selectedDateTime = DateTime.now().obs;
 
   final isPunchActive = false.obs;
+  final activeInTime = '--'.obs;
+  final activeOutTime = '--'.obs;
 
   final currentLocation = 'Not Available'.obs;
   final selectedLocation = "Office".obs;
@@ -37,14 +38,10 @@ class AttendenceListController extends GetxController {
   final selectedLatitude = 0.0.obs;
   final selectedLongitude = 0.0.obs;
 
-  final isMarkingAttendance =
-      false.obs; // To track if attendance is being marked
-  Rx<File?> capturedImage = Rx<File?>(null); // To store the captured image
+  final isMarkingAttendance = false.obs;
+  Rx<File?> capturedImage = Rx<File?>(null);
 
-  final obscureText = true.obs;
-  final errorText = ''.obs;
-
-  final RxList<Widget> attendanceCardList = <Widget>[].obs;
+  final attendanceCardList = <Widget>[].obs;
 
   final ApiService apiService = ApiService();
 
@@ -54,17 +51,88 @@ class AttendenceListController extends GetxController {
     userData = await sessionManager.getUserData();
     await loadAttendanceData();
     await getCurrentLocation();
+
+    // Initialize time and date to current
+    resetDateTimeSelectors();
+  }
+
+  void resetDateTimeSelectors() {
+    selectedDate.value = DateTime.now();
+    selectedTime.value = TimeOfDay.now();
+    selectedDateTime.value = DateTime.now();
   }
 
   Future<void> loadAttendanceData() async {
-    final data = await attendenceStorageService.getAllAttendanceData();
-    attendanceDataList.value = data;
-    if (attendanceDataList.isNotEmpty &&
-        attendanceDataList.any((e) => e.punchedOut == false)) {
-      isPunchActive.value = true;
-      // attendanceRecord =
-      //     attendanceDataList.firstWhere((e) => e.punchedOut == false);
+    try {
+      final data = await attendenceStorageService.getAllAttendanceData();
+      attendanceDataList.value = data;
+
+      // Check for active punch-in (not punched out)
+      final activePunchIn = attendanceDataList
+          .where((record) => record.punchedOut == false)
+          .toList();
+
+      if (activePunchIn.isNotEmpty) {
+        // Sort by date to get the latest active punch-in
+        activePunchIn.sort((a, b) {
+          if (a.inDateTime == null || b.inDateTime == null) return 0;
+          return DateTime.parse(b.inDateTime!)
+              .compareTo(DateTime.parse(a.inDateTime!));
+        });
+
+        // Set the active record
+        activeAttendanceRecord.value = activePunchIn.first;
+        isPunchActive.value = true;
+
+        // Format and display punch-in time
+        if (activeAttendanceRecord.value?.inDateTime != null) {
+          final inTime =
+              DateTime.parse(activeAttendanceRecord.value!.inDateTime!);
+          activeInTime.value = DateFormat('hh:mm a').format(inTime);
+        } else {
+          activeInTime.value = '--';
+        }
+
+        // Since it's an active punch-in, out time is empty
+        activeOutTime.value = '--';
+      } else {
+        // No active punch-in
+        isPunchActive.value = false;
+        activeAttendanceRecord.value = null;
+        activeInTime.value = '--';
+        activeOutTime.value = '--';
+      }
+
+      // Update the UI with attendance records
+      updateAttendanceCardList();
+    } catch (e) {
+      print("Error loading attendance data: $e");
+      Get.snackbar("Error", "Failed to load attendance data: $e");
     }
+  }
+
+  void updateAttendanceCardList() {
+    attendanceCardList.clear();
+
+    // Sort records by date (newest first)
+    final sortedRecords = List<AttendanceRecord>.from(attendanceDataList);
+    sortedRecords.sort((a, b) {
+      if (a.inDateTime == null || b.inDateTime == null) return 0;
+      return DateTime.parse(b.inDateTime!)
+          .compareTo(DateTime.parse(a.inDateTime!));
+    });
+
+    for (final record in sortedRecords) {
+      attendanceCardList.add(
+        Column(
+          children: [
+            AttendenceCard(attendanceRecord: record),
+            const SizedBox(height: 15),
+          ],
+        ),
+      );
+    }
+    attendanceCardList.value = attendanceCardList.reversed.toList();
   }
 
   // Function to select date
@@ -128,13 +196,12 @@ class AttendenceListController extends GetxController {
       }
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
-        timeLimit: Duration(seconds: 10),
+        timeLimit: const Duration(seconds: 10),
       );
       selectedLatitude.value = position.latitude;
       selectedLongitude.value = position.longitude;
       await getAddressFromCoordinates(
           latitude: position.latitude, longitude: position.longitude);
-      // currentLocation.value = "${position.latitude}, ${position.longitude}";
     } on TimeoutException {
       Get.snackbar(
           "Timeout Error", "Failed to fetch location. Please try again.");
@@ -153,10 +220,9 @@ class AttendenceListController extends GetxController {
       List<Placemark> placemarks =
           await placemarkFromCoordinates(latitude, longitude);
 
-      if (placemarks != null && placemarks.isNotEmpty) {
+      if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
         currentLocation.value = place.street ?? 'Street name not found';
-        print('Full Address: ${place.toString()}');
       } else {
         currentLocation.value = 'Address not found for these coordinates';
       }
@@ -170,101 +236,116 @@ class AttendenceListController extends GetxController {
     selectedLocation.value = value;
   }
 
-  Future<void> captureImage() async {
-    final picker = ImagePicker();
-    final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      capturedImage.value = File(pickedFile.path);
-    } else {
-      print('No image selected.');
-    }
-  }
-
   // Function to mark attendance
   Future<void> saveattendence({required BuildContext context}) async {
-    final newAttendanceRecord = AttendanceRecord();
-    newAttendanceRecord.attendenceType =
-        isPunchActive.value ? "logout" : "login";
-    newAttendanceRecord.locationType = selectedLocation.value;
-    newAttendanceRecord.gpsLatitude = selectedLatitude.value;
-    newAttendanceRecord.gpsLongitude = selectedLongitude.value;
-
-    if (!isPunchActive.value) {
-      newAttendanceRecord.inDateTime = selectedDateTime.value.toString();
-      newAttendanceRecord.inLocationName = currentLocation.value;
-      newAttendanceRecord.punchedOut = false;
-    } else {
-      newAttendanceRecord.outDateTime = selectedDateTime.value.toString();
-      newAttendanceRecord.outLocationName = currentLocation.value;
-      newAttendanceRecord.punchedOut = true;
+    if (isMarkingAttendance.value) {
+      Get.snackbar("Processing", "Already processing attendance. Please wait.");
+      return;
     }
 
-    newAttendanceRecord.picture = capturedImage.value != null
-        ? await capturedImage.value!.readAsBytes()
-        : null;
-    newAttendanceRecord.attendenceIndex = attendanceDataList.length +
-        DateTime.now().millisecondsSinceEpoch.toInt();
+    isMarkingAttendance.value = true;
 
-    bool attendenceMarked = await markAttendance(
-      // ignore: use_build_context_synchronously
-      context: context,
-      newAttendanceRecord: newAttendanceRecord,
-    );
+    try {
+      // Create a new attendance record
+      final newAttendanceRecord = AttendanceRecord();
 
-    if (attendenceMarked) {
-      try {
+      // Set basic info
+      newAttendanceRecord.locationType = selectedLocation.value;
+      newAttendanceRecord.gpsLatitude = selectedLatitude.value;
+      newAttendanceRecord.gpsLongitude = selectedLongitude.value;
+      newAttendanceRecord.attendenceIndex =
+          DateTime.now().millisecondsSinceEpoch.toInt();
+
+      if (!isPunchActive.value) {
+        // This is a punch-in
+        newAttendanceRecord.attendenceType = "login";
+        newAttendanceRecord.inDateTime = selectedDateTime.value.toString();
+        newAttendanceRecord.inLocationName = currentLocation.value;
+        newAttendanceRecord.punchedOut = false;
+      } else {
+        // This is a punch-out for an existing record
+        newAttendanceRecord.attendenceType = "logout";
+
+        // Copy the in-time details from active record
+        if (activeAttendanceRecord.value != null) {
+          newAttendanceRecord.inDateTime =
+              activeAttendanceRecord.value!.inDateTime;
+          newAttendanceRecord.inLocationName =
+              activeAttendanceRecord.value!.inLocationName;
+          newAttendanceRecord.attendenceIndex =
+              activeAttendanceRecord.value!.attendenceIndex;
+        }
+
+        // Add punch-out details
+        newAttendanceRecord.outDateTime = selectedDateTime.value.toString();
+        newAttendanceRecord.outLocationName = currentLocation.value;
+        newAttendanceRecord.punchedOut = true;
+      }
+
+      // Handle image
+      if (capturedImage.value != null) {
+        newAttendanceRecord.picture = await capturedImage.value!.readAsBytes();
+      }
+
+      // Send to server
+      bool attendenceMarked = await markAttendance(
+        context: context,
+        newAttendanceRecord: newAttendanceRecord,
+      );
+
+      if (attendenceMarked) {
         if (!isPunchActive.value) {
+          // For punch-in: add new record
           attendanceDataList.add(newAttendanceRecord);
           await attendenceStorageService
               .storeAttendanceData(newAttendanceRecord);
-          attendanceCardList.value = List.generate(
-            attendanceDataList.length,
-            (index) {
-              final attendanceRecord = attendanceDataList[index];
-              return Column(
-                children: [
-                  AttendenceCard(attendanceRecord: attendanceRecord),
-                  SizedBox(
-                    height: 15,
-                  )
-                ],
-              );
-            },
-          ).toList();
+
+          // Update active record
+          activeAttendanceRecord.value = newAttendanceRecord;
+          isPunchActive.value = true;
+
+          // Update displayed times
+          final inTime = DateTime.parse(newAttendanceRecord.inDateTime!);
+          activeInTime.value = DateFormat('hh:mm a').format(inTime);
+          activeOutTime.value = '--';
         } else {
-          attendanceDataList.removeWhere(
-              (e) => e.attendenceType == "login" && e.punchedOut == false);
-          attendanceDataList.add(newAttendanceRecord);
-          await attendenceStorageService
-              .replaceAllAttendanceData(attendanceDataList);
-          attendanceCardList.value = List.generate(
-            attendanceDataList.length,
-            (index) {
-              final attendanceRecord = attendanceDataList[index];
-              return Column(
-                children: [
-                  AttendenceCard(attendanceRecord: attendanceRecord),
-                  SizedBox(
-                    height: 15,
-                  )
-                ],
-              );
-            },
-          ).toList();
+          // For punch-out: update the active record
+          int indexToUpdate = attendanceDataList.indexWhere((record) =>
+              record.punchedOut != true && record.attendenceType == "login");
+
+          if (indexToUpdate >= 0) {
+            // Remove the active record and add the completed one
+            attendanceDataList.removeAt(indexToUpdate);
+            attendanceDataList.add(newAttendanceRecord);
+
+            // Update in Hive
+            await attendenceStorageService
+                .replaceAllAttendanceData(attendanceDataList);
+
+            // Reset active state
+            isPunchActive.value = false;
+            activeAttendanceRecord.value = null;
+            activeInTime.value = '--';
+            activeOutTime.value = '--';
+          }
         }
-        isPunchActive.value = !isPunchActive.value;
-      } catch (e) {
-        Get.snackbar("Local Storage Error",
-            "Failed to save attendance data locally: $e");
-        // Optionally revert the isPunchActive state if local storage fails
-        // isPunchActive.value = !isPunchActive.value;
-      } finally {
+
+        // Update UI
+        updateAttendanceCardList();
+
+        // Close the bottom sheet
+        closeBottomSheet(context: context);
+
+        // Reset the image
         capturedImage.value = null;
+
+        // Reset time and date selectors to current time
+        resetDateTimeSelectors();
       }
-    } else {
-      // If markAttendance failed, no need to update local storage or toggle state
-      capturedImage.value = null;
+    } catch (e) {
+      Get.snackbar("Error", "Failed to process attendance: $e");
+    } finally {
+      isMarkingAttendance.value = false;
     }
   }
 
@@ -272,42 +353,38 @@ class AttendenceListController extends GetxController {
     required BuildContext context,
     required AttendanceRecord newAttendanceRecord,
   }) async {
-    isMarkingAttendance.value = true;
-
-    var formData = FormData.fromMap({
-      'user_id': userData!.userId,
-      'attendance_type': newAttendanceRecord.attendenceType,
-      'date_time': isPunchActive.value
-          ? newAttendanceRecord.outDateTime
-          : newAttendanceRecord.inDateTime,
-      'location_type': newAttendanceRecord.locationType,
-      'gps_latitude': newAttendanceRecord.gpsLatitude,
-      'gps_longitude': newAttendanceRecord.gpsLongitude,
-    });
-
-    if (capturedImage.value != null) {
-      try {
-        formData.files.add(MapEntry(
-          'picture',
-          await MultipartFile.fromFile(capturedImage.value!.path,
-              filename:
-                  'attendance_${DateTime.now().millisecondsSinceEpoch}.png'),
-        ));
-      } catch (e) {
-        print('Error creating multipart file: $e');
-        Get.snackbar("File Error", "Failed to attach the captured image.");
-        isMarkingAttendance.value = false;
-        return false;
-      }
-    }
-
     try {
+      var formData = FormData.fromMap({
+        'user_id': userData!.userId,
+        'attendance_type': newAttendanceRecord.attendenceType,
+        'date_time': isPunchActive.value
+            ? newAttendanceRecord.outDateTime
+            : newAttendanceRecord.inDateTime,
+        'location_type': newAttendanceRecord.locationType,
+        'gps_latitude': newAttendanceRecord.gpsLatitude,
+        'gps_longitude': newAttendanceRecord.gpsLongitude,
+      });
+
+      if (capturedImage.value != null) {
+        try {
+          formData.files.add(MapEntry(
+            'picture',
+            await MultipartFile.fromFile(capturedImage.value!.path,
+                filename:
+                    'attendance_${DateTime.now().millisecondsSinceEpoch}.png'),
+          ));
+        } catch (e) {
+          print('Error creating multipart file: $e');
+          Get.snackbar("File Error", "Failed to attach the captured image.");
+          return false;
+        }
+      }
+
       var response = await apiService.post("/markAttendance.php", formData);
 
       if (response != null && response.statusCode == 200) {
         print('Attendance marked successfully: ${response.data}');
         Get.snackbar("Success", "Attendance marked successfully!");
-        closeBottomSheet(context: context);
         return true;
       } else {
         print(
@@ -340,12 +417,95 @@ class AttendenceListController extends GetxController {
       print('Unexpected error marking attendance: $e');
       Get.snackbar("Unexpected Error", "Something went wrong: $e");
       return false;
-    } finally {
-      isMarkingAttendance.value = false;
     }
   }
 
   void closeBottomSheet({required BuildContext context}) {
-    Navigator.pop(context);
+    Get.back();
+  }
+
+  // Method to check if it's a new day since last punch-in
+  bool isNewDay() {
+    if (activeAttendanceRecord.value?.inDateTime == null) return false;
+
+    final lastPunchInDate =
+        DateTime.parse(activeAttendanceRecord.value!.inDateTime!);
+    final now = DateTime.now();
+
+    return lastPunchInDate.year != now.year ||
+        lastPunchInDate.month != now.month ||
+        lastPunchInDate.day != now.day;
+  }
+
+  // Method to auto punch-out at the end of day (if needed)
+  Future<void> checkAndHandleDayChange() async {
+    // If there's an active punch-in from a previous day
+    if (isPunchActive.value && isNewDay()) {
+      try {
+        // Create an automatic punch-out record for end of previous day
+        final autoPunchOutRecord = AttendanceRecord();
+
+        // Copy data from active record
+        autoPunchOutRecord.attendenceType = "logout";
+        autoPunchOutRecord.inDateTime =
+            activeAttendanceRecord.value!.inDateTime;
+        autoPunchOutRecord.inLocationName =
+            activeAttendanceRecord.value!.inLocationName;
+        autoPunchOutRecord.locationType =
+            activeAttendanceRecord.value!.locationType;
+        autoPunchOutRecord.attendenceIndex =
+            activeAttendanceRecord.value!.attendenceIndex;
+
+        // Set auto punch-out time to 11:59:59 PM of the same day as punch-in
+        final punchInTime =
+            DateTime.parse(activeAttendanceRecord.value!.inDateTime!);
+        final punchOutTime = DateTime(
+            punchInTime.year, punchInTime.month, punchInTime.day, 23, 59, 59);
+
+        autoPunchOutRecord.outDateTime = punchOutTime.toString();
+        autoPunchOutRecord.outLocationName = "Auto Punch-Out at End of Day";
+        autoPunchOutRecord.punchedOut = true;
+        autoPunchOutRecord.gpsLatitude =
+            activeAttendanceRecord.value!.gpsLatitude;
+        autoPunchOutRecord.gpsLongitude =
+            activeAttendanceRecord.value!.gpsLongitude;
+
+        // Remove the active record and add the completed one
+        int indexToUpdate = attendanceDataList.indexWhere((record) =>
+            record.punchedOut != null &&
+            !record.punchedOut! &&
+            record.attendenceType == "login");
+
+        if (indexToUpdate >= 0) {
+          attendanceDataList.removeAt(indexToUpdate);
+          attendanceDataList.add(autoPunchOutRecord);
+
+          // Update in Hive
+          await attendenceStorageService
+              .replaceAllAttendanceData(attendanceDataList);
+
+          // Reset active state
+          isPunchActive.value = false;
+          activeAttendanceRecord.value = null;
+          activeInTime.value = '--';
+          activeOutTime.value = '--';
+
+          // Update UI
+          updateAttendanceCardList();
+
+          Get.snackbar("Auto Punch-Out",
+              "You were automatically punched out at the end of the previous day.");
+        }
+      } catch (e) {
+        print("Error during auto punch-out: $e");
+      }
+    }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // Check for day change when app starts
+    checkAndHandleDayChange();
   }
 }
