@@ -19,6 +19,7 @@ class BeneficiaryRequest {
   String idtype;
   String projectid;
   String partnerid;
+  String beneficeryName;
 
   BeneficiaryRequest({
     required this.villagecode,
@@ -39,6 +40,7 @@ class BeneficiaryRequest {
     required this.idtype,
     required this.projectid,
     required this.partnerid,
+    required this.beneficeryName,
   });
 
   // To convert the Dart object to JSON
@@ -62,6 +64,7 @@ class BeneficiaryRequest {
       'idtype': idtype,
       'projectid': projectid,
       'partnerid': partnerid,
+      'beneficeryName': beneficeryName,
     };
   }
 
@@ -86,6 +89,7 @@ class BeneficiaryRequest {
       idtype: json['idtype'],
       projectid: json['projectid'],
       partnerid: json['partnerid'],
+      beneficeryName: json['beneficeryName'],
     );
   }
 

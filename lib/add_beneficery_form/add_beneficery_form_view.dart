@@ -1,12 +1,18 @@
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
+import 'package:bjup_application/common/response_models/get_village_details_response/get_village_details_response.dart';
+import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/response_models/add_beneficery_request/add_beneficery_request.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'dart:convert';
+
+// Define model classes for village details response
 
 class AddBeneficiaryScreen extends StatefulWidget {
   const AddBeneficiaryScreen({super.key});
@@ -33,30 +39,37 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   UserLoginResponse? userData;
 
   // Form controllers
-  TextEditingController _villageController = TextEditingController();
-  TextEditingController _houseHoldNameController = TextEditingController();
+  final TextEditingController _villageController = TextEditingController();
+  final TextEditingController _houseHoldNameController =
+      TextEditingController();
   String? _hhGender;
-  TextEditingController _familyHeadController = TextEditingController();
-  TextEditingController _beneficiaryNameController = TextEditingController();
-  TextEditingController _guardianController = TextEditingController();
+  final TextEditingController _familyHeadController = TextEditingController();
+  final TextEditingController _beneficiaryNameController =
+      TextEditingController();
+  final TextEditingController _guardianController = TextEditingController();
   String? _beneficiaryGender;
-  TextEditingController _ageController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
   bool? _disability;
   String? _socialGroup;
   String? _category;
-  TextEditingController _idTypeController = TextEditingController();
-  TextEditingController _idNameController = TextEditingController();
+  final TextEditingController _idTypeController = TextEditingController();
+  final TextEditingController _idNameController = TextEditingController();
+
+  // Village details variables
+  final panchayat = ''.obs;
+  final blockCode = ''.obs;
+  final districtCode = ''.obs;
+  final stateCode = ''.obs;
 
   // Dropdown options (replace with your actual data)
-  List<String> _villageOptions = ['Village A', 'Village B', 'Village C'];
-  List<String> _socialGroupOptions = [
+  final List<String> _socialGroupOptions = [
     'SC',
     'ST',
     'BC / OBC',
     'General',
     'Other'
   ];
-  List<String> _categoryOptions = [
+  final List<String> _categoryOptions = [
     'Pregnant Women',
     'Lactating Women',
     'Widow / Single Women',
@@ -69,6 +82,77 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   List<String> genderTypeList = ['Male', 'Female', 'Others'];
   List<String> disabilityTypeList = ['Yes', 'No'];
 
+  final VillageStorageService villageStorageService = VillageStorageService();
+  final villageList = <VillagesList>[].obs;
+
+  Future<void> getVillageList() async {
+    try {
+      final villageListData =
+          await villageStorageService.getAllVillagesForProject(
+        projectId: selectedProject.value,
+      );
+      final seenIds = <String>{};
+      villageList.clear(); // Clear before adding
+      villageList.addAll(villageListData.where((item) {
+        return seenIds.add(item.villageId);
+      }));
+    } catch (e) {
+      _handleError('Failed to load village list: $e');
+    }
+  }
+
+  // New function to fetch village details
+  Future<void> getVillageDetails(String villageCode) async {
+    try {
+      isLoading.value = true;
+
+      var formData = FormData.fromMap({
+        "village_code": villageCode,
+      });
+
+      var response = await apiService.post(
+        "/getVillageDetail.php",
+        formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Accept': '*/*',
+          },
+        ),
+      );
+
+      if (response != null) {
+        var data = response.data;
+
+        if (data['response_code'] == 200) {
+          VillageDetailResponse villageDetailResponse =
+              VillageDetailResponse.fromJson(data);
+          VillageInfo villageInfo = villageDetailResponse.data.villageInfo;
+
+          // Update the village details variables
+          panchayat.value = villageInfo.panchayat;
+          blockCode.value = villageInfo.blockCode;
+          districtCode.value = villageInfo.districtCode;
+          stateCode.value = villageInfo.stateCode;
+
+          print('Village details fetched successfully');
+          print('Panchayat: ${panchayat.value}');
+          print('Block Code: ${blockCode.value}');
+          print('District Code: ${districtCode.value}');
+          print('State Code: ${stateCode.value}');
+        } else {
+          _handleError('Failed to fetch village details: ${data['message']}');
+        }
+      } else {
+        _handleError('Failed to fetch village details: No response');
+      }
+    } catch (e) {
+      _handleError('Error fetching village details: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -78,10 +162,22 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
       selectedProject.value = args['projectId'];
       projectTitle = args['projectTitle'];
       userData = await _sessionManager.getUserData();
+      await getVillageList();
       officeName = userData!.office.officeTitle;
       selectedOfficeId.value = userData!.office.id;
       selectedAnamitorId.value = userData!.userId;
     });
+  }
+
+  Future<void> _handleError(String message) async {
+    errorText.value = message;
+    Get.snackbar(
+      'Error',
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: AppColors.red,
+      colorText: AppColors.white,
+    );
   }
 
   Future<void> _submitForm() async {
@@ -90,10 +186,10 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
       // Create the BeneficiaryRequest object
       BeneficiaryRequest request = BeneficiaryRequest(
         villagecode: _villageController.text,
-        panchayat: 'Aurwan', // You might need a separate field for this
-        blockcode: '01495', // You might need a separate field for this
-        districtcode: '236', // You might need a separate field for this
-        statecode: '10', // You might need a separate field for this
+        panchayat: panchayat.value, // Use the value from API
+        blockcode: blockCode.value, // Use the value from API
+        districtcode: districtCode.value, // Use the value from API
+        statecode: stateCode.value, // Use the value from API
         hhname: _houseHoldNameController.text,
         hhgender: _hhGender!.isNotEmpty
             ? (genderTypeList.indexOf(_hhGender!) + 1).toString()
@@ -115,6 +211,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         idtype: _idTypeController.text,
         projectid: selectedProject.value,
         partnerid: selectedOfficeId.value,
+        beneficeryName: _beneficiaryNameController.text,
       );
       try {
         await submitBeneficery(request: request);
@@ -195,6 +292,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         "idtype": request.idtype.toString(),
         "projectid": request.projectid.toString(),
         "partnerid": request.partnerid.toString(),
+        "beneficeryName": request.beneficeryName.toString(),
       });
 
       var response = await apiService.post(
@@ -332,16 +430,20 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             value: _villageController.text.isNotEmpty
                                 ? _villageController.text
                                 : null,
-                            items: _villageOptions.map((String value) {
+                            items: villageList.map((VillagesList value) {
                               return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
+                                value: value.villageId,
+                                child: Text(value.villageName),
                               );
                             }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _villageController.text = newValue!;
-                              });
+                            onChanged: (String? newValue) async {
+                              if (newValue != null) {
+                                setState(() {
+                                  _villageController.text = newValue;
+                                });
+                                // Call API to get village details
+                                await getVillageDetails(newValue);
+                              }
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -351,6 +453,40 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             },
                           ),
                           SizedBox(height: 16.0),
+
+                          // Village details information
+                          // Obx(() {
+                          //   if (panchayat.value.isNotEmpty) {
+                          //     return Card(
+                          //       margin: EdgeInsets.only(bottom: 16.0),
+                          //       elevation: 2,
+                          //       child: Padding(
+                          //         padding: const EdgeInsets.all(12.0),
+                          //         child: Column(
+                          //           crossAxisAlignment:
+                          //               CrossAxisAlignment.start,
+                          //           children: [
+                          //             Text(
+                          //               'Village Details',
+                          //               style: TextStyle(
+                          //                 fontWeight: FontWeight.bold,
+                          //                 fontSize: 16,
+                          //               ),
+                          //             ),
+                          //             SizedBox(height: 8),
+                          //             Text('Panchayat: ${panchayat.value}'),
+                          //             Text('Block Code: ${blockCode.value}'),
+                          //             Text(
+                          //                 'District Code: ${districtCode.value}'),
+                          //             Text('State Code: ${stateCode.value}'),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     );
+                          //   } else {
+                          //     return SizedBox();
+                          //   }
+                          // }),
 
                           // House hold name
                           TextFormField(
@@ -368,6 +504,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           ),
                           SizedBox(height: 16.0),
 
+                          // Rest of the form remains the same...
                           // Gender (Household)
                           Text('Gender (Household)'),
                           Row(
@@ -438,7 +575,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter beneficiary name';
+                                return 'Please enter Beneficiary Name';
                               }
                               return null;
                             },
@@ -452,6 +589,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                               labelText: 'Guardian',
                               border: OutlineInputBorder(),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter Guardian name';
+                              }
+                              return null;
+                            },
                           ),
                           SizedBox(height: 16.0),
 
@@ -509,6 +652,10 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                               labelText: 'Age',
                               border: OutlineInputBorder(),
                             ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(2),
+                            ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter age';
@@ -630,7 +777,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           ),
                           SizedBox(height: 16.0),
 
-                          // ID Name
+                          // ID Name// ID Name
                           TextFormField(
                             controller: _idNameController,
                             decoration: InputDecoration(
@@ -647,9 +794,20 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           SizedBox(height: 24.0),
 
                           // Submit Button
-                          ElevatedButton(
-                            onPressed: _submitForm,
-                            child: Text('Add Beneficiary'),
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.green,
+                                foregroundColor: AppColors.white,
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                              ),
+                              child: Text(
+                                'Add Beneficiary',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
                           ),
                         ],
                       ),
