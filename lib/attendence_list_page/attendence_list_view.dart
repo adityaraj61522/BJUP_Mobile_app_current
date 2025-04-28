@@ -24,7 +24,7 @@ class AttendenceListView extends StatelessWidget {
       appBar: _buildAppBar(context),
       body: Stack(
         children: [
-          _buildBackgroundImage("lib/assets/images/bjup_logo_zoom.png"),
+          // _buildBackgroundImage("lib/assets/images/bjup_logo_zoom.png"),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -69,18 +69,18 @@ class AttendenceListView extends StatelessWidget {
     );
   }
 
-  Widget _buildBackgroundImage(String imagePath) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(imagePath),
-          fit: BoxFit.fitWidth,
-          opacity: 0.3,
-        ),
-      ),
-    );
-  }
+  // Widget _buildBackgroundImage(String imagePath) {
+  //   return Container(
+  //     padding: const EdgeInsets.all(10),
+  //     decoration: BoxDecoration(
+  //       image: DecorationImage(
+  //         image: AssetImage(imagePath),
+  //         fit: BoxFit.fitWidth,
+  //         opacity: 0.3,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildPunchInOutCard(BuildContext context) {
     return Container(

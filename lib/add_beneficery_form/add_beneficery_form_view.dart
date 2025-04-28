@@ -394,17 +394,17 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         padding: const EdgeInsets.only(bottom: 20),
         child: Stack(
           children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      "lib/assets/images/bjup_logo_zoom.png"), // Your logo as background
-                  fit: BoxFit.fitWidth, // Covers the entire screen
-                  opacity: 0.1,
-                ),
-              ),
-            ),
+            // Container(
+            //   padding: EdgeInsets.all(10),
+            //   decoration: BoxDecoration(
+            //     image: DecorationImage(
+            //       image: AssetImage(
+            //           "lib/assets/images/bjup_logo_zoom.png"), // Your logo as background
+            //       fit: BoxFit.fitWidth, // Covers the entire screen
+            //       opacity: 0.1,
+            //     ),
+            //   ),
+            // ),
             SingleChildScrollView(
               padding: EdgeInsets.all(16.0),
               child: Obx(

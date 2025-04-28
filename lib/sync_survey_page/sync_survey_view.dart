@@ -53,17 +53,17 @@ class SyncSurveyView extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    "lib/assets/images/bjup_logo_zoom.png"), // Your logo as background
-                fit: BoxFit.fitWidth, // Covers the entire screen
-                opacity: 0.3,
-              ),
-            ),
-          ),
+          // Container(
+          //   padding: EdgeInsets.all(10),
+          //   decoration: BoxDecoration(
+          //     image: DecorationImage(
+          //       image: AssetImage(
+          //           "lib/assets/images/bjup_logo_zoom.png"), // Your logo as background
+          //       fit: BoxFit.fitWidth, // Covers the entire screen
+          //       opacity: 0.3,
+          //     ),
+          //   ),
+          // ),
           Obx(
             () => Column(
               children: [

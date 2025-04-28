@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class StartMonitoringView extends StatelessWidget {
   StartMonitoringView({super.key});
 
-  final controller = Get.put(StartMonitoringController());
+  final controller = Get.put(StartMonitoringController(), permanent: false);
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +48,16 @@ class StartMonitoringView extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 20),
         child: Stack(
           children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      "lib/assets/images/bjup_logo_zoom.png"), // Your logo as background
-                  fit: BoxFit.fitWidth, // Covers the entire screen
-                  opacity: 0.1,
-                ),
-              ),
-            ),
+            // Container(
+            //   padding: EdgeInsets.all(10),
+            //   decoration: BoxDecoration(
+            //     image: DecorationImage(
+            //       image: AssetImage("lib/assets/images/bjup_logo_zoom.png"),
+            //       fit: BoxFit.fitWidth,
+            //       opacity: 0.1,
+            //     ),
+            //   ),
+            // ),
             SingleChildScrollView(
               padding: EdgeInsets.all(20),
               child: Obx(
@@ -85,7 +84,7 @@ class StartMonitoringView extends StatelessWidget {
                                   minimumSize: Size(double.infinity, 50),
                                 ),
                                 child: Text(
-                                  "Existing Interview",
+                                  "Current Interview",
                                   style: TextStyle(
                                       color: AppColors.white,
                                       fontWeight: FontWeight.bold),

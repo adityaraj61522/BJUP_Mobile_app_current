@@ -72,15 +72,10 @@ class StartMonitoringController extends GetxController {
     }
     selectedProject.value = args['projectId'] ?? '';
     projectTitle = args['projectTitle'] ?? '';
-    try {
-      userData = await sessionManager.getUserData();
-      officeName = userData?.office.officeTitle ?? '';
-      selectedOfficeId.value = userData?.office.id ?? '';
-      selectedAnamitorId.value = userData?.userId ?? '';
-    } catch (e) {
-      _handleError('Failed to load user data: $e');
-      return; // Stop if user data fails to load
-    }
+    userData = await sessionManager.getUserData();
+    officeName = userData!.office.officeTitle;
+    selectedOfficeId.value = userData?.office.id ?? '';
+    selectedAnamitorId.value = userData?.userId ?? '';
   }
 
   void onExistingInterviewClicked() async {
