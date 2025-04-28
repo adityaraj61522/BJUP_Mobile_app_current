@@ -132,7 +132,7 @@ class _SurveyPageState extends State<SurveyPage> {
           "Success",
           "Survey Saved Locally successfully!",
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.green,
+          backgroundColor: AppColors.primary1,
           colorText: AppColors.white,
         );
         Get.toNamed(AppRoutes.projectActionList);
@@ -762,7 +762,7 @@ class _SurveyPageState extends State<SurveyPage> {
               onPressed: () => onSaveFormClicked(),
               iconAlignment: IconAlignment.end,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.green,
+                backgroundColor: AppColors.primary1,
                 minimumSize: const Size(double.infinity, 50),
               ),
               child: const Text(

@@ -13,4 +13,6 @@ class AppColors {
   static const Color cyan = Color(0xFF00FFFF);
   static const Color magenta = Color(0xFFFF00FF);
   static const Color brown = Color(0xFFA52A2A);
+  static const Color primary1 = Color(0xFF00A859);
+  static const Color primary2 = Color(0xFFF58934);
 }

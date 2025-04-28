@@ -21,7 +21,7 @@ class StartMonitoringView extends StatelessWidget {
             color: AppColors.white,
           ),
         ),
-        backgroundColor: AppColors.green,
+        backgroundColor: AppColors.primary1,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(
@@ -66,7 +66,7 @@ class StartMonitoringView extends StatelessWidget {
                   if (controller.isLoading.value) {
                     return Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.green,
+                        color: AppColors.primary1,
                       ),
                     );
                   } else {
@@ -81,7 +81,7 @@ class StartMonitoringView extends StatelessWidget {
                                 onPressed: () =>
                                     controller.onExistingInterviewClicked(),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.green,
+                                  backgroundColor: AppColors.primary1,
                                   minimumSize: Size(double.infinity, 50),
                                 ),
                                 child: Text(
@@ -98,7 +98,7 @@ class StartMonitoringView extends StatelessWidget {
                                 onPressed: () =>
                                     controller.onAddBeneficeryClicked(),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.green,
+                                  backgroundColor: AppColors.primary1,
                                   minimumSize: Size(double.infinity, 50),
                                 ),
                                 child: Text(

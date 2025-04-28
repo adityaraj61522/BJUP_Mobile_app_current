@@ -22,7 +22,7 @@ class SyncSurveyView extends StatelessWidget {
             color: AppColors.white,
           ),
         ),
-        backgroundColor: AppColors.green,
+        backgroundColor: AppColors.primary1,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(
@@ -77,12 +77,12 @@ class SyncSurveyView extends StatelessWidget {
                           backgroundColor:
                               controller.selectedSyncedSurveys.value == true
                                   ? AppColors.white
-                                  : AppColors.green,
+                                  : AppColors.primary1,
                           minimumSize: Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0),
                             side: BorderSide(
-                              color: AppColors.green,
+                              color: AppColors.primary1,
                               width: 0,
                             ),
                           ),
@@ -92,7 +92,7 @@ class SyncSurveyView extends StatelessWidget {
                           style: TextStyle(
                               color:
                                   controller.selectedSyncedSurveys.value == true
-                                      ? AppColors.green
+                                      ? AppColors.primary1
                                       : AppColors.white,
                               fontWeight: FontWeight.bold),
                         ),
@@ -106,12 +106,12 @@ class SyncSurveyView extends StatelessWidget {
                           backgroundColor:
                               controller.selectedSyncedSurveys.value == false
                                   ? AppColors.white
-                                  : AppColors.green,
+                                  : AppColors.primary1,
                           minimumSize: Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0),
                             side: BorderSide(
-                              color: AppColors.green,
+                              color: AppColors.primary1,
                               width: 0,
                             ),
                           ),
@@ -121,7 +121,7 @@ class SyncSurveyView extends StatelessWidget {
                           style: TextStyle(
                               color: controller.selectedSyncedSurveys.value ==
                                       false
-                                  ? AppColors.green
+                                  ? AppColors.primary1
                                   : AppColors.white,
                               fontWeight: FontWeight.bold),
                         ),
@@ -175,7 +175,7 @@ class SyncSurveyView extends StatelessWidget {
                       onPressed: () => controller.onSyncSurveyClicked(),
                       iconAlignment: IconAlignment.end,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.green,
+                        backgroundColor: AppColors.primary1,
                         minimumSize: Size(double.infinity, 50),
                       ),
                       child: Text(

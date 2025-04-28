@@ -37,7 +37,7 @@ class ProjectMonitoringListView extends StatelessWidget {
         "Project List",
         style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primary1,
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: AppColors.white),

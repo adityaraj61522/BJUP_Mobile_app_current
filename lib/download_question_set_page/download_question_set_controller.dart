@@ -255,7 +255,7 @@ class DownloadQuestionSetController extends GetxController {
                       "Success",
                       'Question Set Data saved successfully!!'.tr,
                       snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.green,
+                      backgroundColor: AppColors.primary1,
                       colorText: AppColors.white,
                     ),
                   });
@@ -271,7 +271,7 @@ class DownloadQuestionSetController extends GetxController {
                       "Success",
                       'Question Form Data saved successfully!!'.tr,
                       snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.green,
+                      backgroundColor: AppColors.primary1,
                       colorText: AppColors.white,
                     ),
                   });
@@ -289,7 +289,7 @@ class DownloadQuestionSetController extends GetxController {
           //   "Success",
           //   'Question Set Data saved successfully!!'.tr,
           //   snackPosition: SnackPosition.BOTTOM,
-          //   backgroundColor: AppColors.green,
+          //   backgroundColor: AppColors.primary1,
           //   colorText: AppColors.white,
           // );
 

@@ -19,7 +19,6 @@ class ModuleSelectionView extends GetView<ModuleSelectionController> {
         child: Column(
           children: [
             _buildLogoAndLanguageSwitcher(),
-            Spacer(),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -28,14 +27,14 @@ class ModuleSelectionView extends GetView<ModuleSelectionController> {
                     icon: Icons.calendar_month_rounded,
                     label: "Attendance".tr,
                     onTap: () => Get.toNamed(AppRoutes.attendenceList),
-                    tileColor: AppColors.blue,
+                    tileColor: AppColors.primary2,
                   ),
                   const SizedBox(height: 20),
                   _buildDashboardButton(
                     icon: Icons.screenshot_monitor_rounded,
                     label: "Monitoring".tr,
                     onTap: () => Get.toNamed(AppRoutes.projectList),
-                    tileColor: const Color.fromARGB(255, 25, 107, 25),
+                    tileColor: AppColors.primary1,
                   ),
                 ],
               ),

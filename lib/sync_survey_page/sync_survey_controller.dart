@@ -102,7 +102,7 @@ class SyncSurveyController extends GetxController {
         "Success",
         "$count Survey Synced successfully!!",
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.green,
+        backgroundColor: AppColors.primary1,
         colorText: AppColors.white,
       );
     } catch (e, stackTrace) {

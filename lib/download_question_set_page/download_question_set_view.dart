@@ -21,7 +21,7 @@ class DownloadQuestionSetView extends StatelessWidget {
             color: AppColors.white,
           ),
         ),
-        backgroundColor: AppColors.green,
+        backgroundColor: AppColors.primary1,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(
@@ -72,7 +72,7 @@ class DownloadQuestionSetView extends StatelessWidget {
                   if (controller.isLoading.value) {
                     return Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.green,
+                        color: AppColors.primary1,
                       ),
                     );
                   } else {
@@ -99,7 +99,7 @@ class DownloadQuestionSetView extends StatelessWidget {
                 onPressed: () => controller.onDownloadQuestionSetClicked(),
                 iconAlignment: IconAlignment.end,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.green,
+                  backgroundColor: AppColors.primary1,
                   minimumSize: Size(double.infinity, 50),
                 ),
                 child: Text(

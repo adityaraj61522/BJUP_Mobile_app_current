@@ -317,7 +317,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
             "Success!!",
             'Beneficery Added Successfully!!'.tr,
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.green,
+            backgroundColor: AppColors.primary1,
             colorText: AppColors.white,
           );
         } else if (data['response_code'] == 100) {
@@ -378,7 +378,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
             },
           ),
         ],
-        backgroundColor: AppColors.green,
+        backgroundColor: AppColors.primary1,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(
@@ -412,7 +412,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                   if (isLoading.value) {
                     return Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.green,
+                        color: AppColors.primary1,
                       ),
                     );
                   } else {
@@ -799,7 +799,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             child: ElevatedButton(
                               onPressed: _submitForm,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.green,
+                                backgroundColor: AppColors.primary1,
                                 foregroundColor: AppColors.white,
                                 padding: EdgeInsets.symmetric(vertical: 12),
                               ),

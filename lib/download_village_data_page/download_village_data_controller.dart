@@ -211,7 +211,7 @@ class DownloadVillageDataController extends GetxController {
                       "Success",
                       'Villlage Data saved successfully!!'.tr,
                       snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.green,
+                      backgroundColor: AppColors.primary1,
                       colorText: AppColors.white,
                     ),
                   });
@@ -233,7 +233,7 @@ class DownloadVillageDataController extends GetxController {
                         "Success",
                         'Beneficiary Data saved successfully!!'.tr,
                         snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: AppColors.green,
+                        backgroundColor: AppColors.primary1,
                         colorText: AppColors.white,
                       ),
                     });

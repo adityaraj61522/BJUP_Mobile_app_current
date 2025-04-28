@@ -155,7 +155,7 @@ class LoginScreen extends GetView<LoginController> {
               borderSide: BorderSide(color: AppColors.black),
             ),
             focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.green),
+              borderSide: BorderSide(color: AppColors.primary1),
             ),
           ),
           style: const TextStyle(color: AppColors.black),
@@ -188,7 +188,7 @@ class LoginScreen extends GetView<LoginController> {
                   borderSide: BorderSide(color: AppColors.black),
                 ),
                 focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.green),
+                  borderSide: BorderSide(color: AppColors.primary1),
                 ),
               ),
               style: const TextStyle(color: AppColors.black),
@@ -214,7 +214,7 @@ class LoginScreen extends GetView<LoginController> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.green,
+              backgroundColor: AppColors.primary1,
               padding: const EdgeInsets.symmetric(vertical: 15),
             ),
             onPressed: _handleLogin,

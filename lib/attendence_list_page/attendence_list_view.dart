@@ -53,7 +53,7 @@ class AttendenceListView extends StatelessWidget {
         "Attendence",
         style: TextStyle(color: AppColors.white),
       ),
-      backgroundColor: AppColors.blue,
+      backgroundColor: AppColors.primary2,
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: AppColors.white),
@@ -88,7 +88,7 @@ class AttendenceListView extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(20)),
-        color: AppColors.blue,
+        color: AppColors.primary2,
       ),
       child: Row(
         children: [
@@ -269,7 +269,8 @@ class AttendenceListView extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () => controller.getCurrentLocation(),
-          child: const Icon(Icons.my_location, color: Colors.green, size: 40),
+          child: const Icon(Icons.my_location,
+              color: AppColors.primary1, size: 40),
         ),
       ],
     );
@@ -321,7 +322,7 @@ class AttendenceListView extends StatelessWidget {
         const SizedBox(width: 10),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.blue,
+            backgroundColor: AppColors.primary2,
           ),
           onPressed: () => controller.saveattendence(context: context),
           child: Obx(() => Text(
