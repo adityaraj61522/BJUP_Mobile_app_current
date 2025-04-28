@@ -57,174 +57,326 @@ class _SurveyPageState extends State<SurveyPage> {
   @override
   void initState() {
     super.initState();
-    // final decodedResponse = jsonDecode(widget.apiResponse);
-    // final List<dynamic> formQuestionsJson = decodedResponse['form_questions'];
     _questions = widget.formQuestions;
   }
 
   onSaveFormClicked() async {
-    // Prepare the answer data here
-    List<Map<String, dynamic>> savedSurveyQuestions =
-        _questions.map((question) {
-      return {
-        "question_id": question.questionId,
-        "question_type": question.questionTypeEnum
-            .toName(), // Use the enum to get the API string
-        "answer": _answers[question.questionId] ?? "",
-        "answerId": (question.questionTypeEnum == QuestionType.checkboxField ||
-                    question.questionTypeEnum ==
-                        QuestionType.multiSelectField) &&
-                _answers.containsKey(question.questionId)
-            ? (_answers[question.questionId] as List).join(',')
-            : "", // Adjust logic for answerId if needed for other types
-      };
-    }).toList();
+    bool isValid = true;
+    for (final question in _questions) {
+      if (question.mandatory && !_answers.containsKey(question.questionId)) {
+        isValid = false;
+        Get.snackbar(
+          "Validation Error",
+          "Please answer all mandatory questions.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.red,
+          colorText: AppColors.white,
+        );
+        setState(() {}); // Trigger a rebuild to show red borders
+        return;
+      } else if (question.mandatory) {
+        final answer = _answers[question.questionId];
+        if (answer == null ||
+            (answer is String && answer.trim().isEmpty) ||
+            (answer is List && answer.isEmpty)) {
+          isValid = false;
+          Get.snackbar(
+            "Validation Error",
+            "Please answer all mandatory questions.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: AppColors.red,
+            colorText: AppColors.white,
+          );
+          setState(() {}); // Trigger a rebuild to show red borders
+          return;
+        }
+      }
+    }
 
-    print(jsonEncode(savedSurveyQuestions));
-    final formToSave = {
-      'animator_id': widget.userId,
-      'savedSurveyQuestions': savedSurveyQuestions.toString(),
-      'surveyId': "1",
-      'questionSetId': widget.questionSetId,
-      'beneficiaryId': widget.beneficeryId,
-      'questionSetName': widget.questionSetName,
-      'isSynced': false,
-    };
-    await surveyStorageService
-        .saveSurveyFormData(
-            projectId: widget.projectId,
-            questionSetId: widget.questionSetId,
-            beneficiaryId: widget.beneficeryId,
-            savedSurveyQuestions: formToSave)
-        .then((value) {
-      print("Survey Saved Locally successfully!");
-      Get.snackbar(
-        "Success",
-        "Survey Saved Locally successfully!",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.green,
-        colorText: AppColors.white,
-      );
-      Get.toNamed(AppRoutes.projectActionList);
-    }).catchError((error) {
-      print("Error saving survey locally: $error");
-      Get.snackbar(
-        "Error",
-        "Failed to save survey locally.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
-      );
-    });
-    ;
+    if (isValid) {
+      List<Map<String, dynamic>> savedSurveyQuestions =
+          _questions.map((question) {
+        return {
+          "question_id": question.questionId,
+          "question_type": question.questionTypeEnum.toName(),
+          "answer": _answers[question.questionId] ?? "",
+          "answerId":
+              (question.questionTypeEnum == QuestionType.checkboxField ||
+                          question.questionTypeEnum ==
+                              QuestionType.multiSelectField) &&
+                      _answers.containsKey(question.questionId)
+                  ? (_answers[question.questionId] as List).join(',')
+                  : "",
+        };
+      }).toList();
+
+      print(jsonEncode(savedSurveyQuestions));
+      final formToSave = {
+        'animator_id': widget.userId,
+        'savedSurveyQuestions': jsonEncode(savedSurveyQuestions),
+        'surveyId': "1",
+        'questionSetId': widget.questionSetId,
+        'beneficiaryId': widget.beneficeryId,
+        'questionSetName': widget.questionSetName,
+        'isSynced': false,
+      };
+      await surveyStorageService
+          .saveSurveyFormData(
+              projectId: widget.projectId,
+              questionSetId: widget.questionSetId,
+              beneficiaryId: widget.beneficeryId,
+              savedSurveyQuestions: formToSave)
+          .then((value) {
+        print("Survey Saved Locally successfully!");
+        Get.snackbar(
+          "Success",
+          "Survey Saved Locally successfully!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.green,
+          colorText: AppColors.white,
+        );
+        Get.toNamed(AppRoutes.projectActionList);
+      }).catchError((error) {
+        print("Error saving survey locally: $error");
+        Get.snackbar(
+          "Error",
+          "Failed to save survey locally.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.red,
+          colorText: AppColors.white,
+        );
+      });
+    }
   }
 
+  bool _isAnswered(String questionId) => _answers.containsKey(questionId);
+
+// Fix for TextFormField (text type) - Add error text when mandatory not answered
   Widget _buildQuestionWidget(FormQuestionData question, int questionIndex) {
     Widget questionWidget;
+    final bool isMandatoryNotAnswered =
+        question.mandatory && !_isAnswered(question.questionId);
+    final border = isMandatoryNotAnswered
+        ? const OutlineInputBorder(borderSide: BorderSide(color: Colors.red))
+        : const OutlineInputBorder();
+
     switch (question.questionTypeEnum) {
-      // Use questionTypeEnum here
       case QuestionType.textAreaField:
-        questionWidget = TextFormField(
-          decoration: InputDecoration(
-            labelText: question.questionText,
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) => _answers[question.questionId] = value,
-          maxLines: null,
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: question.questionText,
+                border: border,
+              ),
+              onChanged: (value) => _answers[question.questionId] = value,
+              maxLines: null,
+            ),
+            if (isMandatoryNotAnswered)
+              const Padding(
+                padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
+                child: Text('This field is required',
+                    style: TextStyle(color: Colors.red, fontSize: 12)),
+              ),
+          ],
         );
+        break;
       case QuestionType.textField:
-        questionWidget = TextFormField(
-          decoration: InputDecoration(
-            labelText: question.questionText,
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) => _answers[question.questionId] = value,
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: question.questionText,
+                border: border,
+              ),
+              onChanged: (value) => _answers[question.questionId] = value,
+            ),
+            if (isMandatoryNotAnswered)
+              const Padding(
+                padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
+                child: Text('This field is required',
+                    style: TextStyle(color: Colors.red, fontSize: 12)),
+              ),
+          ],
         );
+        break;
       case QuestionType.numbericTextField:
-        questionWidget = TextFormField(
-          decoration: InputDecoration(
-            labelText: question.questionText,
-            border: OutlineInputBorder(),
-          ),
-          keyboardType: TextInputType.number,
-          onChanged: (value) => _answers[question.questionId] = value,
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: question.questionText,
+                border: border,
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (value) => _answers[question.questionId] = value,
+            ),
+            if (isMandatoryNotAnswered)
+              const Padding(
+                padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
+                child: Text('This field is required',
+                    style: TextStyle(color: Colors.red, fontSize: 12)),
+              ),
+          ],
         );
+        break;
+
+      // Fix for DateField
       case QuestionType.dateField:
       case QuestionType.datePickerField:
-        questionWidget = buildDateField(question);
-      case QuestionType.mobileField:
-        questionWidget = TextFormField(
-          decoration: InputDecoration(labelText: question.questionText),
-          keyboardType: TextInputType.phone,
-          onChanged: (value) => _answers[question.questionId] = value,
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildDateField(question, isMandatoryNotAnswered),
+            if (isMandatoryNotAnswered)
+              const Padding(
+                padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
+                child: Text('This field is required',
+                    style: TextStyle(color: Colors.red, fontSize: 12)),
+              ),
+          ],
         );
-      case QuestionType.checkboxField:
-        questionWidget = _buildCheckboxField(question);
+        break;
+
+      case QuestionType.mobileField:
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                  labelText: question.questionText, border: border),
+              keyboardType: TextInputType.phone,
+              onChanged: (value) => _answers[question.questionId] = value,
+            ),
+            if (isMandatoryNotAnswered)
+              const Padding(
+                padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
+                child: Text('This field is required',
+                    style: TextStyle(color: Colors.red, fontSize: 12)),
+              ),
+          ],
+        );
+        break;
+
+      // Fix for radio field to not show warning by default
       case QuestionType.radioField:
-        questionWidget = _buildRadioField(question);
-      case QuestionType.multiSelectField:
-        questionWidget = _buildMultiSelectField(question);
-      case QuestionType.selectField:
-        questionWidget = _buildSelectField(question);
+        questionWidget = _buildRadioField(question, isMandatoryNotAnswered);
+        break;
+
+      // Fix for file upload field to always show warning when mandatory
       case QuestionType.fileUploadImage:
       case QuestionType.fileUploadAll:
-        questionWidget = _buildFileUploadField(question); // Placeholder
+        questionWidget =
+            _buildFileUploadField(question, isMandatoryNotAnswered);
+        break;
+
+      // Other cases remain unchanged
+      case QuestionType.checkboxField:
+        questionWidget = _buildCheckboxField(question, isMandatoryNotAnswered);
+        break;
+      case QuestionType.multiSelectField:
+        questionWidget =
+            _buildMultiSelectField(question, isMandatoryNotAnswered);
+        break;
+      case QuestionType.selectField:
+        questionWidget = _buildSelectField(question, isMandatoryNotAnswered);
+        break;
       case QuestionType.mobileCamera:
-        questionWidget = _buildCameraField(question); // Placeholder
+        questionWidget = _buildCameraField(question, isMandatoryNotAnswered);
+        break;
       case QuestionType.gpsLocation:
-        questionWidget = _buildGpsLocationField(question); // Placeholder
+        questionWidget =
+            _buildGpsLocationField(question, isMandatoryNotAnswered);
+        break;
       case QuestionType.writingPad:
-        questionWidget = _buildSignatureField(question); // Placeholder
+        questionWidget = _buildSignatureField(question, isMandatoryNotAnswered);
+        break;
       case QuestionType.readOnly:
         questionWidget = Text(question.questionText);
+        break;
       case QuestionType.urlField:
-        questionWidget = TextFormField(
-          decoration: InputDecoration(labelText: question.questionText),
-          keyboardType: TextInputType.url,
-          onChanged: (value) => _answers[question.questionId] = value,
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                  labelText: question.questionText, border: border),
+              keyboardType: TextInputType.url,
+              onChanged: (value) => _answers[question.questionId] = value,
+            ),
+            if (isMandatoryNotAnswered)
+              const Padding(
+                padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
+                child: Text('This field is required',
+                    style: TextStyle(color: Colors.red, fontSize: 12)),
+              ),
+          ],
         );
+        break;
       case QuestionType.unknown:
         questionWidget =
             Text('Unknown question type: ${question.questionType}');
     }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Q${questionIndex + 1}. ',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ), // Display the question number
+            'Q${questionIndex + 1}${question.mandatory ? '*' : ''}. ',
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
           Expanded(child: questionWidget),
         ],
       ),
     );
   }
 
-  Widget buildDateField(FormQuestionData question) {
+  Widget buildDateField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return DateTimeFormField(
       decoration: InputDecoration(
         labelText: question.questionText,
-        border: OutlineInputBorder(),
+        border: isMandatoryNotAnswered
+            ? const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red))
+            : const OutlineInputBorder(),
       ),
       mode: DateTimeFieldPickerMode.date,
       dateFormat: DateFormat('yyyy-MM-dd'),
-      firstDate: DateTime.now().add(const Duration(days: 10)),
-      lastDate: DateTime.now().add(const Duration(days: 40)),
-      initialPickerDateTime: DateTime.now().add(const Duration(days: 20)),
+      firstDate: DateTime(1900, 1, 1), // Set start date to 01-01-1900
+      lastDate: DateTime(2100, 12, 31), // Set end date to 31-12-2100
       onChanged: (DateTime? value) {
-        _answers[question.questionId] = value;
+        setState(() {
+          _answers[question.questionId] = value;
+        });
+      },
+      validator: (DateTime? value) {
+        if (question.mandatory && value == null) {
+          return 'Please select a date';
+        }
+        return null;
       },
     );
   }
 
-  Widget _buildCheckboxField(FormQuestionData question) {
+  Widget _buildCheckboxField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(question.questionText),
+        Text('${question.questionText}${question.mandatory ? '*' : ''}'),
+        if (isMandatoryNotAnswered)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('This field is required',
+                style: TextStyle(color: Colors.red)),
+          ),
         ...question.questionOptions
             .map((option) => CheckboxListTile(
                   title: Text(option.optionText),
@@ -256,11 +408,19 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildRadioField(FormQuestionData question) {
+// Fix for radio field to not show warning by default
+  Widget _buildRadioField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText),
+        Text('${question.questionText}${question.mandatory ? '*' : ''}'),
+        if (isMandatoryNotAnswered)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('This field is required',
+                style: TextStyle(color: Colors.red)),
+          ),
         ...question.questionOptions
             .map((option) => RadioListTile<String>(
                   title: Text(option.optionText),
@@ -277,37 +437,88 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildMultiSelectField(FormQuestionData question) {
+  Widget _buildMultiSelectField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
+    // Initialize the selected options list if it doesn't exist
+    if (!_answers.containsKey(question.questionId)) {
+      _answers[question.questionId] = <String>[];
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText),
-        DropdownButtonFormField<String>(
-          decoration: InputDecoration(labelText: question.questionText),
-          value: (_answers[question.questionId] as List<String>?)?.first,
-          items: question.questionOptions.map((option) {
-            return DropdownMenuItem<String>(
-              value: option.optionId,
-              child: Text(option.optionText),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              if (newValue != null) {
-                _answers[question.questionId] = [newValue];
-              }
-            });
-          },
+        Text('${question.questionText}${question.mandatory ? '*' : ''}'),
+        if (isMandatoryNotAnswered)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('This field is required',
+                style: TextStyle(color: Colors.red)),
+          ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: isMandatoryNotAnswered ? Colors.red : Colors.grey,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...question.questionOptions.map((option) {
+                bool isSelected = (_answers[question.questionId] as List)
+                    .contains(option.optionId);
+                return CheckboxListTile(
+                  title: Text(option.optionText),
+                  value: isSelected,
+                  dense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        // Add the option to the selected list
+                        (_answers[question.questionId] as List<dynamic>)
+                            .add(option.optionId);
+                      } else {
+                        // Remove the option from the selected list
+                        (_answers[question.questionId] as List<dynamic>)
+                            .remove(option.optionId);
+                      }
+
+                      // Remove the key if the list is empty
+                      if ((_answers[question.questionId] as List).isEmpty) {
+                        _answers.remove(question.questionId);
+                      }
+                    });
+                  },
+                );
+              }).toList(),
+            ],
+          ),
         ),
+        // if (_answers.containsKey(question.questionId) &&
+        //     (_answers[question.questionId] as List).isNotEmpty)
+        //   Padding(
+        //     padding: const EdgeInsets.only(top: 8.0),
+        //     child: Text(
+        //       'Selected: ${(_answers[question.questionId] as List).join(",")}',
+        //       style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+        //     ),
+        //   ),
       ],
     );
   }
 
-  Widget _buildSelectField(FormQuestionData question) {
+  Widget _buildSelectField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: question.questionText,
-        border: OutlineInputBorder(),
+        border: isMandatoryNotAnswered
+            ? const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red))
+            : const OutlineInputBorder(),
       ),
       value: _answers[question.questionId] as String?,
       items: question.questionOptions.map((option) {
@@ -321,15 +532,33 @@ class _SurveyPageState extends State<SurveyPage> {
           _answers[question.questionId] = value;
         });
       },
+      validator: (value) {
+        if (question.mandatory && value == null) {
+          return 'Please select an option';
+        }
+        return null;
+      },
     );
   }
 
-  Widget _buildFileUploadField(FormQuestionData question) {
+  Widget _buildFileUploadField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText),
+        Text('${question.questionText}${question.mandatory ? '*' : ''}'),
+        if (isMandatoryNotAnswered)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('This field is required',
+                style: TextStyle(color: Colors.red)),
+          ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            side: isMandatoryNotAnswered
+                ? const BorderSide(color: Colors.red)
+                : null,
+          ),
           onPressed: () async {
             FilePickerResult? result = await FilePicker.platform.pickFiles(
               type: question.questionTypeEnum == QuestionType.fileUploadImage
@@ -346,7 +575,7 @@ class _SurveyPageState extends State<SurveyPage> {
           child: const Text('Pick File'),
         ),
         if (_answers.containsKey(question.questionId) &&
-            _answers[question.questionId].isNotEmpty)
+            _answers[question.questionId]!.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text('Selected file: ${_answers[question.questionId]}'),
@@ -355,12 +584,24 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildCameraField(FormQuestionData question) {
+  Widget _buildCameraField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText),
+        Text('${question.questionText}${question.mandatory ? '*' : ''}'),
+        if (isMandatoryNotAnswered && !_isAnswered(question.questionId))
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('This field is required',
+                style: TextStyle(color: Colors.red)),
+          ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            side: isMandatoryNotAnswered && !_isAnswered(question.questionId)
+                ? const BorderSide(color: Colors.red)
+                : null,
+          ),
           onPressed: () async {
             final XFile? image =
                 await _picker.pickImage(source: ImageSource.camera);
@@ -373,24 +614,36 @@ class _SurveyPageState extends State<SurveyPage> {
           child: const Text('Take Photo'),
         ),
         if (_answers.containsKey(question.questionId) &&
-            _answers[question.questionId].isNotEmpty)
+            _answers[question.questionId]!.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: SizedBox(
               height: 100,
-              child: Image.file(File(_answers[question.questionId])),
+              child: Image.file(File(_answers[question.questionId]!)),
             ),
           ),
       ],
     );
   }
 
-  Widget _buildGpsLocationField(FormQuestionData question) {
+  Widget _buildGpsLocationField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText),
+        Text('${question.questionText}${question.mandatory ? '*' : ''}'),
+        if (isMandatoryNotAnswered && !_isAnswered(question.questionId))
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('This field is required',
+                style: TextStyle(color: Colors.red)),
+          ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            side: isMandatoryNotAnswered && !_isAnswered(question.questionId)
+                ? const BorderSide(color: Colors.red)
+                : null,
+          ),
           onPressed: () async {
             PermissionStatus permission = await Permission.location.request();
             if (permission.isGranted) {
@@ -418,7 +671,7 @@ class _SurveyPageState extends State<SurveyPage> {
           child: const Text('Get Current Location'),
         ),
         if (_answers.containsKey(question.questionId) &&
-            _answers[question.questionId].isNotEmpty)
+            _answers[question.questionId]!.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text('Current location: ${_answers[question.questionId]}'),
@@ -427,16 +680,22 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildSignatureField(FormQuestionData question) {
+  Widget _buildSignatureField(
+      FormQuestionData question, bool isMandatoryNotAnswered) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText),
+        Text('${question.questionText}${question.mandatory ? '*' : ''}'),
+        if (isMandatoryNotAnswered && !_isAnswered(question.questionId))
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('This field is required',
+                style: TextStyle(color: Colors.red)),
+          ),
         Signature(
           controller: _signatureController,
           width: 300,
           height: 200,
-          // border: Border.all(),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -448,6 +707,12 @@ class _SurveyPageState extends State<SurveyPage> {
               child: const Text('Clear'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                side:
+                    isMandatoryNotAnswered && !_isAnswered(question.questionId)
+                        ? const BorderSide(color: Colors.red)
+                        : null,
+              ),
               onPressed: () async {
                 if (_signatureController.isNotEmpty) {
                   final Uint8List? signatureBytes =
@@ -457,15 +722,6 @@ class _SurveyPageState extends State<SurveyPage> {
                       _answers[question.questionId] =
                           base64Encode(signatureBytes);
                     });
-                    // Optionally display the captured signature
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (BuildContext context) {
-                    //     return AlertDialog(
-                    //       content: Image.memory(signatureBytes),
-                    //     );
-                    //   },
-                    // );
                   }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -479,10 +735,10 @@ class _SurveyPageState extends State<SurveyPage> {
           ],
         ),
         if (_answers.containsKey(question.questionId) &&
-            _answers[question.questionId].isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: const Text('Signature captured.'),
+            _answers[question.questionId]!.isNotEmpty)
+          const Padding(
+            padding: EdgeInsets.only(top: 8.0),
+            child: Text('Signature captured.'),
           ),
       ],
     );
@@ -490,20 +746,15 @@ class _SurveyPageState extends State<SurveyPage> {
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   appBar: AppBar(title: const Text('Survey')),
-    //   body:
     return SingleChildScrollView(
-      // padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ..._questions
-              .asMap() // Convert the list to a map with index
+              .asMap()
               .entries
-              .map((entry) => _buildQuestionWidget(
-                  entry.value, entry.key)) // Pass both question and index
+              .map((entry) => _buildQuestionWidget(entry.value, entry.key))
               .toList(),
           Align(
             alignment: Alignment.bottomCenter,
@@ -512,9 +763,9 @@ class _SurveyPageState extends State<SurveyPage> {
               iconAlignment: IconAlignment.end,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.green,
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
               ),
-              child: Text(
+              child: const Text(
                 "Save Survey",
                 style: TextStyle(
                     color: AppColors.white, fontWeight: FontWeight.bold),
