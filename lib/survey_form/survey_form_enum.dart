@@ -16,7 +16,7 @@ enum QuestionType {
   fileUploadAll,
   selectField,
   urlField,
-  unknown, // Add a default case for robustness
+  unknown,
 }
 
 extension QuestionTypeExtension on String {
@@ -66,41 +66,41 @@ extension QuestionTypeToNameExtension on QuestionType {
   String toName() {
     switch (this) {
       case QuestionType.textAreaField:
-        return 'textAreaField';
+        return 'Text Area Field';
       case QuestionType.dateField:
-        return 'dateField';
+        return 'Date Field';
       case QuestionType.gpsLocation:
-        return 'gpsLocation';
+        return 'Gps Location';
       case QuestionType.datePickerField:
-        return 'datePickerField';
+        return 'Date Picker Field';
       case QuestionType.mobileField:
-        return 'mobileField';
+        return 'Mobile Field';
       case QuestionType.readOnly:
-        return 'readOnly';
+        return 'Read Only';
       case QuestionType.textField:
-        return 'textField';
+        return 'Text Field';
       case QuestionType.mobileCamera:
-        return 'mobileCamera';
+        return 'Mobile Camera';
       case QuestionType.numbericTextField:
-        return 'numbericTextField';
+        return 'Numberic Text Field';
       case QuestionType.multiSelectField:
-        return 'multiSelectField';
+        return 'Multi Select Field';
       case QuestionType.writingPad:
-        return 'writingPad';
+        return 'Writing Pad';
       case QuestionType.checkboxField:
-        return 'checkboxField';
+        return 'Checkbox Field';
       case QuestionType.radioField:
-        return 'radioField';
+        return 'Radio Field';
       case QuestionType.fileUploadImage:
-        return 'fileUploadImage';
+        return 'File Upload Image';
       case QuestionType.fileUploadAll:
-        return 'fileUploadAll';
+        return 'File Upload All';
       case QuestionType.selectField:
-        return 'selectField';
+        return 'Select Field';
       case QuestionType.urlField:
-        return 'urlField';
+        return 'URL Field';
       case QuestionType.unknown:
-        return 'unknown';
+        return 'Unknown';
     }
   }
 
