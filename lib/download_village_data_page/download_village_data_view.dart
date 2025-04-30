@@ -78,7 +78,7 @@ class DownloadVillageDataView extends StatelessWidget {
                   } else {
                     return Column(
                       children: [
-                        buildProjectDetails(),
+                        _buildProjectMonitoringCard(),
                         Divider(),
                         buildInterviewTypeSelector(),
                         Obx(() => Text(controller.selectedInterviewType.value)),
@@ -110,6 +110,59 @@ class DownloadVillageDataView extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProjectMonitoringCard() {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Hi ${controller.userData?.username}!!",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            _buildProjectDetailRow(
+              'Office Id',
+              controller.officeName,
+            ),
+            const SizedBox(height: 10),
+            _buildProjectDetailRow(
+              'Project Name',
+              controller.projectTitle,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProjectDetailRow(String label, String value) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            '$label :',
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
     );
   }
 
@@ -196,39 +249,6 @@ class DownloadVillageDataView extends StatelessWidget {
             ...villageCheckboxes,
           ],
         )
-      ],
-    );
-  }
-
-  Widget buildProjectDetails() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              "Project name:",
-              style: TextStyle(color: AppColors.gray),
-            ),
-            Text(
-              controller.projectTitle,
-              style: TextStyle(
-                  color: AppColors.black, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Text(
-              "Office name:",
-              style: TextStyle(color: AppColors.gray),
-            ),
-            Text(
-              controller.officeName,
-              style: TextStyle(
-                  color: AppColors.black, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
       ],
     );
   }
