@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/project_action_list/project_action_list_controller.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class ProjectMonitoringActionListView extends StatelessWidget {
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: AppColors.white),
-        onPressed: () => Get.back(result: {
+        onPressed: () => Get.toNamed(AppRoutes.projectList, arguments: {
           "projectId": controller.projectId,
           "projectTitle": controller.projectTitle,
         }),

@@ -41,7 +41,7 @@ class ProjectMonitoringListView extends StatelessWidget {
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: AppColors.white),
-        onPressed: () => Get.back(),
+        onPressed: () => Get.toNamed(AppRoutes.moduleSelection),
       ),
       actions: [
         IconButton(

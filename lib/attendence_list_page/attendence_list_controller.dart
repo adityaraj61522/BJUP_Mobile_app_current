@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bjup_application/attendence_list_page/attendence_list_view.dart';
 import 'package:bjup_application/common/api_service/api_service.dart';
+import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/hive_storage_controllers/attendence_list_storage.dart';
 import 'package:bjup_application/common/response_models/attendence_record_model/attendence_record_model.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
@@ -240,6 +241,13 @@ class AttendenceListController extends GetxController {
   Future<void> saveattendence({required BuildContext context}) async {
     if (isMarkingAttendance.value) {
       Get.snackbar("Processing", "Already processing attendance. Please wait.");
+      return;
+    }
+
+    // Check if an image is captured
+    if (capturedImage.value == null) {
+      Get.snackbar("Error", "Please capture an image before submitting.",
+          backgroundColor: AppColors.red, colorText: AppColors.white);
       return;
     }
 
