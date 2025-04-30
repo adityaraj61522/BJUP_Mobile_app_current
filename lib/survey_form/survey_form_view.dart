@@ -324,9 +324,37 @@ class _SurveyPageState extends State<SurveyPage> {
           maxLines: 3,
         );
         break;
-      case QuestionType.textField:
       case QuestionType.numbericTextField:
       case QuestionType.mobileField:
+        questionWidget = TextFormField(
+          initialValue: _answers[question.questionId] as String?,
+          decoration: InputDecoration(
+            labelText: labelText,
+            labelStyle: labelStyle,
+            border: inputBorder,
+            enabledBorder: inputBorder,
+            focusedBorder: inputBorder,
+            errorBorder: errorBorder,
+            focusedErrorBorder: errorBorder,
+          ),
+          keyboardType: TextInputType.phone,
+          onChanged: (value) {
+            _answers[question.questionId] = value;
+            _validateField(question.questionId);
+          },
+          validator: (value) {
+            if (question.questionTypeEnum == QuestionType.mobileField &&
+                value != null &&
+                value.isNotEmpty) {
+              if (!RegExp(r'^[6-9][0-9]*$').hasMatch(value)) {
+                return 'Mobile number must start with 6, 7, 8, or 9 and contain only numbers';
+              }
+            }
+            return null;
+          },
+        );
+        break;
+      case QuestionType.textField:
       case QuestionType.urlField:
         questionWidget = TextFormField(
           initialValue: _answers[question.questionId] as String?,
@@ -350,6 +378,16 @@ class _SurveyPageState extends State<SurveyPage> {
           onChanged: (value) {
             _answers[question.questionId] = value;
             _validateField(question.questionId);
+          },
+          validator: (value) {
+            if (question.questionTypeEnum == QuestionType.urlField &&
+                value != null &&
+                value.isNotEmpty) {
+              if (!Uri.parse(value).isAbsolute) {
+                return 'Please enter a valid URL';
+              }
+            }
+            return null;
           },
         );
         break;
