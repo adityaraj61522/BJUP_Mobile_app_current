@@ -23,6 +23,7 @@ void main() async {
   Hive.registerAdapter(QuestionDropdownOptionAdapter());
   Hive.registerAdapter(QuestionTypeAdapter());
   Hive.registerAdapter(AttendanceRecordAdapter());
+  Hive.registerAdapter(CBODataAdapter());
   Get.put(LoginController());
 
   runApp(MyApp());

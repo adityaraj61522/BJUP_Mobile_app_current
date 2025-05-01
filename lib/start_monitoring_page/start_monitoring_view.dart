@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/start_monitoring_page/start_monitoring_Controller.dart';
 import 'package:bjup_application/survey_form/survey_form_view.dart';
@@ -48,16 +49,6 @@ class StartMonitoringView extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 20),
         child: Stack(
           children: [
-            // Container(
-            //   padding: EdgeInsets.all(10),
-            //   decoration: BoxDecoration(
-            //     image: DecorationImage(
-            //       image: AssetImage("lib/assets/images/bjup_logo_zoom.png"),
-            //       fit: BoxFit.fitWidth,
-            //       opacity: 0.1,
-            //     ),
-            //   ),
-            // ),
             SingleChildScrollView(
               padding: EdgeInsets.all(20),
               child: Obx(
@@ -118,7 +109,6 @@ class StartMonitoringView extends StatelessWidget {
                                 },
                               ],
                             )),
-                        // Obx(() => Text(controller.selectedInterviewType.value)),
                         SizedBox(height: 200),
                       ],
                     );
@@ -133,14 +123,16 @@ class StartMonitoringView extends StatelessWidget {
   }
 
   Widget buildInterviewTypeSelector() {
+    // Question Set Dropdown
     final Widget questionSetDropdown = controller.questionSetList.isNotEmpty
         ? Expanded(
             flex: 2,
             child: DropdownButton<String>(
+              isExpanded: true,
               value: controller.selectedQuestionSet.value.isEmpty
                   ? null
                   : controller.selectedQuestionSet.value,
-              hint: const Text('Select an item'),
+              hint: const Text('Select Question Set'),
               items: controller.questionSetList.map((item) {
                 return DropdownMenuItem(
                   value: item.id,
@@ -160,30 +152,29 @@ class StartMonitoringView extends StatelessWidget {
             flex: 2,
             child: Center(
               child: Text(
-                'No Question Set List Exist',
+                'No Question Set Available',
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
           );
+
+    // Village Dropdown
     final Widget villageDropdown = controller.villageList.isNotEmpty
         ? Expanded(
             flex: 2,
             child: DropdownButton<String>(
+              isExpanded: true,
               value: controller.selectedVillage.value.isEmpty
                   ? null
                   : controller.selectedVillage.value,
-              hint: const Text('Select an item'),
+              hint: const Text('Select Village'),
               items: controller.villageList.map((item) {
                 return DropdownMenuItem(
                   value: item.villageId,
-                  child: Column(
-                    children: [
-                      Text(
-                        item.villageName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ],
+                  child: Text(
+                    item.villageName,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 );
               }).toList(),
@@ -196,106 +187,130 @@ class StartMonitoringView extends StatelessWidget {
             flex: 2,
             child: Center(
               child: Text(
-                'No Village List Exist',
+                'No Villages Available',
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
           );
-    final Widget beneficiaryDropdown = controller.beneficiaryList.isNotEmpty
-        ? Expanded(
-            flex: 2,
-            child: DropdownButton<String>(
-              value: controller.selectedBeneficiary.value.isEmpty
-                  ? null
-                  : controller.selectedBeneficiary.value,
-              hint: const Text('Select an item'),
-              items: controller.beneficiaryList.map((item) {
-                return DropdownMenuItem(
-                  value: item.beneficiaryId,
-                  child: Column(
-                    children: [
-                      Text(
-                        item.beneficiaryName ?? 'no name',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) controller.changeBeneficery(value);
-              },
+
+    // Beneficiary/CBO Dropdown
+    final Widget beneficiaryDropdown = Obx(() {
+      if (controller.beneficiaryOrCBOList.isEmpty) {
+        return Expanded(
+          flex: 2,
+          child: Center(
+            child: Text(
+              'No Data Available',
+              style: TextStyle(color: AppColors.gray),
             ),
-          )
-        : Expanded(
-            flex: 2,
-            child: Center(
-              child: Text(
-                'No Beneficery List Exist',
-                style: TextStyle(color: AppColors.gray),
-              ),
-            ),
-          );
+          ),
+        );
+      }
+
+      return Expanded(
+        flex: 2,
+        child: DropdownButton<String>(
+          isExpanded: true,
+          value: controller.selectedBeneficiary.value.isEmpty
+              ? null
+              : controller.selectedBeneficiary.value,
+          hint: Text(controller.selectedInterviewId.value == "44"
+              ? 'Select Beneficiary'
+              : 'Select CBO'),
+          items: controller.beneficiaryOrCBOList
+              .map((item) {
+                if (item is BeneficiaryData) {
+                  return DropdownMenuItem(
+                    value: item.beneficiaryId,
+                    child: Text(
+                      item.beneficiaryName ?? 'No Name',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  );
+                } else if (item is CBOData) {
+                  return DropdownMenuItem(
+                    value: item.cboid,
+                    child: Text(
+                      item.cboname,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  );
+                }
+                return null;
+              })
+              .whereType<DropdownMenuItem<String>>()
+              .toList(),
+          onChanged: (value) {
+            if (value != null) controller.changeBeneficery(value);
+          },
+        ),
+      );
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               flex: 1,
               child: Text(
-                "Question Set: ",
+                "Question Set:",
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
             questionSetDropdown,
           ],
         ),
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               flex: 1,
               child: Text(
-                "Village: ",
+                "Village:",
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
             villageDropdown,
           ],
         ),
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               flex: 1,
               child: Text(
-                "Beneficary: ",
+                controller.selectedInterviewId.value == "44"
+                    ? "Beneficiary:"
+                    : "CBO:",
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
             beneficiaryDropdown,
           ],
         ),
-        Divider(),
-        Obx(
-          () {
-            if (controller.selectedQuestionFormSet.isNotEmpty) {
-              return SurveyPage(
-                formQuestions: controller.selectedQuestionFormSet,
-                questionSetId: controller.selectedQuestionSet.value,
-                userId: controller.userData!.userId,
-                beneficeryId: controller.selectedBeneficiary.value,
-                projectId: controller.selectedProject.value,
-                questionSetName: controller.questionSetList
-                    .firstWhere((element) =>
-                        element.id == controller.selectedQuestionSet.value)
-                    .title,
-              );
-            }
-            return SizedBox.shrink();
-          },
-        ),
+        const Divider(height: 32),
+        Obx(() {
+          if (controller.selectedQuestionFormSet.isNotEmpty) {
+            return SurveyPage(
+              formQuestions: controller.selectedQuestionFormSet,
+              questionSetId: controller.selectedQuestionSet.value,
+              userId: controller.userData!.userId,
+              beneficeryId: controller.selectedBeneficiary.value,
+              projectId: controller.selectedProject.value,
+              questionSetName: controller.questionSetList
+                  .firstWhere((element) =>
+                      element.id == controller.selectedQuestionSet.value)
+                  .title,
+            );
+          }
+          return const SizedBox.shrink();
+        }),
       ],
     );
   }

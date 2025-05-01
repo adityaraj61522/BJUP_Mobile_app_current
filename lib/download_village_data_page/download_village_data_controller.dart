@@ -4,6 +4,7 @@ import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/hive_storage_controllers/beneficery_list_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
+import 'package:bjup_application/common/hive_storage_controllers/cbo_list_storage.dart';
 import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
 import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
@@ -17,6 +18,7 @@ class DownloadVillageDataController extends GetxController {
   final VillageStorageService villageStorageService = VillageStorageService();
   final BeneficiaryStorageService beneficiaryStorageService =
       BeneficiaryStorageService();
+  final CBOStorageService cboStorageService = CBOStorageService();
 
   final projectList = <ProjectList>[].obs;
 
@@ -199,46 +201,63 @@ class DownloadVillageDataController extends GetxController {
         var data = response.data;
         if (data['response_code'] == 200) {
           var beneficieryCBOData = GetBeneficeryResponse.fromMap(data);
-          await villageStorageService
-              .addVillageData(
-                villageDataList: beneficieryCBOData.selectedVillages,
-                interviewId: interviewTypeId,
-                projectId: selectedProject.value,
-              )
-              .then((value) => {
-                    print("Villlage List Data saved successfully!!"),
-                    Get.snackbar(
-                      "Success",
-                      'Villlage Data saved successfully!!'.tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.primary1,
-                      colorText: AppColors.white,
-                    ),
-                  });
+
+          // Save village data first
+          await villageStorageService.addVillageData(
+            villageDataList: beneficieryCBOData.selectedVillages,
+            interviewId: interviewTypeId,
+            projectId: selectedProject.value,
+          );
+
+          // Handle different interview types
           for (var village in beneficieryCBOData.selectedVillages) {
-            List<BeneficiaryData> beneficiaryDataList = beneficieryCBOData
-                .beneficiaries
-                .where((element) => element.villageCode == village.villageId)
-                .toList();
-            await beneficiaryStorageService
-                .addBeneficiaryData(
-                  beneficiaryDataList: beneficiaryDataList,
-                  interviewId: interviewTypeId,
-                  villageId: village.villageId,
-                  projectId: selectedProject.value,
-                )
-                .then((value) => {
-                      print("Beneficiary Data saved successfully!!"),
-                      Get.snackbar(
-                        "Success",
-                        'Beneficiary Data saved successfully!!'.tr,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: AppColors.primary1,
-                        colorText: AppColors.white,
-                      ),
-                    });
+            if (interviewTypeId == "44") {
+              // Handle beneficiary data
+              List<BeneficiaryData> beneficiaryDataList = beneficieryCBOData
+                  .beneficiaries
+                  .where((element) => element.villageCode == village.villageId)
+                  .toList();
+
+              await beneficiaryStorageService.addBeneficiaryData(
+                beneficiaryDataList: beneficiaryDataList,
+                interviewId: interviewTypeId,
+                villageId: village.villageId,
+                projectId: selectedProject.value,
+              );
+            } else if (interviewTypeId == "46") {
+              // Handle CBO data
+              List<CBOData> cboDataList = beneficieryCBOData.cbo
+                  .where((element) => element.villagecode == village.villageId)
+                  .toList();
+
+              await cboStorageService.addCBOData(
+                cboDataList: cboDataList,
+                interviewId: interviewTypeId,
+                villageId: village.villageId,
+                projectId: selectedProject.value,
+              );
+            } else if (interviewTypeId == "47") {
+              // Handle others data (which is also CBOData type)
+              List<CBOData> othersDataList = beneficieryCBOData.others
+                  .where((element) => element.villagecode == village.villageId)
+                  .toList();
+
+              await cboStorageService.addCBOData(
+                cboDataList: othersDataList,
+                interviewId: interviewTypeId,
+                villageId: village.villageId,
+                projectId: selectedProject.value,
+              );
+            }
           }
-          errorText.value = '';
+
+          Get.snackbar(
+            "Success",
+            'Data saved successfully!!'.tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: AppColors.primary1,
+            colorText: AppColors.white,
+          );
         } else if (data['response_code'] == 100) {
           handleErrorReported(error: "Data not available!!".tr);
         } else if (data['response_code'] == 300) {

@@ -13,6 +13,7 @@ import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
+import 'package:bjup_application/common/hive_storage_controllers/cbo_list_storage.dart';
 
 class StartMonitoringController extends GetxController {
   // Dependencies (use Get.find for better testability)
@@ -25,6 +26,7 @@ class StartMonitoringController extends GetxController {
   final QuestionFormStorageService questionFormStorageService =
       QuestionFormStorageService();
   final ApiService apiService = ApiService();
+  final CBOStorageService cboStorageService = CBOStorageService();
 
   // Reactive variables
   final selectedProject = ''.obs;
@@ -49,6 +51,8 @@ class StartMonitoringController extends GetxController {
   final questionSetList = <QuestionSetList>[].obs;
   final beneficiaryList = <BeneficiaryData>[].obs;
   final selectedQuestionFormSet = <FormQuestionData>[].obs;
+  final beneficiaryOrCBOList =
+      <dynamic>[].obs; // This will hold either BeneficiaryData or CBOData
 
   // Error handling function
   Future<void> _handleError(String message) async {
@@ -158,19 +162,40 @@ class StartMonitoringController extends GetxController {
   Future<void> getBeneficieryList(
       {required String interviewId, required String villageId}) async {
     try {
-      final beneficiaryListData =
-          await beneficiaryStorageService.getBeneficiaryData(
-        interviewId: interviewId,
-        villageId: villageId,
-        projectId: selectedProject.value,
-      );
-      final seenIds = <String>{};
-      beneficiaryList.clear(); // Clear before adding
-      beneficiaryList.addAll(beneficiaryListData.where((item) {
-        return seenIds.add(item.beneficiaryId);
-      }));
+      beneficiaryOrCBOList.clear(); // Clear the list before adding new data
+
+      switch (interviewId) {
+        case "44":
+          // Handle beneficiary data
+          final beneficiaryListData =
+              await beneficiaryStorageService.getBeneficiaryData(
+            interviewId: interviewId,
+            villageId: villageId,
+            projectId: selectedProject.value,
+          );
+          final seenBeneficiaryIds = <String>{};
+          beneficiaryOrCBOList.addAll(beneficiaryListData
+              .where((item) => seenBeneficiaryIds.add(item.beneficiaryId)));
+          break;
+
+        case "46":
+        case "47":
+          // Handle CBO data and Others data (both are CBOData type)
+          final cboListData = await cboStorageService.getCBOData(
+            interviewId: interviewId,
+            villageId: villageId,
+            projectId: selectedProject.value,
+          );
+          final seenCBOIds = <String>{};
+          beneficiaryOrCBOList
+              .addAll(cboListData.where((item) => seenCBOIds.add(item.cboid)));
+          break;
+
+        default:
+          throw Exception('Unsupported interview type: $interviewId');
+      }
     } catch (e) {
-      _handleError('Failed to load beneficiary list: $e');
+      _handleError('Failed to load data list: $e');
     }
   }
 
