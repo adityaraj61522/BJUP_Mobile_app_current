@@ -36,7 +36,7 @@ class SyncSurveyController extends GetxController {
   final totalSurveysToSync = 0.obs;
 
   // Add a timeout duration for API calls
-  final Duration _apiTimeout = Duration(seconds: 30);
+  final Duration _apiTimeout = Duration(seconds: 120);
 
   @override
   void onInit() async {

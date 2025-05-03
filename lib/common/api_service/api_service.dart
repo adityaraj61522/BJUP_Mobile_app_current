@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bjup_application/common/api_config/api_config.dart';
+import 'package:bjup_application/common/api_service/curl_logger.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:dio/dio.dart';
 
@@ -16,7 +17,9 @@ class ApiService {
         receiveTimeout: const Duration(seconds: 10),
       ),
     );
-
+    _dio.interceptors.add(
+      CurlLoggerInterceptor(),
+    );
     // Attach authentication token if available
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
