@@ -126,7 +126,7 @@ class SurveyStorageService {
     }
   }
 
-  static Future<void> closeAllSurveyBoxes() async {
+  Future<void> closeAllSurveyBoxes() async {
     try {
       await Future.wait(_projectSurveyBoxes.values.map((box) => box.close()));
       _projectSurveyBoxes.clear();

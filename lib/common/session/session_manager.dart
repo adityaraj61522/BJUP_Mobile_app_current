@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bjup_application/common/hive_storage_controllers/survey_storage.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,8 @@ class SessionManager {
   static final SessionManager _instance = SessionManager._internal();
   factory SessionManager() => _instance;
   SessionManager._internal();
+
+  final SurveyStorageService surveyStorageService = SurveyStorageService();
 
   Box? _sessionBox;
   bool _isInitialized = false;
@@ -112,6 +115,7 @@ class SessionManager {
   Future<void> forceLogout() async {
     await init();
     await _sessionBox?.clear();
+    await surveyStorageService.closeAllSurveyBoxes();
 
     if (Get.currentRoute != '/login') {
       Get.offAllNamed('/login');

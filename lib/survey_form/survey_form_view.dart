@@ -281,7 +281,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
   String _getDisplayPath(String? fullPath) {
     if (fullPath == null || fullPath.isEmpty) return "No file selected";
-    return fullPath.split('/').last;
+    return "File selected";
   }
 
   Widget _wrapWithValidation(String questionId, Widget child) {
@@ -949,7 +949,7 @@ class _SurveyPageState extends State<SurveyPage> {
               children: [
                 Icon(Icons.check_circle, color: Colors.green, size: 16),
                 SizedBox(width: 4),
-                Text('Signature Saved: ${_getDisplayPath(currentPath)}',
+                Text('Signature Saved.',
                     style: TextStyle(color: Colors.green[700])),
               ],
             ),
