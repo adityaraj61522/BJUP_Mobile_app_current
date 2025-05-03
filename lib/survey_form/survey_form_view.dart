@@ -199,18 +199,31 @@ class _SurveyPageState extends State<SurveyPage> {
     isLoading.value = true;
 
     try {
-      List<Map<String, dynamic>> savedSurveyQuestions =
-          _questions.map((question) {
+      List<Map<String, dynamic>> savedSurveyQuestions = _questions
+          .where(
+              (question) => question.questionTypeEnum != QuestionType.readOnly)
+          .map((question) {
         dynamic answerValue = _answers[question.questionId];
-
         String answerIdStr = "";
-        if ((question.questionTypeEnum == QuestionType.checkboxField ||
-                question.questionTypeEnum == QuestionType.multiSelectField) &&
-            answerValue is List) {
-          answerIdStr = answerValue.join(',');
-        }
 
-        if (answerValue is DateTime) {
+        // Handle multiple choice type questions
+        if (question.questionTypeEnum == QuestionType.multiSelectField ||
+            question.questionTypeEnum == QuestionType.checkboxField) {
+          if (answerValue is List) {
+            answerIdStr = answerValue.join(',');
+            answerValue = ""; // Clear the answer field
+          }
+        }
+        // Handle radio and select fields
+        else if (question.questionTypeEnum == QuestionType.radioField ||
+            question.questionTypeEnum == QuestionType.selectField) {
+          if (answerValue != null) {
+            answerIdStr = answerValue.toString();
+            answerValue = ""; // Clear the answer field
+          }
+        }
+        // Handle date fields
+        else if (answerValue is DateTime) {
           answerValue = DateFormat('yyyy-MM-dd').format(answerValue);
         }
 

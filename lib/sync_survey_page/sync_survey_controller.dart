@@ -309,12 +309,10 @@ class SyncSurveyController extends GetxController {
       // FormData to hold all the form fields including files
       var formData = FormData();
 
-      // Extract file uploads from questions and mark them for removal
-      List<int> fileQuestionIndices = [];
+      // Create a new list to store questions without file uploads
+      List<dynamic> filteredQuestionsArray = [];
 
-      for (int i = 0; i < questionsArray.length; i++) {
-        var question = questionsArray[i];
-
+      for (var question in questionsArray) {
         if (question is Map<String, dynamic> &&
             question.containsKey('question_type') &&
             question.containsKey('question_id')) {
@@ -323,7 +321,7 @@ class SyncSurveyController extends GetxController {
           var answer = question['answer'];
 
           if (questionId.isEmpty) {
-            continue; // Skip this question
+            continue;
           }
 
           // Handle file upload question types
@@ -334,83 +332,58 @@ class SyncSurveyController extends GetxController {
 
             if (answerStr.isNotEmpty) {
               try {
-                // First check if the original file exists
                 File originalFile = File(answerStr);
                 String filePath = answerStr;
                 bool fileExists = await originalFile.exists();
 
-                // Try alternative path if original doesn't exist
                 if (!fileExists) {
-                  try {
-                    final directory = await getApplicationDocumentsDirectory();
-                    final possibleFilename = answerStr.split('/').last;
-                    final alternativePath =
-                        '${directory.path}/$possibleFilename';
-
-                    File alternativeFile = File(alternativePath);
-                    if (await alternativeFile.exists()) {
-                      filePath = alternativePath;
-                      fileExists = true;
-                    }
-                  } catch (innerE) {
-                    print('Error trying alternative path: $innerE');
+                  final directory = await getApplicationDocumentsDirectory();
+                  final possibleFilename = answerStr.split('/').last;
+                  final alternativePath = '${directory.path}/$possibleFilename';
+                  File alternativeFile = File(alternativePath);
+                  if (await alternativeFile.exists()) {
+                    filePath = alternativePath;
+                    fileExists = true;
                   }
                 }
 
                 if (fileExists) {
-                  // Compress the image file if it's an image type
-                  String? compressedFilePath;
-                  try {
-                    compressedFilePath =
-                        await ImageCompressor.compressImageFile(
-                      filePath,
-                      targetSizeKB: 1536, // Target 1.5MB
-                      minQuality: 60, // Don't go below 60% quality
-                    );
+                  String? compressedFilePath =
+                      await ImageCompressor.compressImageFile(
+                    filePath,
+                    targetSizeKB: 1536,
+                    minQuality: 60,
+                  );
 
-                    if (compressedFilePath != null) {
-                      filePath = compressedFilePath;
-                      print('Using compressed file path: $filePath');
-                    }
-                  } catch (compressError) {
-                    print(
-                        'Image compression failed, using original file: $compressError');
-                    // Continue with original file
+                  if (compressedFilePath != null) {
+                    filePath = compressedFilePath;
                   }
 
-                  // Get file size for logging
-                  File fileToUpload = File(filePath);
-                  int fileSizeKB = await fileToUpload.length() ~/ 1024;
-                  print(
-                      'Uploading file for question $questionId (Size: $fileSizeKB KB): $filePath');
-
-                  // Get filename from the path
                   String filename = filePath.split('/').last;
-
-                  // Add file to formData with "question_ID" format
                   formData.files.add(
                     MapEntry(
                       "question_$questionId",
-                      await MultipartFile.fromFile(
-                        filePath,
-                        filename: filename,
-                      ),
+                      await MultipartFile.fromFile(filePath,
+                          filename: filename),
                     ),
                   );
 
-                  // Mark this index for potential modification in the questions array
-                  fileQuestionIndices.add(i);
-                } else {
-                  print(
-                      'File does not exist at any known path for answer: $answerStr');
+                  // Skip adding this question to filteredQuestionsArray
+                  continue;
                 }
               } catch (e) {
                 print('Error processing file $answerStr: $e');
               }
             }
           }
+          // If not a file upload question or if file processing failed, add to filtered array
+          filteredQuestionsArray.add(question);
         }
       }
+
+      // Use the filtered array for the rest of the process
+      formData.fields.add(
+          MapEntry('savedSurveyQuestions', jsonEncode(filteredQuestionsArray)));
 
       // Add required metadata fields from savedSurveyQuestions to formData
       // These fields should NOT be included in the savedSurveyQuestions JSON string
@@ -419,10 +392,6 @@ class SyncSurveyController extends GetxController {
       _addMetadataField(formData, savedSurveyQuestions, 'beneficiaryId');
       _addMetadataField(
           formData, savedSurveyQuestions, 'animator_id', userData?.userId);
-
-      // Serialize the questions array to JSON and add it as a form field
-      formData.fields
-          .add(MapEntry('savedSurveyQuestions', jsonEncode(questionsArray)));
 
       // Print debug information about the form data being sent
       print('FormData fields to be sent:');
