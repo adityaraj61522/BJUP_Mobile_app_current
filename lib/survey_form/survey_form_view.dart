@@ -58,6 +58,13 @@ class _SurveyPageState extends State<SurveyPage> {
   final SurveyStorageService surveyStorageService = SurveyStorageService();
   final Uuid _uuid = const Uuid();
 
+  // Common style to use for all question texts
+  final questionTextStyles = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -313,113 +320,159 @@ class _SurveyPageState extends State<SurveyPage> {
       borderSide: BorderSide(color: Colors.red, width: 1.5),
     );
 
-    final labelStyle = TextStyle(color: hasError ? Colors.red : null);
-    final labelText =
-        '${question.questionText}${question.mandatory ? '*' : ''}';
-
     switch (question.questionTypeEnum) {
       case QuestionType.textAreaField:
-        questionWidget = TextFormField(
-          initialValue: _answers[question.questionId] as String?,
-          decoration: InputDecoration(
-            labelText: labelText,
-            labelStyle: labelStyle,
-            border: inputBorder,
-            enabledBorder: inputBorder,
-            focusedBorder: inputBorder,
-            errorBorder: errorBorder,
-            focusedErrorBorder: errorBorder,
-          ),
-          onChanged: (value) {
-            _answers[question.questionId] = value;
-            _validateField(question.questionId);
-          },
-          maxLines: 3,
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hasError ? Colors.red : Colors.black,
+                ),
+                children: [
+                  TextSpan(text: question.questionText),
+                  if (question.mandatory)
+                    TextSpan(
+                      text: '*',
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              initialValue: _answers[question.questionId] as String?,
+              decoration: InputDecoration(
+                hintText: 'Enter your answer',
+                border: inputBorder,
+                enabledBorder: inputBorder,
+                focusedBorder: inputBorder,
+                errorBorder: errorBorder,
+                focusedErrorBorder: errorBorder,
+              ),
+              onChanged: (value) {
+                _answers[question.questionId] = value;
+                _validateField(question.questionId);
+              },
+              maxLines: 3,
+            ),
+          ],
         );
         break;
       case QuestionType.numbericTextField:
       case QuestionType.mobileField:
-        questionWidget = TextFormField(
-          initialValue: _answers[question.questionId] as String?,
-          decoration: InputDecoration(
-            labelText: labelText,
-            labelStyle: labelStyle,
-            border: inputBorder,
-            enabledBorder: inputBorder,
-            focusedBorder: inputBorder,
-            errorBorder: errorBorder,
-            focusedErrorBorder: errorBorder,
-          ),
-          keyboardType: TextInputType.phone,
-          onChanged: (value) {
-            _answers[question.questionId] = value;
-            _validateField(question.questionId);
-          },
-          validator: (value) {
-            if (question.questionTypeEnum == QuestionType.mobileField &&
-                value != null &&
-                value.isNotEmpty) {
-              if (!RegExp(r'^[6-9][0-9]*$').hasMatch(value)) {
-                return 'Mobile number must start with 6, 7, 8, or 9 and contain only numbers';
-              }
-            }
-            return null;
-          },
-        );
-        break;
       case QuestionType.textField:
       case QuestionType.urlField:
-        questionWidget = TextFormField(
-          initialValue: _answers[question.questionId] as String?,
-          decoration: InputDecoration(
-            labelText: labelText,
-            labelStyle: labelStyle,
-            border: inputBorder,
-            enabledBorder: inputBorder,
-            focusedBorder: inputBorder,
-            errorBorder: errorBorder,
-            focusedErrorBorder: errorBorder,
-          ),
-          keyboardType:
-              question.questionTypeEnum == QuestionType.numbericTextField
-                  ? TextInputType.number
-                  : question.questionTypeEnum == QuestionType.mobileField
-                      ? TextInputType.phone
-                      : question.questionTypeEnum == QuestionType.urlField
-                          ? TextInputType.url
-                          : TextInputType.text,
-          onChanged: (value) {
-            _answers[question.questionId] = value;
-            _validateField(question.questionId);
-          },
-          validator: (value) {
-            if (question.questionTypeEnum == QuestionType.urlField &&
-                value != null &&
-                value.isNotEmpty) {
-              if (!Uri.parse(value).isAbsolute) {
-                return 'Please enter a valid URL';
-              }
-            }
-            return null;
-          },
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hasError ? Colors.red : Colors.black,
+                ),
+                children: [
+                  TextSpan(text: question.questionText),
+                  if (question.mandatory)
+                    TextSpan(
+                      text: '*',
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              initialValue: _answers[question.questionId] as String?,
+              decoration: InputDecoration(
+                hintText: 'Enter your answer',
+                border: inputBorder,
+                enabledBorder: inputBorder,
+                focusedBorder: inputBorder,
+                errorBorder: errorBorder,
+                focusedErrorBorder: errorBorder,
+              ),
+              keyboardType:
+                  question.questionTypeEnum == QuestionType.numbericTextField
+                      ? TextInputType.number
+                      : question.questionTypeEnum == QuestionType.mobileField
+                          ? TextInputType.phone
+                          : question.questionTypeEnum == QuestionType.urlField
+                              ? TextInputType.url
+                              : TextInputType.text,
+              onChanged: (value) {
+                _answers[question.questionId] = value;
+                _validateField(question.questionId);
+              },
+            ),
+          ],
         );
         break;
-
       case QuestionType.dateField:
       case QuestionType.datePickerField:
-        questionWidget = buildDateField(question, hasError, errorText,
-            inputBorder, errorBorder, labelStyle);
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hasError ? Colors.red : Colors.black,
+                ),
+                children: [
+                  TextSpan(text: question.questionText),
+                  if (question.mandatory)
+                    TextSpan(
+                      text: '*',
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            DateTimeFormField(
+              initialValue: _answers[question.questionId] as DateTime?,
+              decoration: InputDecoration(
+                hintText: 'Select date',
+                border: inputBorder,
+                enabledBorder: inputBorder,
+                focusedBorder: inputBorder,
+                errorBorder: errorBorder,
+                focusedErrorBorder: errorBorder,
+              ),
+              mode: DateTimeFieldPickerMode.date,
+              dateFormat: DateFormat('yyyy-MM-dd'),
+              firstDate: DateTime(1900, 1, 1),
+              lastDate: DateTime(2100, 1, 1),
+              onChanged: (DateTime? value) {
+                setState(() {
+                  _answers[question.questionId] = value;
+                  _validateField(question.questionId);
+                });
+              },
+            ),
+          ],
+        );
         break;
-
       case QuestionType.radioField:
         questionWidget = _buildRadioField(question, hasError);
         break;
-
       case QuestionType.fileUploadImage:
       case QuestionType.fileUploadAll:
         questionWidget = _buildFileUploadField(question, hasError);
         break;
-
       case QuestionType.checkboxField:
         questionWidget = _buildCheckboxField(question, hasError);
         break;
@@ -427,8 +480,55 @@ class _SurveyPageState extends State<SurveyPage> {
         questionWidget = _buildMultiSelectField(question, hasError);
         break;
       case QuestionType.selectField:
-        questionWidget = _buildSelectField(
-            question, hasError, inputBorder, errorBorder, labelStyle);
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hasError ? Colors.red : Colors.black,
+                ),
+                children: [
+                  TextSpan(text: question.questionText),
+                  if (question.mandatory)
+                    TextSpan(
+                      text: '*',
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                hintText: 'Select an option',
+                border: inputBorder,
+                enabledBorder: inputBorder,
+                focusedBorder: inputBorder,
+                errorBorder: errorBorder,
+                focusedErrorBorder: errorBorder,
+              ),
+              value: _answers[question.questionId] as String?,
+              items: question.questionOptions.map((option) {
+                return DropdownMenuItem<String>(
+                  value: option.optionId,
+                  child: Text(option.optionText),
+                );
+              }).toList(),
+              onChanged: (String? value) {
+                setState(() {
+                  _answers[question.questionId] = value;
+                  _validateField(question.questionId);
+                });
+              },
+              isExpanded: true,
+            ),
+          ],
+        );
         break;
       case QuestionType.mobileCamera:
         questionWidget = _buildCameraField(question, hasError);
@@ -440,10 +540,7 @@ class _SurveyPageState extends State<SurveyPage> {
         questionWidget = _buildSignatureField(question, hasError);
         break;
       case QuestionType.readOnly:
-        questionWidget = Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Text(question.questionText,
-                style: TextStyle(color: Colors.grey[700])));
+        questionWidget = Text(question.questionText, style: questionTextStyles);
         break;
       case QuestionType.unknown:
         questionWidget =
@@ -460,12 +557,9 @@ class _SurveyPageState extends State<SurveyPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: Text(
-              'Q${questionIndex + 1}${question.mandatory ? '*' : ''}. ',
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
+          Text(
+            'Q${questionIndex + 1} . ',
+            style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           Expanded(child: finalWidget),
         ],
@@ -516,8 +610,25 @@ class _SurveyPageState extends State<SurveyPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text('${question.questionText}${question.mandatory ? '*' : ''}',
-            style: TextStyle(color: hasError ? Colors.red : null)),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hasError ? Colors.red : Colors.black,
+            ),
+            children: [
+              TextSpan(text: question.questionText),
+              if (question.mandatory)
+                TextSpan(
+                  text: '*',
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
         ...question.questionOptions
             .map((option) => CheckboxListTile(
                   title: Text(option.optionText),
@@ -551,8 +662,25 @@ class _SurveyPageState extends State<SurveyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${question.questionText}${question.mandatory ? '*' : ''}',
-            style: TextStyle(color: hasError ? Colors.red : null)),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hasError ? Colors.red : Colors.black,
+            ),
+            children: [
+              TextSpan(text: question.questionText),
+              if (question.mandatory)
+                TextSpan(
+                  text: '*',
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
         ...question.questionOptions
             .map((option) => RadioListTile<String>(
                   title: Text(option.optionText),
@@ -583,8 +711,25 @@ class _SurveyPageState extends State<SurveyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${question.questionText}${question.mandatory ? '*' : ''}',
-            style: TextStyle(color: hasError ? Colors.red : null)),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hasError ? Colors.red : Colors.black,
+            ),
+            children: [
+              TextSpan(text: question.questionText),
+              if (question.mandatory)
+                TextSpan(
+                  text: '*',
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
         Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -625,36 +770,36 @@ class _SurveyPageState extends State<SurveyPage> {
     );
   }
 
-  Widget _buildSelectField(FormQuestionData question, bool hasError,
-      InputBorder border, InputBorder errorBorder, TextStyle labelStyle) {
-    final labelText =
-        '${question.questionText}${question.mandatory ? '*' : ''}';
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: labelStyle,
-        border: border,
-        enabledBorder: border,
-        focusedBorder: border,
-        errorBorder: errorBorder,
-        focusedErrorBorder: errorBorder,
-      ),
-      value: _answers[question.questionId] as String?,
-      items: question.questionOptions.map((option) {
-        return DropdownMenuItem<String>(
-          value: option.optionId,
-          child: Text(option.optionText),
-        );
-      }).toList(),
-      onChanged: (String? value) {
-        setState(() {
-          _answers[question.questionId] = value;
-          _validateField(question.questionId);
-        });
-      },
-      isExpanded: true,
-    );
-  }
+  // Widget _buildSelectField(FormQuestionData question, bool hasError,
+  //     InputBorder border, InputBorder errorBorder, TextStyle labelStyle) {
+  //   final labelText =
+  //       '${question.questionText}${question.mandatory ? '*' : ''}';
+  //   return DropdownButtonFormField<String>(
+  //     decoration: InputDecoration(
+  //       labelText: labelText,
+  //       labelStyle: labelStyle,
+  //       border: border,
+  //       enabledBorder: border,
+  //       focusedBorder: border,
+  //       errorBorder: errorBorder,
+  //       focusedErrorBorder: errorBorder,
+  //     ),
+  //     value: _answers[question.questionId] as String?,
+  //     items: question.questionOptions.map((option) {
+  //       return DropdownMenuItem<String>(
+  //         value: option.optionId,
+  //         child: Text(option.optionText),
+  //       );
+  //     }).toList(),
+  //     onChanged: (String? value) {
+  //       setState(() {
+  //         _answers[question.questionId] = value;
+  //         _validateField(question.questionId);
+  //       });
+  //     },
+  //     isExpanded: true,
+  //   );
+  // }
 
   Widget _buildFileUploadField(FormQuestionData question, bool hasError) {
     final String? currentPath = _answers[question.questionId] as String?;
@@ -663,8 +808,25 @@ class _SurveyPageState extends State<SurveyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${question.questionText}${question.mandatory ? '*' : ''}',
-            style: TextStyle(color: hasError ? Colors.red : null)),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hasError ? Colors.red : Colors.black,
+            ),
+            children: [
+              TextSpan(text: question.questionText),
+              if (question.mandatory)
+                TextSpan(
+                  text: '*',
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
         Row(
           children: [
             ElevatedButton.icon(
@@ -724,8 +886,25 @@ class _SurveyPageState extends State<SurveyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${question.questionText}${question.mandatory ? '*' : ''}',
-            style: TextStyle(color: hasError ? Colors.red : null)),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hasError ? Colors.red : Colors.black,
+            ),
+            children: [
+              TextSpan(text: question.questionText),
+              if (question.mandatory)
+                TextSpan(
+                  text: '*',
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
         ElevatedButton.icon(
           icon: const Icon(Icons.camera_alt),
           style: ElevatedButton.styleFrom(
@@ -779,8 +958,25 @@ class _SurveyPageState extends State<SurveyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${question.questionText}${question.mandatory ? '*' : ''}',
-            style: TextStyle(color: hasError ? Colors.red : null)),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hasError ? Colors.red : Colors.black,
+            ),
+            children: [
+              TextSpan(text: question.questionText),
+              if (question.mandatory)
+                TextSpan(
+                  text: '*',
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
         ElevatedButton.icon(
           icon: const Icon(Icons.location_on),
           style: ElevatedButton.styleFrom(
@@ -868,8 +1064,25 @@ class _SurveyPageState extends State<SurveyPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${question.questionText}${question.mandatory ? '*' : ''}',
-            style: TextStyle(color: hasError ? Colors.red : null)),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: hasError ? Colors.red : Colors.black,
+            ),
+            children: [
+              TextSpan(text: question.questionText),
+              if (question.mandatory)
+                TextSpan(
+                  text: '*',
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
         Container(
           decoration: BoxDecoration(
             border: Border.all(
