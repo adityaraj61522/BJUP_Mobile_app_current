@@ -25,9 +25,9 @@ class LoginScreen extends GetView<LoginController> {
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
-                _buildLogoAndLanguageSwitcher(),
+                Expanded(child: _buildLogoAndLanguageSwitcher()),
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24.0),
                     child: Form(
@@ -51,8 +51,7 @@ class LoginScreen extends GetView<LoginController> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(imagePath),
-            fit: BoxFit.fill,
-            opacity: 0.7,
+            fit: BoxFit.fitWidth,
             alignment: alignment,
           ),
         ),
