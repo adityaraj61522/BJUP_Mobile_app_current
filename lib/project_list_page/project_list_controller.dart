@@ -19,9 +19,17 @@ class ProjectMonitoringListController extends GetxController {
   }
 
   Future<void> getProjectList() async {
-    sessionManager.getProjectList().then((value) {
-      projectList.addAll(value);
-      update();
-    });
+    try {
+      final value = await sessionManager.getProjectList();
+      if (value.isEmpty) {
+        Get.snackbar('info'.tr, 'no_projects_found'.tr);
+      } else {
+        projectList.addAll(value);
+        update();
+      }
+    } catch (e) {
+      Get.snackbar('error'.tr,
+          'error_fetching_projects'.trParams({'error': e.toString()}));
+    }
   }
 }

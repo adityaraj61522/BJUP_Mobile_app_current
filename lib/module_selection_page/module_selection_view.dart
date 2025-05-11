@@ -25,14 +25,14 @@ class ModuleSelectionView extends GetView<ModuleSelectionController> {
                 children: [
                   _buildDashboardButton(
                     icon: Icons.calendar_month_rounded,
-                    label: "Attendance".tr,
+                    label: "attendance_module".tr,
                     onTap: () => Get.toNamed(AppRoutes.attendenceList),
                     tileColor: AppColors.primary2,
                   ),
                   const SizedBox(height: 20),
                   _buildDashboardButton(
                     icon: Icons.screenshot_monitor_rounded,
-                    label: "Monitoring".tr,
+                    label: "monitoring".tr,
                     onTap: () => Get.toNamed(AppRoutes.projectList),
                     tileColor: AppColors.primary1,
                   ),
@@ -143,8 +143,8 @@ class ModuleSelectionView extends GetView<ModuleSelectionController> {
           ),
           child: Row(
             children: [
-              _buildLanguageButton("English", 'en'),
-              _buildLanguageButton("Hindi", 'hi'),
+              _buildLanguageButton("english".tr, 'en'),
+              _buildLanguageButton("hindi".tr, 'hi'),
             ],
           ),
         ),

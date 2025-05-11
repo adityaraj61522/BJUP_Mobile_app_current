@@ -165,7 +165,7 @@ class _SurveyPageState extends State<SurveyPage> {
           (answer is List && answer.isEmpty) ||
           (answer is Map && answer.isEmpty)) {
         isValid = false;
-        error = 'This field is required';
+        error = 'this_field_required'.tr;
       }
     }
 
@@ -265,7 +265,7 @@ class _SurveyPageState extends State<SurveyPage> {
       print("Survey Saved Locally successfully!");
       Get.snackbar(
         "Success",
-        "Survey Saved Locally successfully!",
+        "survey_saved_locally".tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.primary1,
         colorText: AppColors.white,
@@ -276,7 +276,7 @@ class _SurveyPageState extends State<SurveyPage> {
       print("Error saving survey locally: $error");
       Get.snackbar(
         "Error",
-        "Failed to save survey locally. $error",
+        "failed_save_survey".tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.red,
         colorText: AppColors.white,
@@ -287,8 +287,8 @@ class _SurveyPageState extends State<SurveyPage> {
   }
 
   String _getDisplayPath(String? fullPath) {
-    if (fullPath == null || fullPath.isEmpty) return "No file selected";
-    return "File selected";
+    if (fullPath == null || fullPath.isEmpty) return 'no_file_selected'.tr;
+    return 'file_selected'.tr;
   }
 
   Widget _wrapWithValidation(String questionId, Widget child) {
@@ -348,7 +348,7 @@ class _SurveyPageState extends State<SurveyPage> {
             TextFormField(
               initialValue: _answers[question.questionId] as String?,
               decoration: InputDecoration(
-                hintText: 'Enter your answer',
+                hintText: 'enter_your_answer'.tr,
                 border: inputBorder,
                 enabledBorder: inputBorder,
                 focusedBorder: inputBorder,
@@ -394,7 +394,7 @@ class _SurveyPageState extends State<SurveyPage> {
             TextFormField(
               initialValue: _answers[question.questionId] as String?,
               decoration: InputDecoration(
-                hintText: 'Enter your answer',
+                hintText: 'enter_your_answer'.tr,
                 border: inputBorder,
                 enabledBorder: inputBorder,
                 focusedBorder: inputBorder,
@@ -445,7 +445,7 @@ class _SurveyPageState extends State<SurveyPage> {
             DateTimeFormField(
               initialValue: _answers[question.questionId] as DateTime?,
               decoration: InputDecoration(
-                hintText: 'Select date',
+                hintText: 'select_date'.tr,
                 border: inputBorder,
                 enabledBorder: inputBorder,
                 focusedBorder: inputBorder,
@@ -505,7 +505,7 @@ class _SurveyPageState extends State<SurveyPage> {
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               decoration: InputDecoration(
-                hintText: 'Select an option',
+                hintText: 'select_option'.tr,
                 border: inputBorder,
                 enabledBorder: inputBorder,
                 focusedBorder: inputBorder,
@@ -864,7 +864,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   }
                 }
               },
-              label: const Text('Pick File'),
+              label: Text('pick_file'.tr),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -935,7 +935,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   snackPosition: SnackPosition.BOTTOM);
             }
           },
-          label: const Text('Take Photo'),
+          label: Text('take_photo'.tr),
         ),
         if (currentPath != null && currentPath.isNotEmpty)
           Padding(
@@ -943,10 +943,10 @@ class _SurveyPageState extends State<SurveyPage> {
             child: kIsWeb
                 ? Image.network(currentPath,
                     height: 100,
-                    errorBuilder: (c, o, s) => Text('Cannot display image'))
+                    errorBuilder: (c, o, s) => Text('cannot_display_image'.tr))
                 : Image.file(File(currentPath),
                     height: 100,
-                    errorBuilder: (c, o, s) => Text('Cannot display image')),
+                    errorBuilder: (c, o, s) => Text('cannot_display_image'.tr)),
           ),
       ],
     );
@@ -991,7 +991,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
             serviceEnabled = await Geolocator.isLocationServiceEnabled();
             if (!serviceEnabled) {
-              Get.snackbar("Location Error", "Location services are disabled.",
+              Get.snackbar("Location Error", "location_services_disabled".tr,
                   snackPosition: SnackPosition.BOTTOM);
               return;
             }
@@ -1001,7 +1001,7 @@ class _SurveyPageState extends State<SurveyPage> {
               permission = await Geolocator.requestPermission();
               if (permission == LocationPermission.denied) {
                 Get.snackbar(
-                    "Permission Error", "Location permissions are denied.",
+                    "Permission Error", "location_permissions_denied".tr,
                     snackPosition: SnackPosition.BOTTOM);
                 return;
               }
@@ -1009,7 +1009,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
             if (permission == LocationPermission.deniedForever) {
               Get.snackbar("Permission Error",
-                  "Location permissions are permanently denied, we cannot request permissions.",
+                  "location_permissions_permanent_denied".tr,
                   snackPosition: SnackPosition.BOTTOM);
               return;
             }
@@ -1026,20 +1026,20 @@ class _SurveyPageState extends State<SurveyPage> {
               });
               Get.snackbar(
                 "Success",
-                "Location captured.",
+                "location_captured".tr,
                 snackPosition: SnackPosition.BOTTOM,
                 duration: Duration(seconds: 2),
                 backgroundColor: AppColors.primary1,
               );
             } catch (e) {
               print("Error getting location: $e");
-              Get.snackbar("Location Error", "Error getting location: $e",
+              Get.snackbar("Location Error", "error_getting_location".tr,
                   snackPosition: SnackPosition.BOTTOM);
             } finally {
               loadingLocation.value = false;
             }
           },
-          label: const Text('Get Current Location'),
+          label: Text('get_current_location'.tr),
         ),
         if (loadingLocation.value)
           const Center(
@@ -1111,7 +1111,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   });
                 }
               },
-              child: const Text('Clear'),
+              child: Text('clear'.tr),
             ),
             ElevatedButton.icon(
               iconAlignment: IconAlignment.end,
@@ -1119,7 +1119,7 @@ class _SurveyPageState extends State<SurveyPage> {
               style: ElevatedButton.styleFrom(
                 foregroundColor: isSignatureSaved ? Colors.green : null,
               ),
-              label: const Text('Save Signature'),
+              label: Text('save_signature'.tr),
               onPressed: () async {
                 if (_signatureController.isNotEmpty) {
                   final Uint8List? signatureBytes =
@@ -1144,11 +1144,10 @@ class _SurveyPageState extends State<SurveyPage> {
                   if (question.mandatory) {
                     setState(() {
                       _validationErrors[question.questionId] =
-                          'Signature is required';
+                          'signature_required'.tr;
                     });
                   }
-                  Get.snackbar(
-                      "Info", "Please provide a signature before saving.",
+                  Get.snackbar("Info", "provide_signature".tr,
                       snackPosition: SnackPosition.BOTTOM);
                 }
               },
@@ -1162,7 +1161,7 @@ class _SurveyPageState extends State<SurveyPage> {
               children: [
                 Icon(Icons.check_circle, color: Colors.green, size: 16),
                 SizedBox(width: 4),
-                Text('Signature Saved.',
+                Text('signature_saved'.tr,
                     style: TextStyle(color: Colors.green[700])),
               ],
             ),
@@ -1222,7 +1221,7 @@ class _SurveyPageState extends State<SurveyPage> {
                     )
                   : const Icon(Icons.save_alt, color: AppColors.white),
               label: Text(
-                isLoading.value ? "Saving..." : "Save Survey",
+                isLoading.value ? "saving".tr : "save_survey".tr,
                 style: const TextStyle(
                     color: AppColors.white,
                     fontWeight: FontWeight.bold,

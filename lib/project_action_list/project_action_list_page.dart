@@ -28,25 +28,25 @@ class ProjectMonitoringActionListView extends StatelessWidget {
               children: [
                 _buildDashboardButton(
                   icon: Icons.download_for_offline_rounded,
-                  label: "Download Village Data".tr,
+                  label: "download_village_data_button".tr,
                   onTap: () => controller.routeToDownloadVillageData(),
                   tileColor: AppColors.primary1,
                 ),
                 _buildDashboardButton(
                   icon: Icons.question_mark_rounded,
-                  label: "Download Question Set".tr,
+                  label: "download_question_set_button".tr,
                   onTap: () => controller.routeToDownloadQuestionSet(),
                   tileColor: AppColors.primary1,
                 ),
                 _buildDashboardButton(
                   icon: Icons.analytics,
-                  label: "Start Monitoring".tr,
+                  label: "start_monitoring".tr,
                   tileColor: AppColors.primary1,
                   onTap: () => controller.routeToStartMonitoring(),
                 ),
                 _buildDashboardButton(
                   icon: Icons.save_as_rounded,
-                  label: "Local Saved Surveys".tr,
+                  label: "local_saved_surveys".tr,
                   onTap: () => controller.routeToSyncSurvey(),
                   tileColor: AppColors.primary1,
                 ),
@@ -60,8 +60,8 @@ class ProjectMonitoringActionListView extends StatelessWidget {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: const Text(
-        "Data Collection",
+      title: Text(
+        "data_collection".tr,
         style: TextStyle(color: AppColors.white),
       ),
       backgroundColor: AppColors.primary1,

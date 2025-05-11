@@ -101,8 +101,8 @@ class LoginScreen extends GetView<LoginController> {
         ),
         child: Row(
           children: [
-            _buildLanguageButton("English", 'en'),
-            _buildLanguageButton("Hindi", 'hi'),
+            _buildLanguageButton("english".tr, 'en'),
+            _buildLanguageButton("hindi".tr, 'hi'),
           ],
         ),
       ),

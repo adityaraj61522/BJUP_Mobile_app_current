@@ -15,8 +15,8 @@ class DownloadQuestionSetView extends StatelessWidget {
     final sessionManager = SessionManager();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Download Question Set",
+        title: Text(
+          "download_question_set".tr,
           style: TextStyle(
             color: AppColors.white,
           ),
@@ -103,7 +103,7 @@ class DownloadQuestionSetView extends StatelessWidget {
                   minimumSize: Size(double.infinity, 50),
                 ),
                 child: Text(
-                  "Download",
+                  "download".tr,
                   style: TextStyle(
                       color: AppColors.white, fontWeight: FontWeight.bold),
                 ),
@@ -126,7 +126,7 @@ class DownloadQuestionSetView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hi ${controller.userData?.username}!!",
+              "greeting".trParams({'s': controller.userData?.username ?? ''}),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -134,12 +134,12 @@ class DownloadQuestionSetView extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             _buildProjectDetailRow(
-              'Office Id',
+              'office_id'.tr,
               controller.officeName,
             ),
             const SizedBox(height: 10),
             _buildProjectDetailRow(
-              'Project Name',
+              'project_name'.tr,
               controller.projectTitle,
             ),
           ],
@@ -185,7 +185,7 @@ class DownloadQuestionSetView extends StatelessWidget {
             : [
                 Center(
                   child: Text(
-                    'No Question List Exist',
+                    'no_question_list'.tr,
                     style: TextStyle(color: AppColors.gray),
                   ),
                 ),
@@ -194,7 +194,7 @@ class DownloadQuestionSetView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Language",
+          "language".tr,
           style: TextStyle(color: AppColors.gray),
         ),
         Wrap(
@@ -222,7 +222,7 @@ class DownloadQuestionSetView extends StatelessWidget {
             : [
                 Center(
                   child: Text(
-                    'No Question List Exist',
+                    'no_question_list'.tr,
                     style: TextStyle(color: AppColors.gray),
                   ),
                 ),
@@ -231,7 +231,7 @@ class DownloadQuestionSetView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Report Type",
+          "report_type".tr,
           style: TextStyle(color: AppColors.gray),
         ),
         Wrap(
@@ -259,7 +259,7 @@ class DownloadQuestionSetView extends StatelessWidget {
             : [
                 Center(
                   child: Text(
-                    'No Question List Exist',
+                    'no_question_list'.tr,
                     style: TextStyle(color: AppColors.gray),
                   ),
                 ),
@@ -268,7 +268,7 @@ class DownloadQuestionSetView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Question Set",
+          "question_set".tr,
           style: TextStyle(color: AppColors.gray),
         ),
         Wrap(
@@ -286,7 +286,7 @@ class DownloadQuestionSetView extends StatelessWidget {
         Row(
           children: [
             Text(
-              "Project name:",
+              "project_name".tr,
               style: TextStyle(color: AppColors.gray),
             ),
             Text(
@@ -299,7 +299,7 @@ class DownloadQuestionSetView extends StatelessWidget {
         Row(
           children: [
             Text(
-              "Office name:",
+              "office_id".tr,
               style: TextStyle(color: AppColors.gray),
             ),
             Text(

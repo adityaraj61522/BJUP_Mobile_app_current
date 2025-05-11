@@ -16,11 +16,9 @@ class StartMonitoringView extends StatelessWidget {
     final sessionManager = SessionManager();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Start Monitoring",
-          style: TextStyle(
-            color: AppColors.white,
-          ),
+        title: Text(
+          "start_monitoring_title".tr,
+          style: TextStyle(color: AppColors.white),
         ),
         backgroundColor: AppColors.primary1,
         centerTitle: true,
@@ -75,7 +73,7 @@ class StartMonitoringView extends StatelessWidget {
                                   minimumSize: Size(double.infinity, 50),
                                 ),
                                 child: Text(
-                                  "Current Interview",
+                                  "current_interview".tr,
                                   style: TextStyle(
                                       color: AppColors.white,
                                       fontWeight: FontWeight.bold),
@@ -92,7 +90,7 @@ class StartMonitoringView extends StatelessWidget {
                                   minimumSize: Size(double.infinity, 50),
                                 ),
                                 child: Text(
-                                  "Add Beneficery",
+                                  "add_beneficery".tr,
                                   style: TextStyle(
                                       color: AppColors.white,
                                       fontWeight: FontWeight.bold),
@@ -132,7 +130,7 @@ class StartMonitoringView extends StatelessWidget {
               value: controller.selectedQuestionSet.value.isEmpty
                   ? null
                   : controller.selectedQuestionSet.value,
-              hint: const Text('Select Question Set'),
+              hint: Text('select_question_set'.tr),
               items: controller.questionSetList.map((item) {
                 return DropdownMenuItem(
                   value: item.id,
@@ -152,7 +150,7 @@ class StartMonitoringView extends StatelessWidget {
             flex: 2,
             child: Center(
               child: Text(
-                'No Question Set Available',
+                'no_question_set_available'.tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
@@ -167,7 +165,7 @@ class StartMonitoringView extends StatelessWidget {
               value: controller.selectedVillage.value.isEmpty
                   ? null
                   : controller.selectedVillage.value,
-              hint: const Text('Select Village'),
+              hint: Text('select_village'.tr),
               items: controller.villageList.map((item) {
                 return DropdownMenuItem(
                   value: item.villageId,
@@ -187,7 +185,7 @@ class StartMonitoringView extends StatelessWidget {
             flex: 2,
             child: Center(
               child: Text(
-                'No Villages Available',
+                'no_villages_available'.tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
@@ -200,7 +198,7 @@ class StartMonitoringView extends StatelessWidget {
           flex: 2,
           child: Center(
             child: Text(
-              'No Data Available',
+              'no_data_available'.tr,
               style: TextStyle(color: AppColors.gray),
             ),
           ),
@@ -215,8 +213,8 @@ class StartMonitoringView extends StatelessWidget {
               ? null
               : controller.selectedBeneficiary.value,
           hint: Text(controller.selectedInterviewId.value == "44"
-              ? 'Select Beneficiary'
-              : 'Select CBO'),
+              ? 'select_beneficiary'.tr
+              : 'select_cbo'.tr),
           items: controller.beneficiaryOrCBOList
               .map((item) {
                 if (item is BeneficiaryData) {
@@ -259,7 +257,7 @@ class StartMonitoringView extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Text(
-                "Question Set:",
+                "question_set_label".tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
@@ -272,7 +270,7 @@ class StartMonitoringView extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Text(
-                "Village:",
+                "village_label".tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
@@ -286,8 +284,8 @@ class StartMonitoringView extends StatelessWidget {
               flex: 1,
               child: Text(
                 controller.selectedInterviewId.value == "44"
-                    ? "Beneficiary:"
-                    : "CBO:",
+                    ? "beneficiary_label".tr
+                    : "cbo_label".tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
@@ -326,7 +324,8 @@ class StartMonitoringView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hi ${controller.userData?.username}!!",
+              "hi_user"
+                  .trParams({'username': controller.userData?.username ?? ''}),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -334,12 +333,12 @@ class StartMonitoringView extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             _buildProjectDetailRow(
-              'Office Id',
+              'office_id_label'.tr,
               controller.officeName,
             ),
             const SizedBox(height: 10),
             _buildProjectDetailRow(
-              'Project Name',
+              'project_name_label'.tr,
               controller.projectTitle,
             ),
           ],
@@ -375,7 +374,7 @@ class StartMonitoringView extends StatelessWidget {
         Row(
           children: [
             Text(
-              "Project name:",
+              "project_name_prefix".tr,
               style: TextStyle(color: AppColors.gray),
             ),
             Text(
@@ -388,7 +387,7 @@ class StartMonitoringView extends StatelessWidget {
         Row(
           children: [
             Text(
-              "Office name:",
+              "office_name_prefix".tr,
               style: TextStyle(color: AppColors.gray),
             ),
             Text(

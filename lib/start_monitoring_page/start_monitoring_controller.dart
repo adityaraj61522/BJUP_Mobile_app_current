@@ -71,7 +71,7 @@ class StartMonitoringController extends GetxController {
     super.onInit();
     final args = Get.arguments;
     if (args == null) {
-      _handleError('Arguments are null in StartMonitoringController');
+      _handleError('arguments_null'.tr);
       return; // Important: Stop execution if arguments are missing
     }
     selectedProject.value = args['projectId'] ?? '';
@@ -87,7 +87,8 @@ class StartMonitoringController extends GetxController {
       await getQuestionSetList();
       showSelector.value = true;
     } catch (e) {
-      _handleError('Failed to load question sets: $e'); // Use the error handler
+      _handleError('failed_load_question_sets'
+          .trParams({'error': e.toString()})); // Use the error handler
     }
   }
 
@@ -118,7 +119,8 @@ class StartMonitoringController extends GetxController {
         return seenIds.add(item.villageId);
       }));
     } catch (e) {
-      _handleError('Failed to load village list: $e');
+      _handleError(
+          'failed_load_village_list'.trParams({'error': e.toString()}));
     }
   }
 
@@ -138,7 +140,8 @@ class StartMonitoringController extends GetxController {
       update();
       await getQuestionFormSetList();
     } catch (e) {
-      _handleError('Failed to load question set list: $e');
+      _handleError(
+          'failed_load_question_set_list'.trParams({'error': e.toString()}));
     }
   }
 
@@ -155,7 +158,8 @@ class StartMonitoringController extends GetxController {
 
       selectedQuestionFormSet.addAll(questionFormData);
     } catch (e) {
-      _handleError('Failed to load question form set list: $e');
+      _handleError(
+          'failed_load_question_form'.trParams({'error': e.toString()}));
     }
   }
 
@@ -192,10 +196,11 @@ class StartMonitoringController extends GetxController {
           break;
 
         default:
-          throw Exception('Unsupported interview type: $interviewId');
+          throw Exception(
+              'unsupported_interview'.trParams({'type': interviewId}));
       }
     } catch (e) {
-      _handleError('Failed to load data list: $e');
+      _handleError('failed_load_data_list'.trParams({'error': e.toString()}));
     }
   }
 
@@ -205,7 +210,8 @@ class StartMonitoringController extends GetxController {
       await getBeneficieryList(
           interviewId: selectedInterviewId.value, villageId: village);
     } catch (e) {
-      _handleError("Failed to update beneficiary list: $e");
+      _handleError(
+          "failed_update_beneficiary".trParams({'error': e.toString()}));
     }
     update();
   }
@@ -220,7 +226,8 @@ class StartMonitoringController extends GetxController {
           selectedQuestionSetItem?.interviewTypeId ?? '';
       await getVillageList(selectedInterviewId: selectedInterviewId.value);
     } catch (e) {
-      _handleError("Failed to update question set type: $e");
+      _handleError(
+          "failed_update_question_set".trParams({'error': e.toString()}));
     }
     update();
   }

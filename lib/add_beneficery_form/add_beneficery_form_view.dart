@@ -362,7 +362,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add Beneficiary',
+          'add_beneficiary'.tr,
           style: TextStyle(
             color: AppColors.white,
           ),
@@ -424,7 +424,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           // Select Village
                           DropdownButtonFormField<String>(
                             decoration: InputDecoration(
-                              labelText: 'Select Village',
+                              labelText: 'select_village'.tr,
                               border: OutlineInputBorder(),
                             ),
                             value: _villageController.text.isNotEmpty
@@ -447,7 +447,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please select a village';
+                                return 'please_enter_village_name'.tr;
                               }
                               return null;
                             },
@@ -492,12 +492,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           TextFormField(
                             controller: _houseHoldNameController,
                             decoration: InputDecoration(
-                              labelText: 'House hold name',
+                              labelText: 'household_name'.tr,
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter house hold name';
+                                return 'please_enter_household_name'.tr;
                               }
                               return null;
                             },
@@ -506,7 +506,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
 
                           // Rest of the form remains the same...
                           // Gender (Household)
-                          Text('Gender (Household)'),
+                          Text('gender_household'.tr),
                           Row(
                             children: <Widget>[
                               Radio<String>(
@@ -518,7 +518,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('Male'),
+                              Text('male'.tr),
                               SizedBox(width: 16.0),
                               Radio<String>(
                                 value: 'Female',
@@ -529,7 +529,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('Female'),
+                              Text('female'.tr),
                               SizedBox(width: 16.0),
                               Radio<String>(
                                 value: 'Other',
@@ -540,12 +540,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('Other'),
+                              Text('other'.tr),
                             ],
                           ),
                           if (submitTriggered.value && _hhGender == null)
                             Text(
-                              'Please select household gender',
+                              'please_enter_household_gender'.tr,
                               style: TextStyle(color: Colors.red),
                             ),
                           SizedBox(height: 16.0),
@@ -554,12 +554,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           TextFormField(
                             controller: _familyHeadController,
                             decoration: InputDecoration(
-                              labelText: 'Family Head',
+                              labelText: 'family_head'.tr,
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter family head name';
+                                return 'please_enter_family_name';
                               }
                               return null;
                             },
@@ -570,12 +570,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           TextFormField(
                             controller: _beneficiaryNameController,
                             decoration: InputDecoration(
-                              labelText: 'Beneficiary Name',
+                              labelText: 'beneficiary_name'.tr,
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter Beneficiary Name';
+                                return 'please_enter_beneficery_name'.tr;
                               }
                               return null;
                             },
@@ -586,12 +586,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           TextFormField(
                             controller: _guardianController,
                             decoration: InputDecoration(
-                              labelText: 'Guardian',
+                              labelText: 'guardian'.tr,
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter Guardian name';
+                                return 'please_enter_guardian_name';
                               }
                               return null;
                             },
@@ -599,7 +599,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           SizedBox(height: 16.0),
 
                           // Gender (Beneficiary)
-                          Text('Gender (Beneficiary)'),
+                          Text('gender_beneficery'.tr),
                           Row(
                             children: <Widget>[
                               Radio<String>(
@@ -611,7 +611,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('Male'),
+                              Text('male'.tr),
                               SizedBox(width: 16.0),
                               Radio<String>(
                                 value: 'Female',
@@ -622,7 +622,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('Female'),
+                              Text('female'.tr),
                               SizedBox(width: 16.0),
                               Radio<String>(
                                 value: 'Other',
@@ -633,13 +633,13 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('Other'),
+                              Text('other'.tr),
                             ],
                           ),
                           if (submitTriggered.value &&
                               _beneficiaryGender == null)
                             Text(
-                              'Please select beneficiary gender',
+                              'please_enter_beneficery_gender'.tr,
                               style: TextStyle(color: Colors.red),
                             ),
                           SizedBox(height: 16.0),
@@ -649,7 +649,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             controller: _ageController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              labelText: 'Age',
+                              labelText: 'age'.tr,
                               border: OutlineInputBorder(),
                             ),
                             inputFormatters: [
@@ -658,7 +658,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter age';
+                                return 'please_enter_age'.tr;
                               }
                               if (int.tryParse(value) == null) {
                                 return 'Please enter a valid number';
@@ -669,7 +669,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           SizedBox(height: 16.0),
 
                           // Disability
-                          Text('Disability'),
+                          Text('disability'.tr),
                           Row(
                             children: <Widget>[
                               Radio<bool>(
@@ -681,7 +681,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('Yes'),
+                              Text('yes'.tr),
                               SizedBox(width: 16.0),
                               Radio<bool>(
                                 value: false,
@@ -692,12 +692,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                   });
                                 },
                               ),
-                              Text('No'),
+                              Text('no'.tr),
                             ],
                           ),
                           if (submitTriggered.value && _disability == null)
                             Text(
-                              'Please select disability status',
+                              'please_enter_disability_status'.tr,
                               style: TextStyle(color: Colors.red),
                             ),
                           SizedBox(height: 16.0),
@@ -705,7 +705,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           // Select Social Group
                           DropdownButtonFormField<String>(
                             decoration: InputDecoration(
-                              labelText: 'Select Social Group',
+                              labelText: 'select_social_group'.tr,
                               border: OutlineInputBorder(),
                             ),
                             value: _socialGroup,
@@ -722,7 +722,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please select a social group';
+                                return 'please_select_social_group'.tr;
                               }
                               return null;
                             },
@@ -732,7 +732,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           // Select Categories
                           DropdownButtonFormField<String>(
                             decoration: InputDecoration(
-                              labelText: 'Select Categories',
+                              labelText: 'select_categories'.tr,
                               border: OutlineInputBorder(),
                             ),
                             isExpanded: true,
@@ -754,7 +754,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please select a category';
+                                return 'please_select_category'.tr;
                               }
                               return null;
                             },
@@ -765,12 +765,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           TextFormField(
                             controller: _idTypeController,
                             decoration: InputDecoration(
-                              labelText: 'ID Type',
+                              labelText: 'id_type'.tr,
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter ID Type';
+                                return 'please_enter_id_type'.tr;
                               }
                               return null;
                             },
@@ -781,12 +781,12 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           TextFormField(
                             controller: _idNameController,
                             decoration: InputDecoration(
-                              labelText: 'ID Name',
+                              labelText: 'id_name'.tr,
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter ID name';
+                                return 'please_enter_id_name'.tr;
                               }
                               return null;
                             },
@@ -804,7 +804,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                                 padding: EdgeInsets.symmetric(vertical: 12),
                               ),
                               child: Text(
-                                'Add Beneficiary',
+                                'add_beneficiary_button'.tr,
                                 style: TextStyle(fontSize: 16),
                               ),
                             ),

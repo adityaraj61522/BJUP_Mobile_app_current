@@ -85,17 +85,17 @@ class DownloadQuestionSetController extends GetxController {
     String projectId = selectedProject.value;
 
     if (projectId.isEmpty || projectId.isEmpty) {
-      errorText.value = "Project Not Selected".tr;
+      errorText.value = "project_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (officeId.isEmpty || officeId.isEmpty) {
-      errorText.value = "Office Not Selected".tr;
+      errorText.value = "office_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (anamitorId.isEmpty || anamitorId.isEmpty) {
-      errorText.value = "Animator Not Selected".tr;
+      errorText.value = "animator_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
@@ -189,27 +189,27 @@ class DownloadQuestionSetController extends GetxController {
     String villageId = selectedVillages;
 
     if (language.isEmpty) {
-      errorText.value = "Language Not Selected".tr;
+      errorText.value = "language_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (reportTypeId.isEmpty) {
-      errorText.value = "Report Type Not Selected".tr;
+      errorText.value = "report_type_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (questionSetId.isEmpty) {
-      errorText.value = "Question Set Not Selected".tr;
+      errorText.value = "question_set_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (interviewTypeId.isEmpty) {
-      errorText.value = "Interview Type Not Selected".tr;
+      errorText.value = "interview_type_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (villageId.isEmpty) {
-      errorText.value = "Village Id Not Selected".tr;
+      errorText.value = "village_id_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
@@ -252,8 +252,8 @@ class DownloadQuestionSetController extends GetxController {
               .then((value) => {
                     print("Question Set Data saved successfully!!"),
                     Get.snackbar(
-                      "Success",
-                      'Question Set Data saved successfully!!'.tr,
+                      "success".tr,
+                      "question_set_saved".tr,
                       snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: AppColors.primary1,
                       colorText: AppColors.white,
@@ -268,8 +268,8 @@ class DownloadQuestionSetController extends GetxController {
               .then((value) => {
                     print("Question Form Data saved successfully!!"),
                     Get.snackbar(
-                      "Success",
-                      'Question Form Data saved successfully!!'.tr,
+                      "success".tr,
+                      "question_form_saved".tr,
                       snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: AppColors.primary1,
                       colorText: AppColors.white,
@@ -300,7 +300,7 @@ class DownloadQuestionSetController extends GetxController {
           errorText.value = '';
           // Get.offAllNamed('/moduleSelection');
         } else if (data['response_code'] == 100) {
-          handleErrorReported(error: "Data not available!!".tr);
+          handleErrorReported(error: "data_not_available".tr);
         } else if (data['response_code'] == 300) {
           await _sessionManager.checkSession();
         } else {

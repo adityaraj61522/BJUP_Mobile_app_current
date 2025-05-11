@@ -49,8 +49,8 @@ class AttendenceListView extends StatelessWidget {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text(
-        "Attendence",
+      title: Text(
+        "attendance".tr,
         style: TextStyle(color: AppColors.white),
       ),
       backgroundColor: AppColors.primary2,
@@ -114,7 +114,7 @@ class AttendenceListView extends StatelessWidget {
       children: [
         const SizedBox(height: 15),
         Text(
-          title,
+          title.tr, // 'punch_in_time'.tr or 'punch_out_time'.tr
           style: const TextStyle(
             color: AppColors.white,
             fontWeight: FontWeight.w700,
@@ -154,7 +154,7 @@ class AttendenceListView extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              controller.isPunchActive.value ? 'Punch Out' : 'Punch In',
+              controller.isPunchActive.value ? 'punch_out'.tr : 'punch_in'.tr,
               style: const TextStyle(
                 color: AppColors.white,
                 fontWeight: FontWeight.w700,
@@ -200,11 +200,9 @@ class AttendenceListView extends StatelessWidget {
   Widget _buildDatePickerRow(BuildContext context) {
     return Row(
       children: [
-        const Expanded(
-          child: Text(
-            'Date',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
+        Text(
+          'date'.tr,
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
         Expanded(
           child: Obx(() => Text(
@@ -229,7 +227,9 @@ class AttendenceListView extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            controller.isPunchActive.value ? 'Punch Out Time' : 'Punch In Time',
+            controller.isPunchActive.value
+                ? 'punch_out_time'.tr
+                : 'punch_in_time'.tr,
             style: const TextStyle(fontWeight: FontWeight.w700),
           ),
         ),
@@ -253,10 +253,8 @@ class AttendenceListView extends StatelessWidget {
   Widget _buildLocationPickerRow() {
     return Row(
       children: [
-        const Expanded(
-          child: Text('Current Location',
-              style: TextStyle(fontWeight: FontWeight.w700)),
-        ),
+        Text('current_location'.tr,
+            style: TextStyle(fontWeight: FontWeight.w700)),
         Expanded(
           child: Obx(() => Text(
                 controller.currentLocation.value,
@@ -278,8 +276,8 @@ class AttendenceListView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const Text(
-          "Location:",
+        Text(
+          "location".tr,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
@@ -287,7 +285,7 @@ class AttendenceListView extends StatelessWidget {
           children: [
             Expanded(
               child: Obx(() => RadioListTile<String>(
-                    title: const Text("Office"),
+                    title: Text("office".tr),
                     value: "Office",
                     groupValue: controller.selectedLocation.value,
                     onChanged: (value) => controller.changeLocation(value!),
@@ -295,7 +293,7 @@ class AttendenceListView extends StatelessWidget {
             ),
             Expanded(
               child: Obx(() => RadioListTile<String>(
-                    title: const Text("Field"),
+                    title: Text("field".tr),
                     value: "Field",
                     groupValue: controller.selectedLocation.value,
                     onChanged: (value) => controller.changeLocation(value!),
@@ -314,7 +312,7 @@ class AttendenceListView extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: () => Get.back(),
-          child: const Text("Close"),
+          child: Text("close".tr),
         ),
         const SizedBox(width: 10),
         ElevatedButton(
@@ -323,7 +321,9 @@ class AttendenceListView extends StatelessWidget {
           ),
           onPressed: () => controller.saveattendence(context: context),
           child: Obx(() => Text(
-                controller.isPunchActive.isTrue ? "Punch Out" : "Punch In",
+                controller.isPunchActive.isTrue
+                    ? "punch_out".tr
+                    : "punch_in".tr,
                 style: const TextStyle(color: AppColors.white),
               )),
         ),
@@ -420,13 +420,13 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             ElevatedButton.icon(
               onPressed: () => _handleImagePick(ImageSource.gallery, context),
               icon: const Icon(Icons.photo_library),
-              label: const Text("Gallery"),
+              label: Text("gallery".tr),
             ),
             const SizedBox(width: 10),
             ElevatedButton.icon(
               onPressed: () => _handleImagePick(ImageSource.camera, context),
               icon: const Icon(Icons.camera_alt),
-              label: const Text("Camera"),
+              label: Text("camera".tr),
             ),
           ],
         ),
@@ -473,21 +473,21 @@ class AttendenceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAttendanceDetailRow(
-              'Date',
+              'date'.tr,
               attendanceRecord.inDateTime != null
                   ? DateFormat('yyyy-MM-dd')
                       .format(DateTime.parse(attendanceRecord.inDateTime!))
                   : '--'),
           const SizedBox(height: 10),
           _buildAttendanceDetailRow(
-              'Punch In Time',
+              'punch_in_time'.tr,
               attendanceRecord.inDateTime != null
                   ? DateFormat('hh:mm a')
                       .format(DateTime.parse(attendanceRecord.inDateTime!))
                   : '--'),
           const SizedBox(height: 10),
           _buildAttendanceDetailRow(
-              'Punch Out Time',
+              'punch_out_time'.tr,
               attendanceRecord.outDateTime != null &&
                       attendanceRecord.outDateTime!.isNotEmpty
                   ? DateFormat('hh:mm a')
@@ -495,10 +495,10 @@ class AttendenceCard extends StatelessWidget {
                   : '--'),
           const SizedBox(height: 10),
           _buildAttendanceDetailRow(
-              'Location', attendanceRecord.inLocationName ?? '--'),
+              'location'.tr, attendanceRecord.inLocationName ?? '--'),
           const SizedBox(height: 10),
           _buildAttendanceDetailRow(
-              'Status',
+              'status'.tr,
               attendanceRecord.punchedOut != null &&
                       attendanceRecord.punchedOut == true
                   ? 'Completed'

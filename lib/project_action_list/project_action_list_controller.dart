@@ -80,8 +80,8 @@ class ProjectMonitoringActionListController extends GetxController {
   void routeToStartMonitoring() async {
     if (villageExists.value == false) {
       Get.snackbar(
-        "Please Download Villages.",
-        'Village Data required'.tr,
+        "download_villages_first".tr,
+        'village_data_required'.tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.orange,
         colorText: AppColors.white,
@@ -90,8 +90,8 @@ class ProjectMonitoringActionListController extends GetxController {
     }
     if (questionSetsExists.value == false) {
       Get.snackbar(
-        "Please Download Question Sets.",
-        'Question Set Data required'.tr,
+        "download_question_sets".tr,
+        'question_set_required'.tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.orange,
         colorText: AppColors.white,

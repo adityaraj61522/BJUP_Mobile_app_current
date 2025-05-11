@@ -108,7 +108,8 @@ class AttendenceListController extends GetxController {
       updateAttendanceCardList();
     } catch (e) {
       print("Error loading attendance data: $e");
-      Get.snackbar("Error", "Failed to load attendance data: $e");
+      Get.snackbar("Error",
+          "error_loading_attendance".trParams({'error': e.toString()}));
     }
   }
 
@@ -179,20 +180,19 @@ class AttendenceListController extends GetxController {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        Get.snackbar("Location Error", "Please enable location services.");
+        Get.snackbar("Location Error", "enable_location".tr);
         return;
       }
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          Get.snackbar("Permission Denied", "Location permission is required.");
+          Get.snackbar("Permission Denied", "location_permission_required".tr);
           return;
         }
       }
       if (permission == LocationPermission.deniedForever) {
-        Get.snackbar("Permission Denied",
-            "Location access is permanently denied. Enable from settings.");
+        Get.snackbar("Permission Denied", "location_permanent_denied".tr);
         return;
       }
       Position position = await Geolocator.getCurrentPosition(
@@ -204,14 +204,14 @@ class AttendenceListController extends GetxController {
       await getAddressFromCoordinates(
           latitude: position.latitude, longitude: position.longitude);
     } on TimeoutException {
-      Get.snackbar(
-          "Timeout Error", "Failed to fetch location. Please try again.");
+      Get.snackbar("Timeout Error", "timeout_error".tr);
     } on PermissionDeniedException {
-      Get.snackbar("Permission Error", "Location permission was denied.");
+      Get.snackbar("Permission Error", "location_denied".tr);
     } on LocationServiceDisabledException {
-      Get.snackbar("Service Disabled", "Location service is turned off.");
+      Get.snackbar("Service Disabled", "location_service_off".tr);
     } catch (e) {
-      Get.snackbar("Unexpected Error", "Something went wrong: $e");
+      Get.snackbar("Unexpected Error",
+          "unexpected_error".trParams({'error': e.toString()}));
     }
   }
 
@@ -223,12 +223,13 @@ class AttendenceListController extends GetxController {
 
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
-        currentLocation.value = place.street ?? 'Street name not found';
+        currentLocation.value = place.street ?? 'street_not_found'.tr;
       } else {
-        currentLocation.value = 'Address not found for these coordinates';
+        currentLocation.value = 'address_not_found'.tr;
       }
     } catch (e) {
-      currentLocation.value = 'Error fetching address: $e';
+      currentLocation.value =
+          'error_fetching_address'.trParams({'error': e.toString()});
       print('Error fetching address: $e');
     }
   }
@@ -240,13 +241,13 @@ class AttendenceListController extends GetxController {
   // Function to mark attendance
   Future<void> saveattendence({required BuildContext context}) async {
     if (isMarkingAttendance.value) {
-      Get.snackbar("Processing", "Already processing attendance. Please wait.");
+      Get.snackbar("Processing", "processing_attendance".tr);
       return;
     }
 
     // Check if an image is captured
     if (capturedImage.value == null) {
-      Get.snackbar("Error", "Please capture an image before submitting.",
+      Get.snackbar("Error", "capture_image".tr,
           backgroundColor: AppColors.red, colorText: AppColors.white);
       return;
     }
@@ -351,7 +352,7 @@ class AttendenceListController extends GetxController {
         resetDateTimeSelectors();
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to process attendance: $e");
+      Get.snackbar("Error", "failed_mark_attendance".tr);
     } finally {
       isMarkingAttendance.value = false;
     }
@@ -383,7 +384,7 @@ class AttendenceListController extends GetxController {
           ));
         } catch (e) {
           print('Error creating multipart file: $e');
-          Get.snackbar("File Error", "Failed to attach the captured image.");
+          Get.snackbar("File Error", "file_error".tr);
           return false;
         }
       }
@@ -392,12 +393,12 @@ class AttendenceListController extends GetxController {
 
       if (response != null && response.statusCode == 200) {
         print('Attendance marked successfully: ${response.data}');
-        Get.snackbar("Success", "Attendance marked successfully!");
+        Get.snackbar("Success", "attendance_marked".tr);
         return true;
       } else {
         print(
             'Failed to mark attendance: ${response?.statusCode} - ${response?.data}');
-        String errorMessage = "Failed to mark attendance.";
+        String errorMessage = "failed_mark_attendance".tr;
         if (response?.data != null &&
             response!.data is Map &&
             response.data.containsKey('message')) {
@@ -410,7 +411,8 @@ class AttendenceListController extends GetxController {
       }
     } on DioException catch (e) {
       print('Dio error marking attendance: $e');
-      String errorMessage = "Something went wrong while marking attendance.";
+      String errorMessage =
+          "network_error".trParams({'error': e.message.toString()});
       if (e.response != null &&
           e.response?.data != null &&
           e.response?.data is Map &&
@@ -423,7 +425,8 @@ class AttendenceListController extends GetxController {
       return false;
     } catch (e) {
       print('Unexpected error marking attendance: $e');
-      Get.snackbar("Unexpected Error", "Something went wrong: $e");
+      Get.snackbar("Unexpected Error",
+          "unexpected_error".trParams({'error': e.toString()}));
       return false;
     }
   }
@@ -471,7 +474,7 @@ class AttendenceListController extends GetxController {
             punchInTime.year, punchInTime.month, punchInTime.day, 23, 59, 59);
 
         autoPunchOutRecord.outDateTime = punchOutTime.toString();
-        autoPunchOutRecord.outLocationName = "Auto Punch-Out at End of Day";
+        autoPunchOutRecord.outLocationName = "auto_punch_out_location".tr;
         autoPunchOutRecord.punchedOut = true;
         autoPunchOutRecord.gpsLatitude =
             activeAttendanceRecord.value!.gpsLatitude;
@@ -501,8 +504,7 @@ class AttendenceListController extends GetxController {
           // Update UI
           updateAttendanceCardList();
 
-          Get.snackbar("Auto Punch-Out",
-              "You were automatically punched out at the end of the previous day.");
+          Get.snackbar("Auto Punch-Out", "auto_punch_out".tr);
         }
       } catch (e) {
         print("Error during auto punch-out: $e");

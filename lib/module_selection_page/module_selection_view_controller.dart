@@ -23,13 +23,20 @@ class ModuleSelectionController extends GetxController {
   }
 
   void checkVillageData() async {
-    final villages = await villageStorageService.getAllVillagesForProject(
-      projectId: projectId.value,
-    );
-    if (villages.isNotEmpty) {
-      villageExists.value = true;
-    } else {
-      villageExists.value = false;
+    try {
+      final villages = await villageStorageService.getAllVillagesForProject(
+        projectId: projectId.value,
+      );
+      if (villages.isNotEmpty) {
+        villageExists.value = true;
+        Get.snackbar('success'.tr, 'village_data_loaded'.tr);
+      } else {
+        villageExists.value = false;
+        Get.snackbar('info'.tr, 'no_villages_found'.tr);
+      }
+    } catch (e) {
+      Get.snackbar('error'.tr,
+          'error_checking_villages'.trParams({'error': e.toString()}));
     }
   }
 }

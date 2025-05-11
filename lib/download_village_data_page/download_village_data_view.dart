@@ -15,8 +15,8 @@ class DownloadVillageDataView extends StatelessWidget {
     final sessionManager = SessionManager();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Download Village Data",
+        title: Text(
+          "download_village_data".tr,
           style: TextStyle(
             color: AppColors.white,
           ),
@@ -101,7 +101,7 @@ class DownloadVillageDataView extends StatelessWidget {
                   minimumSize: Size(double.infinity, 50),
                 ),
                 child: Text(
-                  "Download",
+                  "download_button".tr,
                   style: TextStyle(
                       color: AppColors.white, fontWeight: FontWeight.bold),
                 ),
@@ -124,19 +124,19 @@ class DownloadVillageDataView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hi ${controller.userData?.username}!!",
+              "greeting".trParams({'s': controller.userData?.username ?? ''}),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             _buildProjectDetailRow(
-              'Office Id',
+              'office_id'.tr,
               controller.officeName,
             ),
             const SizedBox(height: 10),
             _buildProjectDetailRow(
-              'Project Name',
+              'project_name'.tr,
               controller.projectTitle,
             ),
           ],
@@ -182,7 +182,7 @@ class DownloadVillageDataView extends StatelessWidget {
         : [
             Center(
               child: Text(
-                'No Interview Type List Exist',
+                'no_interview_type_list'.tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
@@ -191,7 +191,7 @@ class DownloadVillageDataView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Interview Type",
+          "interview_type".tr,
           style: TextStyle(color: AppColors.gray),
         ),
         Wrap(
@@ -228,7 +228,7 @@ class DownloadVillageDataView extends StatelessWidget {
         : [
             Center(
               child: Text(
-                'No village List Exist',
+                'no_village_list'.tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
@@ -238,7 +238,7 @@ class DownloadVillageDataView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Village's",
+          "villages".tr,
           style: TextStyle(color: AppColors.gray),
         ),
         Wrap(

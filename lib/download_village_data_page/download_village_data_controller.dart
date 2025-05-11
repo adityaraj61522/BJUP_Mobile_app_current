@@ -76,12 +76,12 @@ class DownloadVillageDataController extends GetxController {
     String projectId = selectedProject.value;
 
     if (projectId.isEmpty || projectId.isEmpty) {
-      errorText.value = "Project Not Selected".tr;
+      errorText.value = "project_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (anamitorId.isEmpty || anamitorId.isEmpty) {
-      errorText.value = "Animator Not Selected".tr;
+      errorText.value = "animator_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
@@ -124,8 +124,7 @@ class DownloadVillageDataController extends GetxController {
           await _sessionManager.checkSession();
         } else {
           errorText.value = data['message'] ?? "something_went_wrong".tr;
-
-          handleErrorReported(error: errorText.value);
+          handleErrorReported(error: "invalid_response".tr);
           await _sessionManager.logout();
         }
       } else {
@@ -134,7 +133,8 @@ class DownloadVillageDataController extends GetxController {
       }
     } catch (e) {
       print('Login error: $e');
-      handleErrorReported(error: "something_went_wrong".tr);
+      handleErrorReported(
+          error: "error_fetching_villages".trParams({'error': e.toString()}));
       await _sessionManager.logout();
     } finally {
       isLoading.value = false;
@@ -158,12 +158,12 @@ class DownloadVillageDataController extends GetxController {
     String villageId = selectedVillageList.join(',').toString();
 
     if (projectsId.isEmpty) {
-      errorText.value = "Project Not Selected".tr;
+      errorText.value = "project_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
     if (partnerId.isEmpty) {
-      errorText.value = "Partner Not Selected".tr;
+      errorText.value = "partner_not_selected".tr;
       handleErrorReported(error: errorText.value);
       return;
     }
@@ -252,19 +252,19 @@ class DownloadVillageDataController extends GetxController {
           }
 
           Get.snackbar(
-            "Success",
-            'Data saved successfully!!'.tr,
+            "success".tr,
+            "data_saved".tr,
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: AppColors.primary1,
             colorText: AppColors.white,
           );
         } else if (data['response_code'] == 100) {
-          handleErrorReported(error: "Data not available!!".tr);
+          handleErrorReported(error: "data_not_available".tr);
         } else if (data['response_code'] == 300) {
           await _sessionManager.checkSession();
         } else {
           errorText.value = data['message'] ?? "something_went_wrong".tr;
-          handleErrorReported(error: errorText.value);
+          handleErrorReported(error: "invalid_response".tr);
         }
       } else {
         handleErrorReported(error: "something_went_wrong".tr);

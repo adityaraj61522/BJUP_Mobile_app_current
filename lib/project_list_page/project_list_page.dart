@@ -33,8 +33,8 @@ class ProjectMonitoringListView extends StatelessWidget {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: const Text(
-        "Project List",
+      title: Text(
+        "project_list".tr,
         style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
       ),
       backgroundColor: AppColors.primary1,
@@ -42,6 +42,7 @@ class ProjectMonitoringListView extends StatelessWidget {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: AppColors.white),
         onPressed: () => Get.toNamed(AppRoutes.moduleSelection),
+        tooltip: 'back_to_modules'.tr,
       ),
       actions: [
         IconButton(
@@ -68,9 +69,10 @@ class ProjectMonitoringListView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildProjectDetailRow('Project Id', projectItem.projectId),
+              _buildProjectDetailRow('project_id'.tr, projectItem.projectId),
               const SizedBox(height: 10),
-              _buildProjectDetailRow('Project Name', projectItem.projectTitle),
+              _buildProjectDetailRow(
+                  'project_name'.tr, projectItem.projectTitle),
             ],
           ),
         ),
