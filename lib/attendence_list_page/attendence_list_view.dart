@@ -101,7 +101,7 @@ class AttendenceListView extends StatelessWidget {
                 'Punch Out Time', controller.activeOutTime.value)),
           ),
           Expanded(
-            child: Obx(() => _buildPunchButton(context)),
+            child: _buildPunchButton(context),
           ),
         ],
       ),
@@ -133,37 +133,46 @@ class AttendenceListView extends StatelessWidget {
   }
 
   Widget _buildPunchButton(BuildContext context) {
-    return InkWell(
-      onTap: () => _showBottomSheet(context),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: const Color.fromARGB(62, 255, 255, 255),
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              controller.isPunchActive.value
-                  ? Icons.logout_outlined
-                  : Icons.login_outlined,
-              color: AppColors.white,
-              size: 40,
-            ),
-            const Spacer(),
-            Text(
-              controller.isPunchActive.value ? 'punch_out'.tr : 'punch_in'.tr,
-              style: const TextStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.w700,
+    return Obx(() {
+      final bool isEnabled = controller.isPunchButtonEnabled();
+      return InkWell(
+        onTap: isEnabled ? () => _showBottomSheet(context) : null,
+        child: Opacity(
+          opacity: isEnabled ? 1.0 : 0.5,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: const Color.fromARGB(62, 255, 255, 255),
               ),
-            )
-          ],
+              borderRadius: BorderRadius.circular(20),
+              color: isEnabled ? null : Colors.grey,
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  controller.isPunchActive.value
+                      ? Icons.logout_outlined
+                      : Icons.login_outlined,
+                  color: AppColors.white,
+                  size: 40,
+                ),
+                const Spacer(),
+                Text(
+                  controller.isPunchActive.value
+                      ? 'punch_out'.tr
+                      : 'punch_in'.tr,
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void _showBottomSheet(BuildContext context) {

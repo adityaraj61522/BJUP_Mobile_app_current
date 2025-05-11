@@ -53,7 +53,7 @@ class AttendenceListController extends GetxController {
     userData = await sessionManager.getUserData();
     await loadAttendanceData();
     await getCurrentLocation();
-
+    resetPunchStatusForNewDay();
     // Initialize time and date to current
     resetDateTimeSelectors();
   }
@@ -241,6 +241,17 @@ class AttendenceListController extends GetxController {
 
   // Function to mark attendance
   Future<void> saveattendence({required BuildContext context}) async {
+    if (!isPunchButtonEnabled()) {
+      Get.snackbar(
+          "Not Allowed",
+          isPunchActive.value
+              ? "You have already punched out today"
+              : "You have already punched in today",
+          backgroundColor: AppColors.red,
+          colorText: AppColors.white);
+      return;
+    }
+
     if (isMarkingAttendance.value) {
       Get.snackbar("Processing", "processing_attendance".tr);
       return;
@@ -521,5 +532,59 @@ class AttendenceListController extends GetxController {
     super.onReady();
     // Check for day change when app starts
     checkAndHandleDayChange();
+  }
+
+  // Check if user has already punched in today
+  bool hasAlreadyPunchedInToday() {
+    final today = DateTime.now();
+    return attendanceDataList.any((record) {
+      if (record.inDateTime == null) return false;
+      final recordDate = DateTime.parse(record.inDateTime!);
+      return recordDate.year == today.year &&
+          recordDate.month == today.month &&
+          recordDate.day == today.day;
+    });
+  }
+
+  // Check if user has already punched out today
+  bool hasAlreadyPunchedOutToday() {
+    final today = DateTime.now();
+    return attendanceDataList.any((record) {
+      if (record.outDateTime == null) return false;
+      final recordDate = DateTime.parse(record.outDateTime!);
+      return recordDate.year == today.year &&
+          recordDate.month == today.month &&
+          recordDate.day == today.day &&
+          record.punchedOut == true;
+    });
+  }
+
+  // Check if punch button should be enabled
+  bool isPunchButtonEnabled() {
+    if (isPunchActive.value) {
+      // If active punch-in exists, only allow punch-out if not already done today
+      return !hasAlreadyPunchedOutToday();
+    } else {
+      // Only allow punch-in if not already done today
+      return !hasAlreadyPunchedInToday();
+    }
+  }
+
+  void resetPunchStatusForNewDay() {
+    final now = DateTime.now();
+    final lastPunchIn = activeAttendanceRecord.value?.inDateTime != null
+        ? DateTime.parse(activeAttendanceRecord.value!.inDateTime!)
+        : null;
+
+    if (lastPunchIn != null &&
+        (lastPunchIn.year != now.year ||
+            lastPunchIn.month != now.month ||
+            lastPunchIn.day != now.day)) {
+      // Reset punch status for new day
+      isPunchActive.value = false;
+      activeAttendanceRecord.value = null;
+      activeInTime.value = '--';
+      activeOutTime.value = '--';
+    }
   }
 }
