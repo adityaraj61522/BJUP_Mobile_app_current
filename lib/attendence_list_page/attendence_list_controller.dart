@@ -45,6 +45,7 @@ class AttendenceListController extends GetxController {
   final attendanceCardList = <Widget>[].obs;
 
   final ApiService apiService = ApiService();
+  final isImageCaptured = false.obs;
 
   @override
   void onInit() async {
@@ -249,7 +250,10 @@ class AttendenceListController extends GetxController {
     if (capturedImage.value == null) {
       Get.snackbar("Error", "capture_image".tr,
           backgroundColor: AppColors.red, colorText: AppColors.white);
+      isImageCaptured.value = true;
       return;
+    } else {
+      isImageCaptured.value = false;
     }
 
     isMarkingAttendance.value = true;
@@ -350,8 +354,6 @@ class AttendenceListController extends GetxController {
 
         // Reset time and date selectors to current time
         resetDateTimeSelectors();
-
-        Navigator.pop(context);
       }
     } catch (e) {
       Get.snackbar("Error", "failed_mark_attendance".tr);

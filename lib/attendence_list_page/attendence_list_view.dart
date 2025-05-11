@@ -183,6 +183,22 @@ class AttendenceListView extends StatelessWidget {
               const SizedBox(height: 20),
               _buildLocationRadioButtons(),
               const Center(child: ImagePickerWidget()),
+              Obx(() {
+                if (controller.isImageCaptured.value) {
+                  return Center(
+                    child: Text(
+                      "capture_image".tr,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.red,
+                      ),
+                    ),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              }),
               const SizedBox(height: 9),
               _buildBottomSheetButtons(context),
             ],
@@ -200,9 +216,11 @@ class AttendenceListView extends StatelessWidget {
   Widget _buildDatePickerRow(BuildContext context) {
     return Row(
       children: [
-        Text(
-          'date'.tr,
-          style: TextStyle(fontWeight: FontWeight.w700),
+        Expanded(
+          child: Text(
+            'date'.tr,
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
         ),
         Expanded(
           child: Obx(() => Text(
@@ -253,8 +271,10 @@ class AttendenceListView extends StatelessWidget {
   Widget _buildLocationPickerRow() {
     return Row(
       children: [
-        Text('current_location'.tr,
-            style: TextStyle(fontWeight: FontWeight.w700)),
+        Expanded(
+          child: Text('current_location'.tr,
+              style: TextStyle(fontWeight: FontWeight.w700)),
+        ),
         Expanded(
           child: Obx(() => Text(
                 controller.currentLocation.value,
