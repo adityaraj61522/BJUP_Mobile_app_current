@@ -5,6 +5,7 @@ import 'package:bjup_application/common/response_models/get_village_details_resp
 import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/response_models/add_beneficery_request/add_beneficery_request.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -319,6 +320,14 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: AppColors.primary1,
             colorText: AppColors.white,
+          );
+
+          Get.toNamed(
+            AppRoutes.projectActionList,
+            arguments: {
+              "projectId": selectedProject.value,
+              "projectTitle": projectTitle,
+            },
           );
         } else if (data['response_code'] == 100) {
           handleErrorReported(error: "something_went_wrong".tr);

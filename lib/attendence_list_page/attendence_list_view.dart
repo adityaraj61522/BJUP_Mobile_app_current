@@ -319,7 +319,10 @@ class AttendenceListView extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary2,
           ),
-          onPressed: () => controller.saveattendence(context: context),
+          onPressed: () {
+            controller.saveattendence(context: context);
+            Get.back();
+          },
           child: Obx(() => Text(
                 controller.isPunchActive.isTrue
                     ? "punch_out".tr

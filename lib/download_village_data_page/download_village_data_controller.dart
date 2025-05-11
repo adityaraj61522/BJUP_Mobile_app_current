@@ -8,6 +8,7 @@ import 'package:bjup_application/common/hive_storage_controllers/cbo_list_storag
 import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
 import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
@@ -257,6 +258,13 @@ class DownloadVillageDataController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: AppColors.primary1,
             colorText: AppColors.white,
+          );
+          Get.toNamed(
+            AppRoutes.projectActionList,
+            arguments: {
+              "projectId": selectedProject.value,
+              "projectTitle": projectTitle,
+            },
           );
         } else if (data['response_code'] == 100) {
           handleErrorReported(error: "data_not_available".tr);

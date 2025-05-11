@@ -8,6 +8,7 @@ import 'package:bjup_application/common/hive_storage_controllers/village_list_st
 import 'package:bjup_application/common/response_models/get_question_set_response/get_question_set_response.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
@@ -299,6 +300,13 @@ class DownloadQuestionSetController extends GetxController {
           // await _sessionManager.saveProjectList(projects: userData.projects);
           errorText.value = '';
           // Get.offAllNamed('/moduleSelection');
+          Get.toNamed(
+            AppRoutes.projectActionList,
+            arguments: {
+              "projectId": selectedProject.value,
+              "projectTitle": projectTitle,
+            },
+          );
         } else if (data['response_code'] == 100) {
           handleErrorReported(error: "data_not_available".tr);
         } else if (data['response_code'] == 300) {

@@ -350,6 +350,8 @@ class AttendenceListController extends GetxController {
 
         // Reset time and date selectors to current time
         resetDateTimeSelectors();
+
+        Navigator.pop(context);
       }
     } catch (e) {
       Get.snackbar("Error", "failed_mark_attendance".tr);
