@@ -9,7 +9,8 @@ import 'package:get/get.dart';
 class StartMonitoringView extends StatelessWidget {
   StartMonitoringView({super.key});
 
-  final controller = Get.put(StartMonitoringController(), permanent: false);
+  final controller = Get.put(StartMonitoringController(),
+      permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -305,6 +306,7 @@ class StartMonitoringView extends StatelessWidget {
                   .firstWhere((element) =>
                       element.id == controller.selectedQuestionSet.value)
                   .title,
+              beneficeryName: controller.getBeneficiaryOrCBOName(),
             );
           }
           return const SizedBox.shrink();

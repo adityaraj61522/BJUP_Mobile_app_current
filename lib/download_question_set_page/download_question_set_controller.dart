@@ -268,13 +268,13 @@ class DownloadQuestionSetController extends GetxController {
                   projectId: selectedProject.value)
               .then((value) => {
                     print("Question Form Data saved successfully!!"),
-                    Get.snackbar(
-                      "success".tr,
-                      "question_form_saved".tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.primary1,
-                      colorText: AppColors.white,
-                    ),
+                    // Get.snackbar(
+                    //   "success".tr,
+                    //   "question_form_saved".tr,
+                    //   snackPosition: SnackPosition.BOTTOM,
+                    //   backgroundColor: AppColors.primary1,
+                    //   colorText: AppColors.white,
+                    // ),
                   });
 
           // await downloadedStorageManager.saveQuestionSetData(

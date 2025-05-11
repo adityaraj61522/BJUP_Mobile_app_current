@@ -11,7 +11,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
-import 'dart:convert';
 
 // Define model classes for village details response
 
@@ -293,7 +292,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         "idtype": request.idtype.toString(),
         "projectid": request.projectid.toString(),
         "partnerid": request.partnerid.toString(),
-        "beneficeryName": request.beneficeryName.toString(),
+        "benificiary_name": request.beneficeryName.toString(),
       });
 
       var response = await apiService.post(
@@ -309,7 +308,6 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
 
       if (response != null) {
         var data = response.data;
-        data = jsonDecode(response.data.toString());
 
         if (data['response_code'] == 200) {
           errorText.value = '';

@@ -224,7 +224,7 @@ const Map<String, String> hi = {
   'village_label': 'गांव:',
   'beneficiary_label': 'लाभार्थी:',
   'cbo_label': 'CBO:',
-  'hi_user': 'नमस्ते {username}!!',
+  'hi_user': 'नमस्ते @username !!',
   'office_id_label': 'कार्यालय आईडी',
   'project_name_label': 'परियोजना का नाम',
   'project_name_prefix': 'परियोजना नाम:',

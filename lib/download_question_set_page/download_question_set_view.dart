@@ -8,7 +8,8 @@ import 'package:get/get.dart';
 class DownloadQuestionSetView extends StatelessWidget {
   DownloadQuestionSetView({super.key});
 
-  final controller = Get.put(DownloadQuestionSetController());
+  final controller = Get.put(DownloadQuestionSetController(),
+      permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
 
   @override
   Widget build(BuildContext context) {

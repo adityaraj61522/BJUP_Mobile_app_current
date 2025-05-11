@@ -260,7 +260,7 @@ const Map<String, String> en = {
   'village_label': 'Village:',
   'beneficiary_label': 'Beneficiary:',
   'cbo_label': 'CBO:',
-  'hi_user': 'Hi {username}!!',
+  'hi_user': 'Hi @username !!',
   'office_id_label': 'Office Id',
   'project_name_label': 'Project Name',
   'project_name_prefix': 'Project name:',

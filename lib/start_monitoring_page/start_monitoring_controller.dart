@@ -241,4 +241,39 @@ class StartMonitoringController extends GetxController {
     }
     update();
   }
+
+  // Add these functions to your StartMonitoringController class
+  String getBeneficiaryOrCBOName() {
+    try {
+      // If lists are empty, return early
+      if (beneficiaryOrCBOList.isEmpty || selectedBeneficiary.value.isEmpty) {
+        return 'Not Selected';
+      }
+
+      // Find the selected item
+      final selectedItem = beneficiaryOrCBOList.firstWhere(
+        (element) {
+          if (element is BeneficiaryData) {
+            return element.beneficiaryId == selectedBeneficiary.value;
+          } else if (element is CBOData) {
+            return element.cboid == selectedBeneficiary.value;
+          }
+          return false;
+        },
+        orElse: () => null,
+      );
+
+      // Return appropriate name based on type
+      if (selectedItem is BeneficiaryData) {
+        return selectedItem.beneficiaryName ?? 'Unknown Beneficiary';
+      } else if (selectedItem is CBOData) {
+        return selectedItem.cboname;
+      }
+
+      return 'Not Found';
+    } catch (e) {
+      print('Error getting beneficiary/CBO name: $e');
+      return 'Error: Unable to retrieve name';
+    }
+  }
 }

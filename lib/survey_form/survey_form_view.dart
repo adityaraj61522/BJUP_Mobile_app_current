@@ -23,6 +23,7 @@ import 'package:uuid/uuid.dart';
 class SurveyPage extends StatefulWidget {
   final List<FormQuestionData> formQuestions;
   final String beneficeryId;
+  final String beneficeryName;
   final String userId;
   final String questionSetId;
   final String projectId;
@@ -32,6 +33,7 @@ class SurveyPage extends StatefulWidget {
     super.key,
     required this.formQuestions,
     required this.beneficeryId,
+    required this.beneficeryName,
     required this.userId,
     required this.questionSetId,
     required this.projectId,
@@ -250,6 +252,7 @@ class _SurveyPageState extends State<SurveyPage> {
         'surveyId': "1",
         'questionSetId': widget.questionSetId,
         'beneficiaryId': widget.beneficeryId,
+        'beneficeryName': widget.beneficeryName,
         'questionSetName': widget.questionSetName,
         'isSynced': false,
         'projectId': widget.projectId,
@@ -284,11 +287,6 @@ class _SurveyPageState extends State<SurveyPage> {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  String _getDisplayPath(String? fullPath) {
-    if (fullPath == null || fullPath.isEmpty) return 'no_file_selected'.tr;
-    return 'file_selected'.tr;
   }
 
   Widget _wrapWithValidation(String questionId, Widget child) {
@@ -803,7 +801,25 @@ class _SurveyPageState extends State<SurveyPage> {
 
   Widget _buildFileUploadField(FormQuestionData question, bool hasError) {
     final String? currentPath = _answers[question.questionId] as String?;
-    final String displayPath = _getDisplayPath(currentPath);
+    final Widget displayPath = currentPath == null || currentPath.isEmpty
+        ? Text(
+            'no_file_selected'.tr,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: Colors.grey[600]),
+          )
+        : Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 16),
+                SizedBox(width: 4),
+                Text('file_selected'.tr,
+                    style: TextStyle(color: Colors.green[700])),
+              ],
+            ),
+          );
+
+    // _getDisplayPath(currentPath);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -867,13 +883,7 @@ class _SurveyPageState extends State<SurveyPage> {
               label: Text('pick_file'.tr),
             ),
             const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                displayPath,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            ),
+            Expanded(child: displayPath),
           ],
         ),
       ],

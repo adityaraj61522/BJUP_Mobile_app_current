@@ -8,8 +8,8 @@ import 'package:get/get.dart';
 class SyncSurveyView extends StatelessWidget {
   SyncSurveyView({super.key});
 
-  final SyncSurveyController controller =
-      Get.put(SyncSurveyController(), permanent: false);
+  final SyncSurveyController controller = Get.put(SyncSurveyController(),
+      permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +229,7 @@ class SyncSurveyView extends StatelessWidget {
           // Handle item based on its type
           if (item is Map) {
             final questionSetName = _safeGetString(item, 'questionSetName');
-            final beneficiaryId = _safeGetString(item, 'beneficiaryId');
+            final beneficiaryId = _safeGetString(item, 'beneficeryName');
 
             widgets.add(_buildSurveySyncTile(
               questionSetName: questionSetName,
@@ -378,7 +378,7 @@ class SyncSurveyView extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: Text(
-                  'Beneficiary Id:',
+                  'Beneficiary Name:',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               ),

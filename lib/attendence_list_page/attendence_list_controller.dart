@@ -109,8 +109,13 @@ class AttendenceListController extends GetxController {
       updateAttendanceCardList();
     } catch (e) {
       print("Error loading attendance data: $e");
-      Get.snackbar("Error",
-          "error_loading_attendance".trParams({'error': e.toString()}));
+      Get.snackbar(
+        "Error",
+        "error_loading_attendance".trParams({'error': e.toString()}),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
     }
   }
 
@@ -181,19 +186,37 @@ class AttendenceListController extends GetxController {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        Get.snackbar("Location Error", "enable_location".tr);
+        Get.snackbar(
+          "Location Error",
+          "enable_location".tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.red,
+          colorText: AppColors.white,
+        );
         return;
       }
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          Get.snackbar("Permission Denied", "location_permission_required".tr);
+          Get.snackbar(
+            "Permission Denied",
+            "location_permission_required".tr,
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: AppColors.red,
+            colorText: AppColors.white,
+          );
           return;
         }
       }
       if (permission == LocationPermission.deniedForever) {
-        Get.snackbar("Permission Denied", "location_permanent_denied".tr);
+        Get.snackbar(
+          "Permission Denied",
+          "location_permanent_denied".tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.red,
+          colorText: AppColors.white,
+        );
         return;
       }
       Position position = await Geolocator.getCurrentPosition(
@@ -205,14 +228,37 @@ class AttendenceListController extends GetxController {
       await getAddressFromCoordinates(
           latitude: position.latitude, longitude: position.longitude);
     } on TimeoutException {
-      Get.snackbar("Timeout Error", "timeout_error".tr);
+      Get.snackbar(
+        "Timeout Error",
+        "timeout_error".tr,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
     } on PermissionDeniedException {
-      Get.snackbar("Permission Error", "location_denied".tr);
+      Get.snackbar(
+        "Permission Error",
+        "location_denied".tr,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
     } on LocationServiceDisabledException {
-      Get.snackbar("Service Disabled", "location_service_off".tr);
+      Get.snackbar(
+        "Service Disabled",
+        "location_service_off".tr,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
     } catch (e) {
-      Get.snackbar("Unexpected Error",
-          "unexpected_error".trParams({'error': e.toString()}));
+      Get.snackbar(
+        "Unexpected Error",
+        "unexpected_error".trParams({'error': e.toString()}),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
     }
   }
 
@@ -253,14 +299,25 @@ class AttendenceListController extends GetxController {
     }
 
     if (isMarkingAttendance.value) {
-      Get.snackbar("Processing", "processing_attendance".tr);
+      Get.snackbar(
+        "Processing",
+        "processing_attendance".tr,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
       return;
     }
 
     // Check if an image is captured
     if (capturedImage.value == null) {
-      Get.snackbar("Error", "capture_image".tr,
-          backgroundColor: AppColors.red, colorText: AppColors.white);
+      Get.snackbar(
+        "Error",
+        "capture_image".tr,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
       isImageCaptured.value = true;
       return;
     } else {
@@ -367,7 +424,13 @@ class AttendenceListController extends GetxController {
         resetDateTimeSelectors();
       }
     } catch (e) {
-      Get.snackbar("Error", "failed_mark_attendance".tr);
+      Get.snackbar(
+        "Error",
+        "failed_mark_attendance".tr,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
     } finally {
       isMarkingAttendance.value = false;
     }
@@ -399,7 +462,13 @@ class AttendenceListController extends GetxController {
           ));
         } catch (e) {
           print('Error creating multipart file: $e');
-          Get.snackbar("File Error", "file_error".tr);
+          Get.snackbar(
+            "File Error",
+            "file_error".tr,
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: AppColors.red,
+            colorText: AppColors.white,
+          );
           return false;
         }
       }
@@ -408,7 +477,13 @@ class AttendenceListController extends GetxController {
 
       if (response != null && response.statusCode == 200) {
         print('Attendance marked successfully: ${response.data}');
-        Get.snackbar("Success", "attendance_marked".tr);
+        Get.snackbar(
+          "Success",
+          "attendance_marked".tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.red,
+          colorText: AppColors.white,
+        );
         return true;
       } else {
         print(
@@ -421,7 +496,13 @@ class AttendenceListController extends GetxController {
         } else if (response?.data != null) {
           errorMessage = 'Failed to mark attendance: ${response!.data}';
         }
-        Get.snackbar("Error", errorMessage);
+        Get.snackbar(
+          "Error",
+          errorMessage,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.red,
+          colorText: AppColors.white,
+        );
         return false;
       }
     } on DioException catch (e) {
@@ -436,12 +517,23 @@ class AttendenceListController extends GetxController {
       } else if (e.message != null) {
         errorMessage = 'Network error: ${e.message}';
       }
-      Get.snackbar("Network Error", errorMessage);
+      Get.snackbar(
+        "Network Error",
+        errorMessage,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
       return false;
     } catch (e) {
       print('Unexpected error marking attendance: $e');
-      Get.snackbar("Unexpected Error",
-          "unexpected_error".trParams({'error': e.toString()}));
+      Get.snackbar(
+        "Unexpected Error",
+        "unexpected_error".trParams({'error': e.toString()}),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.red,
+        colorText: AppColors.white,
+      );
       return false;
     }
   }
@@ -519,7 +611,13 @@ class AttendenceListController extends GetxController {
           // Update UI
           updateAttendanceCardList();
 
-          Get.snackbar("Auto Punch-Out", "auto_punch_out".tr);
+          Get.snackbar(
+            "Auto Punch-Out",
+            "auto_punch_out".tr,
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: AppColors.red,
+            colorText: AppColors.white,
+          );
         }
       } catch (e) {
         print("Error during auto punch-out: $e");
