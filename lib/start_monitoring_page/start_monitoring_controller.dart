@@ -43,7 +43,7 @@ class StartMonitoringController extends GetxController {
   // Non-reactive variables
   String projectId = '';
   String projectTitle = '';
-  String officeName = '';
+  final officeName = ''.obs;
   UserLoginResponse? userData;
 
   // Lists
@@ -53,6 +53,25 @@ class StartMonitoringController extends GetxController {
   final selectedQuestionFormSet = <FormQuestionData>[].obs;
   final beneficiaryOrCBOList =
       <dynamic>[].obs; // This will hold either BeneficiaryData or CBOData
+
+  @override
+  void onInit() {
+    print('Controller initialized with new instance');
+    super.onInit();
+    final args = Get.arguments;
+    print(args);
+    selectedProject.value = args['projectId'];
+    projectTitle = args['projectTitle'];
+    _initializeUserData();
+  }
+
+  Future<void> _initializeUserData() async {
+    userData = await sessionManager.getUserData();
+    officeName.value = userData!.office.officeTitle;
+    selectedOfficeId.value = userData!.office.id;
+    selectedAnamitorId.value = userData!.userId;
+    print(officeName);
+  }
 
   // Error handling function
   Future<void> _handleError(String message) async {
@@ -64,22 +83,6 @@ class StartMonitoringController extends GetxController {
       backgroundColor: AppColors.red,
       colorText: AppColors.white,
     );
-  }
-
-  @override
-  void onInit() async {
-    super.onInit();
-    final args = Get.arguments;
-    if (args == null) {
-      _handleError('arguments_null'.tr);
-      return; // Important: Stop execution if arguments are missing
-    }
-    selectedProject.value = args['projectId'] ?? '';
-    projectTitle = args['projectTitle'] ?? '';
-    userData = await sessionManager.getUserData();
-    officeName = userData!.office.officeTitle;
-    selectedOfficeId.value = userData?.office.id ?? '';
-    selectedAnamitorId.value = userData?.userId ?? '';
   }
 
   void onExistingInterviewClicked() async {
@@ -275,5 +278,22 @@ class StartMonitoringController extends GetxController {
       print('Error getting beneficiary/CBO name: $e');
       return 'Error: Unable to retrieve name';
     }
+  }
+
+  @override
+  void onClose() {
+    print('Controller instance disposed');
+    // Clear all observers and states
+    selectedProject.close();
+    selectedAnamitorId.close();
+    selectedOfficeId.close();
+    selectedInterviewId.close();
+    selectedVillage.close();
+    selectedQuestionSet.close();
+    selectedBeneficiary.close();
+    errorText.close();
+    isLoading.close();
+    showSelector.close();
+    super.onClose();
   }
 }

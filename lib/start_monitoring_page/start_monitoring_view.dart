@@ -9,8 +9,14 @@ import 'package:get/get.dart';
 class StartMonitoringView extends StatelessWidget {
   StartMonitoringView({super.key});
 
-  final controller = Get.put(StartMonitoringController(),
-      permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
+  // Generate a unique tag each time the view is created
+  final String uniqueTag = DateTime.now().microsecondsSinceEpoch.toString();
+
+  late final controller = Get.put(
+    StartMonitoringController(),
+    permanent: false,
+    tag: uniqueTag,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +228,7 @@ class StartMonitoringView extends StatelessWidget {
                   return DropdownMenuItem(
                     value: item.beneficiaryId,
                     child: Text(
-                      item.beneficiaryName ?? 'No Name',
+                      "${item.beneficiaryName ?? ''} (${item.guardian ?? ''})",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -334,10 +340,12 @@ class StartMonitoringView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            _buildProjectDetailRow(
-              'office_id_label'.tr,
-              controller.officeName,
-            ),
+            Obx(() {
+              return _buildProjectDetailRow(
+                'office_id_label'.tr,
+                controller.officeName.value,
+              );
+            }),
             const SizedBox(height: 10),
             _buildProjectDetailRow(
               'project_name_label'.tr,
@@ -365,39 +373,6 @@ class StartMonitoringView extends StatelessWidget {
             value,
             style: const TextStyle(fontWeight: FontWeight.w700),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildProjectDetails() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              "project_name_prefix".tr,
-              style: TextStyle(color: AppColors.gray),
-            ),
-            Text(
-              controller.projectTitle,
-              style: TextStyle(
-                  color: AppColors.black, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Text(
-              "office_name_prefix".tr,
-              style: TextStyle(color: AppColors.gray),
-            ),
-            Text(
-              controller.officeName,
-              style: TextStyle(
-                  color: AppColors.black, fontWeight: FontWeight.bold),
-            ),
-          ],
         ),
       ],
     );

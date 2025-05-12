@@ -11,10 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AttendenceListView extends StatelessWidget {
-  final AttendenceListController controller = Get.put(
-      AttendenceListController(),
-      permanent: false,
-      tag: DateTime.now().millisecondsSinceEpoch.toString());
+  final AttendenceListController controller =
+      Get.put(AttendenceListController());
   final sessionManager = SessionManager();
 
   AttendenceListView({super.key});
