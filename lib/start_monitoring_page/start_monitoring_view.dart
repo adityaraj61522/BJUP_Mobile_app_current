@@ -228,7 +228,7 @@ class StartMonitoringView extends StatelessWidget {
                   return DropdownMenuItem(
                     value: item.beneficiaryId,
                     child: Text(
-                      "${item.beneficiaryName ?? ''} (${item.guardian ?? ''})",
+                      "${item.beneficiaryName ?? ''} (${item.guardian})",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
