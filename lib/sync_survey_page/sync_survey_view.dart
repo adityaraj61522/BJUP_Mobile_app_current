@@ -91,8 +91,8 @@ class SyncSurveyView extends StatelessWidget {
             onPressed: () => controller.selectedSyncedSurveys.value = false,
             style: ElevatedButton.styleFrom(
               backgroundColor: controller.selectedSyncedSurveys.value
-                  ? AppColors.white
-                  : AppColors.primary1,
+                  ? AppColors.primary1
+                  : AppColors.white,
               minimumSize: Size(double.infinity, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(0),
@@ -106,8 +106,8 @@ class SyncSurveyView extends StatelessWidget {
               'Locally Saved (${controller.notSynkedSurveyData.isEmpty ? 0 : controller.notSynkedSurveyData.length})',
               style: TextStyle(
                 color: controller.selectedSyncedSurveys.value
-                    ? AppColors.primary1
-                    : AppColors.white,
+                    ? AppColors.white
+                    : AppColors.primary1,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -118,8 +118,8 @@ class SyncSurveyView extends StatelessWidget {
             onPressed: () => controller.selectedSyncedSurveys.value = true,
             style: ElevatedButton.styleFrom(
               backgroundColor: controller.selectedSyncedSurveys.value
-                  ? AppColors.primary1
-                  : AppColors.white,
+                  ? AppColors.white
+                  : AppColors.primary1,
               minimumSize: Size(double.infinity, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(0),
@@ -133,8 +133,8 @@ class SyncSurveyView extends StatelessWidget {
               'Synced Surveys (${controller.synkedSurveyData.isEmpty ? 0 : controller.synkedSurveyData.length})',
               style: TextStyle(
                 color: controller.selectedSyncedSurveys.value
-                    ? AppColors.white
-                    : AppColors.primary1,
+                    ? AppColors.primary1
+                    : AppColors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -404,7 +404,7 @@ class SyncSurveyView extends StatelessWidget {
                     : Icons.cloud_upload,
                 color: controller.selectedSyncedSurveys.value
                     ? Colors.green
-                    : AppColors.primary1,
+                    : AppColors.red,
                 size: 18,
               ),
               SizedBox(width: 5),
@@ -415,7 +415,7 @@ class SyncSurveyView extends StatelessWidget {
                 style: TextStyle(
                   color: controller.selectedSyncedSurveys.value
                       ? Colors.green
-                      : AppColors.primary1,
+                      : AppColors.red,
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
                 ),

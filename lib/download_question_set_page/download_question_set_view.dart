@@ -82,11 +82,8 @@ class DownloadQuestionSetView extends StatelessWidget {
                         _buildProjectMonitoringCard(),
                         Divider(),
                         buildLanguageSelector(),
-                        Obx(() => Text(controller.selectedLanguage.value)),
                         buildReportTypeSelector(),
-                        Obx(() => Text(controller.selectedReportType.value)),
                         buildQuestionSetSelector(),
-                        Obx(() => Text(controller.selectedQuestionSet.value)),
                         SizedBox(height: 200),
                       ],
                     );
@@ -126,13 +123,13 @@ class DownloadQuestionSetView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "greeting".trParams({'s': controller.userData?.username ?? ''}),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // Text(
+            //   "greeting".trParams({'s': controller.userData?.username ?? ''}),
+            //   style: TextStyle(
+            //     fontSize: 18,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
             const SizedBox(height: 10),
             _buildProjectDetailRow(
               'office_id'.tr,

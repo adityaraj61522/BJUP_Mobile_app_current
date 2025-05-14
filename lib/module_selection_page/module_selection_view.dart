@@ -5,10 +5,12 @@ import 'package:bjup_application/module_selection_page/module_selection_view_con
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ModuleSelectionView extends GetView<ModuleSelectionController> {
-  final sessionManager = SessionManager();
-
+class ModuleSelectionView extends StatelessWidget {
   ModuleSelectionView({super.key});
+
+  final controller = Get.put(ModuleSelectionController(),
+      permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
+  final sessionManager = SessionManager();
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +19,20 @@ class ModuleSelectionView extends GetView<ModuleSelectionController> {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildLogoAndLanguageSwitcher(),
+            Text(
+              "greeting".trParams({'s': controller.userData?.username ?? ''}),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

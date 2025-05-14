@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:bjup_application/survey_form/survey_form_enum.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -363,7 +364,58 @@ class _SurveyPageState extends State<SurveyPage> {
         );
         break;
       case QuestionType.numbericTextField:
-      case QuestionType.mobileField:
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hasError ? Colors.red : Colors.black,
+                ),
+                children: [
+                  TextSpan(text: question.questionText),
+                  if (question.mandatory)
+                    TextSpan(
+                      text: '*',
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              initialValue: _answers[question.questionId] as String?,
+              decoration: InputDecoration(
+                hintText: 'enter_your_answer'.tr,
+                border: inputBorder,
+                enabledBorder: inputBorder,
+                focusedBorder: inputBorder,
+                errorBorder: errorBorder,
+                focusedErrorBorder: errorBorder,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              keyboardType:
+                  question.questionTypeEnum == QuestionType.numbericTextField
+                      ? TextInputType.number
+                      : question.questionTypeEnum == QuestionType.mobileField
+                          ? TextInputType.phone
+                          : question.questionTypeEnum == QuestionType.urlField
+                              ? TextInputType.url
+                              : TextInputType.text,
+              onChanged: (value) {
+                _answers[question.questionId] = value;
+                _validateField(question.questionId);
+              },
+            ),
+          ],
+        );
+        break;
       case QuestionType.textField:
       case QuestionType.urlField:
         questionWidget = Column(
@@ -399,6 +451,60 @@ class _SurveyPageState extends State<SurveyPage> {
                 errorBorder: errorBorder,
                 focusedErrorBorder: errorBorder,
               ),
+              keyboardType:
+                  question.questionTypeEnum == QuestionType.numbericTextField
+                      ? TextInputType.number
+                      : question.questionTypeEnum == QuestionType.mobileField
+                          ? TextInputType.phone
+                          : question.questionTypeEnum == QuestionType.urlField
+                              ? TextInputType.url
+                              : TextInputType.text,
+              onChanged: (value) {
+                _answers[question.questionId] = value;
+                _validateField(question.questionId);
+              },
+            ),
+          ],
+        );
+        break;
+      case QuestionType.mobileField:
+        questionWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: hasError ? Colors.red : Colors.black,
+                ),
+                children: [
+                  TextSpan(text: question.questionText),
+                  if (question.mandatory)
+                    TextSpan(
+                      text: '*',
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              initialValue: _answers[question.questionId] as String?,
+              decoration: InputDecoration(
+                hintText: 'enter_your_answer'.tr,
+                border: inputBorder,
+                enabledBorder: inputBorder,
+                focusedBorder: inputBorder,
+                errorBorder: errorBorder,
+                focusedErrorBorder: errorBorder,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(10),
+              ],
               keyboardType:
                   question.questionTypeEnum == QuestionType.numbericTextField
                       ? TextInputType.number

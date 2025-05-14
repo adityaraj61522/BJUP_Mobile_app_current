@@ -331,14 +331,14 @@ class StartMonitoringView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "hi_user"
-                  .trParams({'username': controller.userData?.username ?? ''}),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // Text(
+            //   "hi_user"
+            //       .trParams({'username': controller.userData?.username ?? ''}),
+            //   style: TextStyle(
+            //     fontSize: 18,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
             const SizedBox(height: 10),
             Obx(() {
               return _buildProjectDetailRow(

@@ -19,8 +19,8 @@ class LoginScreen extends GetView<LoginController> {
       ),
       body: Stack(
         children: [
-          _buildBackgroundImage(
-              "lib/assets/images/village_img.png", Alignment.bottomCenter),
+          // _buildBackgroundImage(
+          //     "lib/assets/images/village_img.png", Alignment.bottomCenter),
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -136,9 +136,9 @@ class LoginScreen extends GetView<LoginController> {
         Text(
           'log_in'.tr,
           style: const TextStyle(
-            fontSize: 28,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: AppColors.black,
+            color: AppColors.gray,
           ),
         ),
         const SizedBox(height: 30),

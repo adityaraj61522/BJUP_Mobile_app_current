@@ -82,9 +82,7 @@ class DownloadVillageDataView extends StatelessWidget {
                         _buildProjectMonitoringCard(),
                         Divider(),
                         buildInterviewTypeSelector(),
-                        Obx(() => Text(controller.selectedInterviewType.value)),
                         buildVillageSelector(),
-                        Obx(() => Text(controller.selectedVillage.value)),
                         SizedBox(height: 200),
                       ],
                     );
@@ -124,13 +122,13 @@ class DownloadVillageDataView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "greeting".trParams({'s': controller.userData?.username ?? ''}),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // Text(
+            //   "greeting".trParams({'s': controller.userData?.username ?? ''}),
+            //   style: TextStyle(
+            //     fontSize: 18,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
             _buildProjectDetailRow(
               'office_id'.tr,
               controller.officeName,

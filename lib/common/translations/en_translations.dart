@@ -1,5 +1,5 @@
 const Map<String, String> en = {
-  'log_in': 'Log In',
+  'log_in': 'Welcome to BJUP (Bhartiya Jan Utthan Parishad)',
   'username': 'Username',
   'password': 'Password',
   'login': 'Log in',
@@ -205,7 +205,8 @@ const Map<String, String> en = {
   // Download Village Data Controller related translations
   'partner_not_selected': 'Partner Not Selected',
   'data_saved': 'Data saved successfully!!',
-  'session_expired': 'Session expired. Please login again.',
+  'session_expired': 'You have been Logged Out!!',
+  'please_login_again': 'Please login again.',
   'error_saving_data': 'Error saving data: {error}',
   'error_fetching_villages': 'Error fetching villages: {error}',
   'invalid_response': 'Invalid response from server',

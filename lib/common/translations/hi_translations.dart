@@ -1,5 +1,5 @@
 const Map<String, String> hi = {
-  'log_in': 'लॉग इन करें',
+  'log_in': 'BJUP (भारतीय जन उत्थान परिषद) में आपका स्वागत है |',
   'username': 'उपयोगकर्ता नाम',
   'password': 'पासवर्ड',
   'login': 'लॉग इन',
@@ -179,7 +179,8 @@ const Map<String, String> hi = {
   'success': 'सफलता',
   'partner_not_selected': 'पार्टनर चयनित नहीं किया गया',
   'data_saved': 'डेटा सफलतापूर्वक सहेजा गया!!',
-  'session_expired': 'सत्र समाप्त हो गया। कृपया पुनः लॉगिन करें।',
+  'session_expired': 'आप लॉग आउट हो गए हैं!!',
+  'please_login_again': 'कृपया फिर से लॉग इन करें।',
   'error_saving_data': 'डेटा सहेजने में त्रुटि: {error}',
   'error_fetching_villages': 'गांव प्राप्त करने में त्रुटि: {error}',
   'invalid_response': 'सर्वर से अमान्य प्रतिक्रिया',
