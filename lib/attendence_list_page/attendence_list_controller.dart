@@ -47,6 +47,8 @@ class AttendenceListController extends GetxController {
   final ApiService apiService = ApiService();
   final isImageCaptured = false.obs;
 
+  final isLoading = false.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -472,9 +474,10 @@ class AttendenceListController extends GetxController {
           return false;
         }
       }
-
+      isLoading.value = true;
       var response = await apiService.post("/markAttendance.php", formData);
 
+      isLoading.value = false;
       if (response != null && response.statusCode == 200) {
         print('Attendance marked successfully: ${response.data}');
         Get.snackbar(
@@ -526,6 +529,7 @@ class AttendenceListController extends GetxController {
       );
       return false;
     } catch (e) {
+      isLoading.value = false;
       print('Unexpected error marking attendance: $e');
       Get.snackbar(
         "Unexpected Error",

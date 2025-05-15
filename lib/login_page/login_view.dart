@@ -44,20 +44,20 @@ class LoginScreen extends GetView<LoginController> {
     );
   }
 
-  Widget _buildBackgroundImage(String imagePath, Alignment alignment) {
-    return Positioned.fill(
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.fitWidth,
-            alignment: alignment,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildBackgroundImage(String imagePath, Alignment alignment) {
+  //   return Positioned.fill(
+  //     child: Container(
+  //       padding: const EdgeInsets.all(10),
+  //       decoration: BoxDecoration(
+  //         image: DecorationImage(
+  //           image: AssetImage(imagePath),
+  //           fit: BoxFit.fitWidth,
+  //           alignment: alignment,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildLogoAndLanguageSwitcher() {
     return Row(

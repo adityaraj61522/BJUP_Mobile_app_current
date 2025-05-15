@@ -257,7 +257,7 @@ class _SurveyPageState extends State<SurveyPage> {
         'questionSetName': widget.questionSetName,
         'isSynced': false,
         'projectId': widget.projectId,
-        'timestamp': DateTime.now().toIso8601String(),
+        'timestamp': DateTime.now().toIso8601String()
       };
 
       await surveyStorageService.saveSurveyFormData(

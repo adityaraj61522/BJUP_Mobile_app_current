@@ -15,11 +15,13 @@ class BeneficiaryRequest {
   String socialgroup;
   String disability;
   String category;
+  String relegion;
   String idname;
   String idtype;
   String projectid;
   String partnerid;
   String beneficeryName;
+  String categoryOther;
 
   BeneficiaryRequest({
     required this.villagecode,
@@ -36,11 +38,13 @@ class BeneficiaryRequest {
     required this.socialgroup,
     required this.disability,
     required this.category,
+    required this.relegion,
     required this.idname,
     required this.idtype,
     required this.projectid,
     required this.partnerid,
     required this.beneficeryName,
+    required this.categoryOther,
   });
 
   // To convert the Dart object to JSON
@@ -60,11 +64,13 @@ class BeneficiaryRequest {
       'socialgroup': socialgroup,
       'disability': disability,
       'category': category,
+      'relegion': relegion,
       'idname': idname,
       'idtype': idtype,
       'projectid': projectid,
       'partnerid': partnerid,
       'beneficeryName': beneficeryName,
+      'categoryOther': categoryOther,
     };
   }
 
@@ -85,11 +91,13 @@ class BeneficiaryRequest {
       socialgroup: json['socialgroup'],
       disability: json['disability'],
       category: json['category'],
+      relegion: json['relegion'],
       idname: json['idname'],
       idtype: json['idtype'],
       projectid: json['projectid'],
       partnerid: json['partnerid'],
       beneficeryName: json['beneficeryName'],
+      categoryOther: json['categoryOther'],
     );
   }
 

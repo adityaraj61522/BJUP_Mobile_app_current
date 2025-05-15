@@ -47,11 +47,14 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   final TextEditingController _beneficiaryNameController =
       TextEditingController();
   final TextEditingController _guardianController = TextEditingController();
+  final TextEditingController _otherCatagoryController =
+      TextEditingController();
   String? _beneficiaryGender;
   final TextEditingController _ageController = TextEditingController();
   bool? _disability;
   String? _socialGroup;
   String? _category;
+  String? _relegion;
   final TextEditingController _idTypeController = TextEditingController();
   final TextEditingController _idNameController = TextEditingController();
 
@@ -65,22 +68,37 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   final List<String> _socialGroupOptions = [
     'SC',
     'ST',
-    'BC / OBC',
+    'OBC',
     'General',
-    'Other'
+    'Other',
+    'Do not Know',
+    'Minority',
+    'Nomadic Tribes',
   ];
   final List<String> _categoryOptions = [
-    'Pregnant Women',
-    'Lactating Women',
-    'Widow / Single Women',
-    'PWDs benefitted',
-    'Women Headed Family',
-    'Economically backward family (Rs 50000 or less annual income)',
-    'A family where members are migrant workers',
-    'Others'
+    'Children',
+    'CNCP',
+    'Youth',
+    'Elderly',
+    'Women',
+    'Farmers',
+    'SAM/MAM',
+    'Economically Backward Family',
+    'Pregnant/Lactating Mother',
+    'Others (Specify)',
   ];
   List<String> genderTypeList = ['Male', 'Female', 'Others'];
   List<String> disabilityTypeList = ['Yes', 'No'];
+  final List<String> _relegionOptions = [
+    'Hindus',
+    'Muslims',
+    'Sikhs',
+    'Buddhists',
+    'Christians',
+    'Jains',
+    'Others',
+    'Do not want to specify',
+  ];
 
   final VillageStorageService villageStorageService = VillageStorageService();
   final villageList = <VillagesList>[].obs;
@@ -207,11 +225,15 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         category: _category!.isNotEmpty
             ? (_categoryOptions.indexOf(_category!) + 1).toString()
             : '',
+        relegion: _relegion!.isNotEmpty
+            ? (_relegionOptions.indexOf(_relegion!) + 1).toString()
+            : '',
         idname: _idNameController.text,
         idtype: _idTypeController.text,
         projectid: selectedProject.value,
         partnerid: selectedOfficeId.value,
         beneficeryName: _beneficiaryNameController.text,
+        categoryOther: _otherCatagoryController.text,
       );
       try {
         await submitBeneficery(request: request);
@@ -286,13 +308,15 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         "sex": request.sex.toString(),
         "age": request.age.toString(),
         "socialgroup": request.socialgroup.toString(),
-        "disability": request.disability.toString(),
+        "disability": "2",
         "category": request.category.toString(),
         "idname": request.idname.toString(),
         "idtype": request.idtype.toString(),
         "projectid": request.projectid.toString(),
         "partnerid": request.partnerid.toString(),
         "benificiary_name": request.beneficeryName.toString(),
+        "relegion": request.relegion.toString(),
+        "category_other": request.categoryOther.toString(),
       });
 
       var response = await apiService.post(
@@ -675,40 +699,65 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           ),
                           SizedBox(height: 16.0),
 
-                          // Disability
-                          Text('disability'.tr),
-                          Row(
-                            children: <Widget>[
-                              Radio<bool>(
-                                value: true,
-                                groupValue: _disability,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    _disability = value;
-                                  });
-                                },
-                              ),
-                              Text('yes'.tr),
-                              SizedBox(width: 16.0),
-                              Radio<bool>(
-                                value: false,
-                                groupValue: _disability,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    _disability = value;
-                                  });
-                                },
-                              ),
-                              Text('no'.tr),
-                            ],
-                          ),
-                          if (submitTriggered.value && _disability == null)
-                            Text(
-                              'please_enter_disability_status'.tr,
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          SizedBox(height: 16.0),
+                          // // Disability
+                          // Text('disability'.tr),
+                          // Row(
+                          //   children: <Widget>[
+                          //     Radio<bool>(
+                          //       value: true,
+                          //       groupValue: _disability,
+                          //       onChanged: (bool? value) {
+                          //         setState(() {
+                          //           _disability = value;
+                          //         });
+                          //       },
+                          //     ),
+                          //     Text('yes'.tr),
+                          //     SizedBox(width: 16.0),
+                          //     Radio<bool>(
+                          //       value: false,
+                          //       groupValue: _disability,
+                          //       onChanged: (bool? value) {
+                          //         setState(() {
+                          //           _disability = value;
+                          //         });
+                          //       },
+                          //     ),
+                          //     Text('no'.tr),
+                          //   ],
+                          // ),
+                          // if (submitTriggered.value && _disability == null)
+                          //   Text(
+                          //     'please_enter_disability_status'.tr,
+                          //     style: TextStyle(color: Colors.red),
+                          //   ),
 
+                          DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              labelText: 'select_religion'.tr,
+                              border: OutlineInputBorder(),
+                            ),
+                            value: _relegion,
+                            items: _relegionOptions.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _relegion = newValue;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'please_select_social_group'.tr;
+                              }
+                              return null;
+                            },
+                          ),
+
+                          SizedBox(height: 16.0),
                           // Select Social Group
                           DropdownButtonFormField<String>(
                             decoration: InputDecoration(
@@ -767,6 +816,28 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                             },
                           ),
                           SizedBox(height: 16.0),
+
+                          if (_category != null &&
+                              _category!.isNotEmpty &&
+                              _category! == 'Others (Specify)') ...[
+                            TextFormField(
+                              controller: _otherCatagoryController,
+                              decoration: InputDecoration(
+                                labelText: 'other_catagory'.tr,
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (_category != null &&
+                                    _category!.isNotEmpty &&
+                                    _category! == 'Others (Specify)' &&
+                                    (value == null || value.isEmpty)) {
+                                  return 'please_select_other_catagory'.tr;
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 16.0),
+                          ],
 
                           // Id type
                           TextFormField(

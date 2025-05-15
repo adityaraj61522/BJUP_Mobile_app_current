@@ -25,25 +25,38 @@ class AttendenceListView extends StatelessWidget {
       body: Stack(
         children: [
           // _buildBackgroundImage("lib/assets/images/bjup_logo_zoom.png"),
+
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                _buildPunchInOutCard(context),
-                const SizedBox(height: 15),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Obx(() => Column(
-                          // ignore: invalid_use_of_protected_member
-                          children: controller.attendanceCardList.value,
-                        )),
-                  ),
-                ),
-              ],
-            ),
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return buildView(context: context);
+              }
+            }),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildView({required BuildContext context}) {
+    return Column(
+      children: [
+        _buildPunchInOutCard(context),
+        const SizedBox(height: 15),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Obx(() => Column(
+                  // ignore: invalid_use_of_protected_member
+                  children: controller.attendanceCardList.value,
+                )),
+          ),
+        ),
+      ],
     );
   }
 
