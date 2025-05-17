@@ -23,6 +23,9 @@ class GetBeneficeryResponse extends HiveObject {
   @HiveField(5)
   final List<CBOData> others;
 
+  @HiveField(6)
+  final List<CBOData> institute;
+
   GetBeneficeryResponse({
     required this.responseCode,
     required this.message,
@@ -30,6 +33,7 @@ class GetBeneficeryResponse extends HiveObject {
     required this.beneficiaries,
     required this.cbo,
     required this.others,
+    required this.institute,
   });
 
   factory GetBeneficeryResponse.fromMap(Map<String, dynamic> json) {
@@ -52,6 +56,10 @@ class GetBeneficeryResponse extends HiveObject {
               ?.map((o) => CBOData.fromMap(o))
               .toList() ??
           [],
+      institute: (json['data']['institute'] as List?)
+              ?.map((o) => CBOData.fromMap(o))
+              .toList() ??
+          [],
     );
   }
 
@@ -63,6 +71,7 @@ class GetBeneficeryResponse extends HiveObject {
           'benificiary': beneficiaries.map((b) => b.toJson()).toList(),
           'cbo': cbo.map((c) => c.toJson()).toList(),
           'others': others.map((o) => o.toJson()).toList(),
+          'institute': institute.map((o) => o.toJson()).toList(),
         },
       };
 }

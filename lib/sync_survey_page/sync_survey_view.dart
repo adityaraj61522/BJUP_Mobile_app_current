@@ -37,14 +37,35 @@ class SyncSurveyView extends StatelessWidget {
             onPressed: _navigateToProjectAction,
           ),
           actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.logout,
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'logout') {
+                  sessionManager.forceLogout();
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    value: 'logout',
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.logout,
+                          color: AppColors.black,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text('logout'.tr),
+                      ],
+                    ),
+                  ),
+                ];
+              },
+              icon: Icon(
+                Icons.more_vert,
                 color: AppColors.white,
               ),
-              onPressed: () {
-                _showLogoutConfirmationDialog(context, sessionManager);
-              },
             ),
           ],
         ),
@@ -472,39 +493,39 @@ class SyncSurveyView extends StatelessWidget {
     );
   }
 
-  void _showLogoutConfirmationDialog(
-      BuildContext context, SessionManager sessionManager) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm Logout'),
-          content: Text('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: AppColors.primary1),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                sessionManager.forceLogout();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary1,
-              ),
-              child: Text(
-                'Logout',
-                style: TextStyle(color: AppColors.white),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showLogoutConfirmationDialog(
+  //     BuildContext context, SessionManager sessionManager) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Confirm Logout'),
+  //         content: Text('Are you sure you want to logout?'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: Text(
+  //               'Cancel',
+  //               style: TextStyle(color: AppColors.primary1),
+  //             ),
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //               sessionManager.forceLogout();
+  //             },
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: AppColors.primary1,
+  //             ),
+  //             child: Text(
+  //               'Logout',
+  //               style: TextStyle(color: AppColors.white),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

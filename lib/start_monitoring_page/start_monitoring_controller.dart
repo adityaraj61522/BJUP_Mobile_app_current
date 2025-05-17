@@ -187,6 +187,7 @@ class StartMonitoringController extends GetxController {
 
         case "46":
         case "47":
+        case "50":
           // Handle CBO data and Others data (both are CBOData type)
           final cboListData = await cboStorageService.getCBOData(
             interviewId: interviewId,

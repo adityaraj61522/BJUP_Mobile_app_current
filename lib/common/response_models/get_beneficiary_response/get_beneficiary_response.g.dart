@@ -20,6 +20,7 @@ class GetBeneficeryResponseAdapter extends TypeAdapter<GetBeneficeryResponse> {
       beneficiaries: (fields[3] as List).cast<BeneficiaryData>(),
       cbo: (fields[4] as List).cast<CBOData>(),
       others: (fields[5] as List).cast<CBOData>(),
+      institute: (fields[6] as List).cast<CBOData>(),
     );
   }
 
@@ -38,7 +39,9 @@ class GetBeneficeryResponseAdapter extends TypeAdapter<GetBeneficeryResponse> {
       ..writeByte(4)
       ..write(obj.cbo)
       ..writeByte(5)
-      ..write(obj.others);
+      ..write(obj.others)
+      ..writeByte(6)
+      ..write(obj.institute);
   }
 }
 

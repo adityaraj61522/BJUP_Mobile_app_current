@@ -39,14 +39,35 @@ class StartMonitoringView extends StatelessWidget {
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.logout,
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'logout') {
+                sessionManager.forceLogout();
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.logout,
+                        color: AppColors.black,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('logout'.tr),
+                    ],
+                  ),
+                ),
+              ];
+            },
+            icon: Icon(
+              Icons.more_vert,
               color: AppColors.white,
             ),
-            onPressed: () => {
-              sessionManager.forceLogout(),
-            },
           ),
         ],
       ),

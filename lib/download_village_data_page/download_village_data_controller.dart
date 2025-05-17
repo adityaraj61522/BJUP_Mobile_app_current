@@ -249,6 +249,18 @@ class DownloadVillageDataController extends GetxController {
                 villageId: village.villageId,
                 projectId: selectedProject.value,
               );
+            } else if (interviewTypeId == "50") {
+              // Handle others data (which is also CBOData type)
+              List<CBOData> othersDataList = beneficieryCBOData.others
+                  .where((element) => element.villagecode == village.villageId)
+                  .toList();
+
+              await cboStorageService.addCBOData(
+                cboDataList: othersDataList,
+                interviewId: interviewTypeId,
+                villageId: village.villageId,
+                projectId: selectedProject.value,
+              );
             }
           }
 
