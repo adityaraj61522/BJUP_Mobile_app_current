@@ -251,7 +251,7 @@ class DownloadVillageDataController extends GetxController {
               );
             } else if (interviewTypeId == "50") {
               // Handle others data (which is also CBOData type)
-              List<CBOData> othersDataList = beneficieryCBOData.others
+              List<CBOData> othersDataList = beneficieryCBOData.institute
                   .where((element) => element.villagecode == village.villageId)
                   .toList();
 

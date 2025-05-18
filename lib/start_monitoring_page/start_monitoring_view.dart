@@ -242,7 +242,9 @@ class StartMonitoringView extends StatelessWidget {
               : controller.selectedBeneficiary.value,
           hint: Text(controller.selectedInterviewId.value == "44"
               ? 'select_beneficiary'.tr
-              : 'select_cbo'.tr),
+              : controller.selectedInterviewId.value == "50"
+                  ? 'select_institute'.tr
+                  : 'select_cbo'.tr),
           items: controller.beneficiaryOrCBOList
               .map((item) {
                 if (item is BeneficiaryData) {
@@ -313,7 +315,9 @@ class StartMonitoringView extends StatelessWidget {
               child: Text(
                 controller.selectedInterviewId.value == "44"
                     ? "beneficiary_label".tr
-                    : "cbo_label".tr,
+                    : controller.selectedInterviewId.value == "50"
+                        ? "institute_label".tr
+                        : "cbo_label".tr,
                 style: TextStyle(color: AppColors.gray),
               ),
             ),
