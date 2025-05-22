@@ -565,7 +565,10 @@ class AttendenceCard extends StatelessWidget {
                   : '--'),
           const SizedBox(height: 10),
           _buildAttendanceDetailRow(
-              'location'.tr, attendanceRecord.inLocationName ?? '--'),
+              'location_in'.tr, attendanceRecord.inLocationName ?? '--'),
+          const SizedBox(height: 10),
+          _buildAttendanceDetailRow(
+              'location_out'.tr, attendanceRecord.outLocationName ?? '--'),
           const SizedBox(height: 10),
           _buildAttendanceDetailRow(
               'status'.tr,

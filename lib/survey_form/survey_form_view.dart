@@ -28,6 +28,7 @@ class SurveyPage extends StatefulWidget {
   final String userId;
   final String questionSetId;
   final String projectId;
+  final String projectName;
   final String questionSetName;
 
   const SurveyPage({
@@ -38,6 +39,7 @@ class SurveyPage extends StatefulWidget {
     required this.userId,
     required this.questionSetId,
     required this.projectId,
+    required this.projectName,
     required this.questionSetName,
   });
 
@@ -274,8 +276,10 @@ class _SurveyPageState extends State<SurveyPage> {
         backgroundColor: AppColors.primary1,
         colorText: AppColors.white,
       );
-      Get.offAllNamed(AppRoutes.projectActionList,
-          arguments: {"projectId": widget.projectId});
+      Get.toNamed(AppRoutes.projectActionList, arguments: {
+        "projectId": widget.projectId,
+        "projectName": widget.projectName,
+      });
     } catch (error) {
       print("Error saving survey locally: $error");
       Get.snackbar(

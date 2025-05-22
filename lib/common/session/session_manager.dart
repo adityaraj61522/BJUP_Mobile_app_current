@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bjup_application/common/hive_storage_controllers/survey_storage.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -108,7 +109,7 @@ class SessionManager {
   Future<void> logout() async {
     await init();
     await _sessionBox?.clear();
-    Get.offAllNamed('/login');
+    Get.offAllNamed(AppRoutes.login);
   }
 
   // Force logout with message
@@ -118,7 +119,7 @@ class SessionManager {
     await surveyStorageService.closeAllSurveyBoxes();
 
     if (Get.currentRoute != '/login') {
-      Get.offAllNamed('/login');
+      Get.offAllNamed(AppRoutes.login);
       Get.snackbar(
         'session_expired'.tr,
         'please_login_again'.tr,

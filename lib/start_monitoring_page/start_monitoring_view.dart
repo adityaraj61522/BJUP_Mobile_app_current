@@ -338,6 +338,7 @@ class StartMonitoringView extends StatelessWidget {
                       element.id == controller.selectedQuestionSet.value)
                   .title,
               beneficeryName: controller.getBeneficiaryOrCBOName(),
+              projectName: controller.projectTitle,
             );
           }
           return const SizedBox.shrink();

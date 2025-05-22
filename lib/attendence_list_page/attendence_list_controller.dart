@@ -222,7 +222,9 @@ class AttendenceListController extends GetxController {
         return;
       }
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        // ignore: deprecated_member_use
+        desiredAccuracy: LocationAccuracy.best,
+        // ignore: deprecated_member_use
         timeLimit: const Duration(seconds: 10),
       );
       selectedLatitude.value = position.latitude;

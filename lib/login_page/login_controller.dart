@@ -1,5 +1,6 @@
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
+import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -67,7 +68,7 @@ class LoginController extends GetxController {
           await _sessionManager.saveUserSession(userData: userData);
           await _sessionManager.saveProjectList(projects: userData.projects);
           errorText.value = '';
-          Get.offAllNamed('/moduleSelection');
+          Get.offAllNamed(AppRoutes.moduleSelection);
         } else if (data['response_code'] == 100) {
           errorText.value = "incorrect_username_password".tr;
           await _sessionManager.logout();
@@ -92,7 +93,7 @@ class LoginController extends GetxController {
 
   void logout() async {
     await _sessionBox.clear();
-    Get.offAllNamed('/login');
+    Get.offAllNamed(AppRoutes.login);
   }
 
   @override
