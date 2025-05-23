@@ -1,6 +1,7 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
+import 'package:bjup_application/common/widgets/version_screen.dart';
 import 'package:bjup_application/module_selection_page/module_selection_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,10 @@ class ModuleSelectionView extends StatelessWidget {
               ),
             ),
             Spacer(),
+            const Center(
+              child: VersionScreen(),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),

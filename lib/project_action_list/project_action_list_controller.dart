@@ -25,12 +25,12 @@ class ProjectMonitoringActionListController extends GetxController {
     print(args);
     projectId = args['projectId'];
     projectTitle = args['projectTitle'];
-    checkVillageData();
-    checkQuestionSetData();
+    await checkVillageData();
+    await checkQuestionSetData();
     // await fetchQuestionSet();
   }
 
-  void checkVillageData() async {
+  Future<void> checkVillageData() async {
     final villages = await villageStorageService.getAllVillagesForProject(
       projectId: projectId,
     );
@@ -41,7 +41,7 @@ class ProjectMonitoringActionListController extends GetxController {
     }
   }
 
-  void checkQuestionSetData() async {
+  Future<void> checkQuestionSetData() async {
     final questionSets =
         await questionSetStorageService.getAllQuestionsForProject(
       projectId: projectId,

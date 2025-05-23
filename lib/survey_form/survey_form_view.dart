@@ -278,7 +278,7 @@ class _SurveyPageState extends State<SurveyPage> {
       );
       Get.toNamed(AppRoutes.projectActionList, arguments: {
         "projectId": widget.projectId,
-        "projectName": widget.projectName,
+        "projectTitle": widget.projectName,
       });
     } catch (error) {
       print("Error saving survey locally: $error");
