@@ -377,7 +377,9 @@ class SyncSurveyController extends GetxController {
             }
           }
           // If not a file upload question or if file processing failed, add to filtered array
-          filteredQuestionsArray.add(question);
+          if (!_isFileUploadType(question['question_type'])) {
+            filteredQuestionsArray.add(question);
+          }
         }
       }
 
