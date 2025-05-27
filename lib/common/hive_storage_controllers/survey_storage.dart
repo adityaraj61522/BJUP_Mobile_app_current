@@ -24,7 +24,7 @@ class SurveyStorageService {
     required Map<String, dynamic> savedSurveyQuestions,
   }) async {
     final String boxKey =
-        'survey_form_data_qs_${questionSetId}_ben_${beneficiaryId}';
+        'survey_form_data_qs_${questionSetId}_ben_${beneficiaryId}_${savedSurveyQuestions['time']}';
     try {
       final projectBox = await _getProjectSurveyBox(projectId: projectId);
       await projectBox.put(boxKey, savedSurveyQuestions);
@@ -95,7 +95,7 @@ class SurveyStorageService {
     required Map<String, dynamic> updatedSurveyQuestions,
   }) async {
     final String boxKey =
-        'survey_form_data_qs_${questionSetId}_ben_$beneficiaryId';
+        'survey_form_data_qs_${questionSetId}_ben_${beneficiaryId}_${updatedSurveyQuestions['time']}';
     try {
       final projectBox = await _getProjectSurveyBox(projectId: projectId);
       if (projectBox.containsKey(boxKey)) {
