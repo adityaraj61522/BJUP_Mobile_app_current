@@ -40,10 +40,10 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
 
   // Form controllers
   final TextEditingController _villageController = TextEditingController();
-  final TextEditingController _houseHoldNameController =
-      TextEditingController();
-  String? _hhGender;
-  final TextEditingController _familyHeadController = TextEditingController();
+  // final TextEditingController _houseHoldNameController =
+  //     TextEditingController();
+  // String? _hhGender;
+  // final TextEditingController _familyHeadController = TextEditingController();
   final TextEditingController _beneficiaryNameController =
       TextEditingController();
   final TextEditingController _guardianController = TextEditingController();
@@ -55,8 +55,8 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   String? _socialGroup;
   String? _category;
   String? _relegion;
-  final TextEditingController _idTypeController = TextEditingController();
-  final TextEditingController _idNameController = TextEditingController();
+  // final TextEditingController _idTypeController = TextEditingController();
+  // final TextEditingController _idNameController = TextEditingController();
 
   // Village details variables
   final panchayat = ''.obs;
@@ -208,11 +208,9 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         blockcode: blockCode.value, // Use the value from API
         districtcode: districtCode.value, // Use the value from API
         statecode: stateCode.value, // Use the value from API
-        hhname: _houseHoldNameController.text,
-        hhgender: _hhGender!.isNotEmpty
-            ? (genderTypeList.indexOf(_hhGender!) + 1).toString()
-            : '',
-        hof: _familyHeadController.text,
+        hhname: '_houseHoldNameController.text',
+        hhgender: '',
+        hof: '_familyHeadController.text',
         guardian: _guardianController.text,
         sex: _beneficiaryGender!.isNotEmpty
             ? (genderTypeList.indexOf(_beneficiaryGender!) + 1).toString()
@@ -228,8 +226,8 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         relegion: _relegion!.isNotEmpty
             ? (_relegionOptions.indexOf(_relegion!) + 1).toString()
             : '',
-        idname: _idNameController.text,
-        idtype: _idTypeController.text,
+        idname: "_idNameController.text",
+        idtype: "_idTypeController.tex",
         projectid: selectedProject.value,
         partnerid: selectedOfficeId.value,
         beneficeryName: _beneficiaryNameController.text,
@@ -301,21 +299,21 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         "blockcode": request.blockcode.toString(),
         "districtcode": request.districtcode.toString(),
         "statecode": request.statecode.toString(),
-        "hhname": request.hhname.toString(),
-        "hhgender": request.hhgender.toString(),
-        "hof": request.hof.toString(),
+        "hhname": 'abc',
+        "hhgender": '1',
+        "hof": 'abc',
         "guardian": request.guardian.toString(),
         "sex": request.sex.toString(),
         "age": request.age.toString(),
         "socialgroup": request.socialgroup.toString(),
         "disability": "2",
         "category": request.category.toString(),
-        "idname": request.idname.toString(),
-        "idtype": request.idtype.toString(),
+        "idname": 'abc',
+        "idtype": 'abc',
         "projectid": request.projectid.toString(),
         "partnerid": request.partnerid.toString(),
         "benificiary_name": request.beneficeryName.toString(),
-        "relegion": request.relegion.toString(),
+        "religion": request.relegion.toString(),
         "category_other": request.categoryOther.toString(),
       });
 
@@ -541,82 +539,82 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           // }),
 
                           // House hold name
-                          TextFormField(
-                            controller: _houseHoldNameController,
-                            decoration: InputDecoration(
-                              labelText: 'household_name'.tr,
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please_enter_household_name'.tr;
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 16.0),
+                          // TextFormField(
+                          //   controller: _houseHoldNameController,
+                          //   decoration: InputDecoration(
+                          //     labelText: 'household_name'.tr,
+                          //     border: OutlineInputBorder(),
+                          //   ),
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'please_enter_household_name'.tr;
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
+                          // SizedBox(height: 16.0),
 
-                          // Rest of the form remains the same...
-                          // Gender (Household)
-                          Text('gender_household'.tr),
-                          Row(
-                            children: <Widget>[
-                              Radio<String>(
-                                value: 'Male',
-                                groupValue: _hhGender,
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    _hhGender = value;
-                                  });
-                                },
-                              ),
-                              Text('male'.tr),
-                              SizedBox(width: 16.0),
-                              Radio<String>(
-                                value: 'Female',
-                                groupValue: _hhGender,
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    _hhGender = value;
-                                  });
-                                },
-                              ),
-                              Text('female'.tr),
-                              SizedBox(width: 16.0),
-                              Radio<String>(
-                                value: 'Other',
-                                groupValue: _hhGender,
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    _hhGender = value;
-                                  });
-                                },
-                              ),
-                              Text('other'.tr),
-                            ],
-                          ),
-                          if (submitTriggered.value && _hhGender == null)
-                            Text(
-                              'please_enter_household_gender'.tr,
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          SizedBox(height: 16.0),
+                          // // Rest of the form remains the same...
+                          // // Gender (Household)
+                          // Text('gender_household'.tr),
+                          // Row(
+                          //   children: <Widget>[
+                          //     Radio<String>(
+                          //       value: 'Male',
+                          //       groupValue: _hhGender,
+                          //       onChanged: (String? value) {
+                          //         setState(() {
+                          //           _hhGender = value;
+                          //         });
+                          //       },
+                          //     ),
+                          //     Text('male'.tr),
+                          //     SizedBox(width: 16.0),
+                          //     Radio<String>(
+                          //       value: 'Female',
+                          //       groupValue: _hhGender,
+                          //       onChanged: (String? value) {
+                          //         setState(() {
+                          //           _hhGender = value;
+                          //         });
+                          //       },
+                          //     ),
+                          //     Text('female'.tr),
+                          //     SizedBox(width: 16.0),
+                          //     Radio<String>(
+                          //       value: 'Other',
+                          //       groupValue: _hhGender,
+                          //       onChanged: (String? value) {
+                          //         setState(() {
+                          //           _hhGender = value;
+                          //         });
+                          //       },
+                          //     ),
+                          //     Text('other'.tr),
+                          //   ],
+                          // ),
+                          // if (submitTriggered.value && _hhGender == null)
+                          //   Text(
+                          //     'please_enter_household_gender'.tr,
+                          //     style: TextStyle(color: Colors.red),
+                          //   ),
+                          // SizedBox(height: 16.0),
 
                           // Family Head
-                          TextFormField(
-                            controller: _familyHeadController,
-                            decoration: InputDecoration(
-                              labelText: 'family_head'.tr,
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please_enter_family_name';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 16.0),
+                          // TextFormField(
+                          //   controller: _familyHeadController,
+                          //   decoration: InputDecoration(
+                          //     labelText: 'family_head'.tr,
+                          //     border: OutlineInputBorder(),
+                          //   ),
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'please_enter_family_name';
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
+                          // SizedBox(height: 16.0),
 
                           // Beneficiary Name
                           TextFormField(
@@ -861,36 +859,36 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                           ],
 
                           // Id type
-                          TextFormField(
-                            controller: _idTypeController,
-                            decoration: InputDecoration(
-                              labelText: 'id_type'.tr,
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please_enter_id_type'.tr;
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 16.0),
+                          // TextFormField(
+                          //   controller: _idTypeController,
+                          //   decoration: InputDecoration(
+                          //     labelText: 'id_type'.tr,
+                          //     border: OutlineInputBorder(),
+                          //   ),
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'please_enter_id_type'.tr;
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
+                          // SizedBox(height: 16.0),
 
                           // ID Name// ID Name
-                          TextFormField(
-                            controller: _idNameController,
-                            decoration: InputDecoration(
-                              labelText: 'id_name'.tr,
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please_enter_id_name'.tr;
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 24.0),
+                          // TextFormField(
+                          //   controller: _idNameController,
+                          //   decoration: InputDecoration(
+                          //     labelText: 'id_name'.tr,
+                          //     border: OutlineInputBorder(),
+                          //   ),
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'please_enter_id_name'.tr;
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
+                          // SizedBox(height: 24.0),
 
                           // Submit Button
                           Container(
