@@ -675,7 +675,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                               Text('female'.tr),
                               SizedBox(width: 16.0),
                               Radio<String>(
-                                value: 'Other',
+                                value: 'Others',
                                 groupValue: _beneficiaryGender,
                                 onChanged: (String? value) {
                                   setState(() {
