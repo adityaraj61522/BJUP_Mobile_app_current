@@ -108,23 +108,25 @@ class StartMonitoringView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 15),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () =>
-                                    controller.onAddBeneficeryClicked(),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary1,
-                                  minimumSize: Size(double.infinity, 50),
-                                ),
-                                child: Text(
-                                  "add_beneficery".tr,
-                                  style: TextStyle(
-                                      color: AppColors.white,
-                                      fontWeight: FontWeight.bold),
+                            if (controller.familyTypeExist.value) ...[
+                              SizedBox(width: 15),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      controller.onAddBeneficeryClicked(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary1,
+                                    minimumSize: Size(double.infinity, 50),
+                                  ),
+                                  child: Text(
+                                    "add_beneficery".tr,
+                                    style: TextStyle(
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                         Divider(),

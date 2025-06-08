@@ -54,8 +54,10 @@ class StartMonitoringController extends GetxController {
   final beneficiaryOrCBOList =
       <dynamic>[].obs; // This will hold either BeneficiaryData or CBOData
 
+  final familyTypeExist = false.obs;
+
   @override
-  void onInit() {
+  void onInit() async {
     print('Controller initialized with new instance');
     super.onInit();
     final args = Get.arguments;
@@ -63,6 +65,9 @@ class StartMonitoringController extends GetxController {
     selectedProject.value = args['projectId'];
     projectTitle = args['projectTitle'];
     _initializeUserData();
+    final villageData = await villageStorageService.getVillageData(
+        interviewId: '44', projectId: selectedProject.value);
+    familyTypeExist.value = villageData.isNotEmpty;
   }
 
   Future<void> _initializeUserData() async {
@@ -181,6 +186,10 @@ class StartMonitoringController extends GetxController {
             projectId: selectedProject.value,
           );
           final seenBeneficiaryIds = <String>{};
+          beneficiaryListData.sort((a, b) => (a.beneficiaryName ?? '')
+              .toLowerCase()
+              .compareTo((b.beneficiaryName ?? '').toLowerCase()));
+
           beneficiaryOrCBOList.addAll(beneficiaryListData
               .where((item) => seenBeneficiaryIds.add(item.beneficiaryId)));
           break;
@@ -195,6 +204,9 @@ class StartMonitoringController extends GetxController {
             projectId: selectedProject.value,
           );
           final seenCBOIds = <String>{};
+          cboListData.sort((a, b) =>
+              (a.cboname).toLowerCase().compareTo((b.cboname).toLowerCase()));
+
           beneficiaryOrCBOList
               .addAll(cboListData.where((item) => seenCBOIds.add(item.cboid)));
           break;
