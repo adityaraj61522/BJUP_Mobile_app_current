@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bjup_application/common/api_service/api_service.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/hive_storage_controllers/beneficery_list_storage.dart';
@@ -68,6 +69,9 @@ class StartMonitoringController extends GetxController {
     final villageData = await villageStorageService.getVillageData(
         interviewId: '44', projectId: selectedProject.value);
     familyTypeExist.value = villageData.isNotEmpty;
+    print('Family Type Exist: ${familyTypeExist.value}');
+    var encoder = new JsonEncoder.withIndent("     ");
+    print('village data: ${encoder.convert(villageData)}');
   }
 
   Future<void> _initializeUserData() async {

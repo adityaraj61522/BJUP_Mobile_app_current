@@ -9,13 +9,10 @@ import 'package:get/get.dart';
 class StartMonitoringView extends StatelessWidget {
   StartMonitoringView({super.key});
 
-  // Generate a unique tag each time the view is created
-  final String uniqueTag = DateTime.now().microsecondsSinceEpoch.toString();
-
-  late final controller = Get.put(
+  final controller = Get.put(
     StartMonitoringController(),
     permanent: false,
-    tag: uniqueTag,
+    tag: DateTime.now().microsecondsSinceEpoch.toString(),
   );
 
   @override
