@@ -5,6 +5,7 @@ import 'package:bjup_application/start_monitoring_page/start_monitoring_Controll
 import 'package:bjup_application/survey_form/survey_form_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 class StartMonitoringView extends StatelessWidget {
   StartMonitoringView({super.key});
@@ -234,44 +235,61 @@ class StartMonitoringView extends StatelessWidget {
 
       return Expanded(
         flex: 2,
-        child: DropdownButton<String>(
-          isExpanded: true,
-          value: controller.selectedBeneficiary.value.isEmpty
+        child: DropdownSearch<String>(
+          popupProps: PopupProps.menu(
+            showSearchBox: true,
+            searchFieldProps: TextFieldProps(
+              decoration: InputDecoration(
+                hintText: 'search'.tr,
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          items: controller.beneficiaryOrCBOList.map((item) {
+            if (item is BeneficiaryData) {
+              return "${item.beneficiaryName ?? ''} (${item.guardian})";
+            } else if (item is CBOData) {
+              return item.cboname;
+            }
+            return "";
+          }).toList(),
+          selectedItem: controller.selectedBeneficiary.value.isEmpty
               ? null
-              : controller.selectedBeneficiary.value,
-          hint: Text(controller.selectedInterviewId.value == "44"
-              ? 'select_beneficiary'.tr
-              : controller.selectedInterviewId.value == "50"
-                  ? 'select_institute'.tr
-                  : 'select_cbo'.tr),
-          items: controller.beneficiaryOrCBOList
-              .map((item) {
-                if (item is BeneficiaryData) {
-                  return DropdownMenuItem(
-                    value: item.beneficiaryId,
-                    child: Text(
-                      "${item.beneficiaryName ?? ''} (${item.guardian})",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  );
-                } else if (item is CBOData) {
-                  return DropdownMenuItem(
-                    value: item.cboid,
-                    child: Text(
-                      item.cboname,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  );
-                }
-                return null;
-              })
-              .whereType<DropdownMenuItem<String>>()
-              .toList(),
-          onChanged: (value) {
-            if (value != null) controller.changeBeneficery(value);
+              : controller.getBeneficiaryOrCBOName(),
+          onChanged: (String? value) {
+            if (value != null) {
+              final selectedItem = controller.beneficiaryOrCBOList.firstWhere(
+                (item) {
+                  if (item is BeneficiaryData) {
+                    return "${item.beneficiaryName ?? ''} (${item.guardian})" ==
+                        value;
+                  } else if (item is CBOData) {
+                    return item.cboname == value;
+                  }
+                  return false;
+                },
+              );
+
+              if (selectedItem is BeneficiaryData) {
+                controller.changeBeneficery(selectedItem.beneficiaryId);
+              } else if (selectedItem is CBOData) {
+                controller.changeBeneficery(selectedItem.cboid);
+              }
+            }
           },
+          dropdownDecoratorProps: DropDownDecoratorProps(
+            dropdownSearchDecoration: InputDecoration(
+              hintText: controller.selectedInterviewId.value == "44"
+                  ? 'select_beneficiary'.tr
+                  : controller.selectedInterviewId.value == "50"
+                      ? 'select_institute'.tr
+                      : 'select_cbo'.tr,
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
         ),
       );
     });
