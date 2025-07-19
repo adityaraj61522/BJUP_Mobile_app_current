@@ -115,7 +115,7 @@ class DownloadVillageDataView extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 onPressed: () => controller.onDownloadQuestionSetClicked(),
-                iconAlignment: IconAlignment.end,
+                // a: IconAlignment.end,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary1,
                   minimumSize: Size(double.infinity, 50),
