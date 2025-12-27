@@ -226,75 +226,114 @@ class DownloadQuestionSetView extends StatelessWidget {
   }
 
   Widget buildReportTypeSelector() {
-    final List<Widget> reportTypeList =
-        controller.reportType != null && controller.reportType!.isNotEmpty
-            ? controller.reportType!
-                .map(
-                  (report) => RadioListTile<String>(
-                    title: Text(report.type),
-                    value: report.id,
-                    groupValue: controller.selectedReportType.value,
-                    onChanged: (value) => controller.changeReportType(value!),
-                  ),
-                )
-                .toList()
-            : [
-                Center(
-                  child: Text(
-                    'no_question_list'.tr,
-                    style: TextStyle(color: AppColors.gray),
-                  ),
-                ),
-              ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "report_type".tr,
-          style: TextStyle(color: AppColors.gray),
+          style: TextStyle(color: AppColors.gray, fontSize: 14),
         ),
-        Wrap(
-          children: [
-            ...reportTypeList,
-          ],
-        )
+        SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.gray.withOpacity(0.5)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: controller.selectedReportType.value.isEmpty
+                  ? null
+                  : controller.selectedReportType.value,
+              hint: Text('select_report_type'.tr),
+              items: controller.reportType != null &&
+                      controller.reportType!.isNotEmpty
+                  ? controller.reportType!
+                      .map(
+                        (report) => DropdownMenuItem<String>(
+                          value: report.id,
+                          child: Text(report.type),
+                        ),
+                      )
+                      .toList()
+                  : [],
+              onChanged: (value) {
+                if (value != null) {
+                  controller.changeReportType(value);
+                }
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 16),
       ],
     );
   }
 
   Widget buildQuestionSetSelector() {
-    final List<Widget> questionSetList =
-        controller.questionSet != null && controller.questionSet!.isNotEmpty
-            ? controller.questionSet!
-                .map(
-                  (set) => RadioListTile<String>(
-                    title: Text(set.title),
-                    value: set.id,
-                    groupValue: controller.selectedQuestionSet.value,
-                    onChanged: (value) => controller.changeQuestionSet(value!),
-                  ),
-                )
-                .toList()
-            : [
-                Center(
-                  child: Text(
-                    'no_question_list'.tr,
-                    style: TextStyle(color: AppColors.gray),
-                  ),
-                ),
-              ];
+    // Filter question sets based on selected report type
+    final filteredQuestionSets = controller.questionSet != null &&
+            controller.questionSet!.isNotEmpty &&
+            controller.selectedReportType.value.isNotEmpty
+        ? controller.questionSet!
+            .where(
+                (set) => set.reportType == controller.selectedReportType.value)
+            .toList()
+        : [];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "question_set".tr,
-          style: TextStyle(color: AppColors.gray),
+          style: TextStyle(color: AppColors.gray, fontSize: 14),
         ),
-        Wrap(
-          children: [
-            ...questionSetList,
-          ],
-        )
+        SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.gray.withOpacity(0.5)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: controller.selectedQuestionSet.value.isEmpty ||
+                      !filteredQuestionSets.any((set) =>
+                          set.id == controller.selectedQuestionSet.value)
+                  ? null
+                  : controller.selectedQuestionSet.value,
+              hint: Text(
+                controller.selectedReportType.value.isEmpty
+                    ? 'select_report_type_first'.tr
+                    : filteredQuestionSets.isEmpty
+                        ? 'no_question_list'.tr
+                        : 'select_question_set'.tr,
+              ),
+              items: filteredQuestionSets.isNotEmpty
+                  ? filteredQuestionSets
+                      .map(
+                        (set) => DropdownMenuItem<String>(
+                          value: set.id,
+                          child: Text(set.title),
+                        ),
+                      )
+                      .toList()
+                  : [],
+              onChanged: controller.selectedReportType.value.isEmpty
+                  ? null
+                  : (value) {
+                      if (value != null) {
+                        controller.changeQuestionSet(value);
+                      }
+                    },
+            ),
+          ),
+        ),
+        SizedBox(height: 16),
       ],
     );
   }

@@ -135,7 +135,8 @@ class SessionManager {
   Future<void> checkSession() async {
     await init();
     // final user = getUser();
-    if (await _sessionBox?.get('isVlaidSession')) {
+    final isValidSession = _sessionBox?.get('isVlaidSession') as bool?;
+    if (isValidSession == true) {
       Get.offNamed('/moduleSelection');
     } else {
       await forceLogout();

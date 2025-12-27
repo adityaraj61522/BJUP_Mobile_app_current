@@ -104,7 +104,10 @@ const Map<String, String> en = {
   'project_name': 'Project Name',
   'language': 'Language',
   'report_type': 'Report Type',
+  'select_report_type': 'Select Report Type',
   'question_set': 'Question Set',
+  'select_question_set': 'Select Question Set',
+  'select_report_type_first': 'Please select report type first',
   'no_question_list': 'No Question List Exist',
   'project_details': 'Project Details',
 
@@ -251,7 +254,6 @@ const Map<String, String> en = {
   'start_monitoring_title': 'Start Monitoring',
   'current_interview': 'Current Interview',
   'add_beneficery': 'Add Beneficiary',
-  'select_question_set': 'Select Question Set',
   'no_question_set_available': 'No Question Set Available',
   'no_villages_available': 'No Villages Available',
   'select_beneficiary': 'Select Beneficiary',
