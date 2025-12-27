@@ -51,6 +51,7 @@ class _SurveyPageState extends State<SurveyPage> {
   List<FormQuestionData> _questions = [];
   final Map<String, dynamic> _answers = {};
   final Map<String, String?> _validationErrors = {};
+  final Map<String, bool> _questionVisibility = {};
   final ImagePicker _picker = ImagePicker();
   final SignatureController _signatureController = SignatureController(
     penStrokeWidth: 3,
@@ -74,7 +75,90 @@ class _SurveyPageState extends State<SurveyPage> {
   void initState() {
     super.initState();
     _questions = widget.formQuestions;
+    _initializeVisibility();
     _signatureController.addListener(_handleSignatureChange);
+  }
+
+  void _initializeVisibility() {
+    for (var question in _questions) {
+      _questionVisibility[question.questionId] = _isQuestionVisible(question);
+    }
+  }
+
+  bool _isQuestionVisible(FormQuestionData question) {
+    // If parent question is "0", it's always visible
+    if (question.parentQuestion == "0") {
+      return true;
+    }
+
+    // Check if parent question exists
+    final parentQuestion = _questions.firstWhereOrNull(
+      (q) => q.questionId == question.parentQuestion,
+    );
+
+    if (parentQuestion == null) {
+      return true; // If parent not found, show the question
+    }
+
+    // First check if parent question itself is visible (for nested dependencies)
+    if (_questionVisibility[parentQuestion.questionId] == false) {
+      return false;
+    }
+
+    // Get parent's answer
+    final parentAnswer = _answers[question.parentQuestion];
+    if (parentAnswer == null) {
+      return false; // Parent not answered yet
+    }
+
+    // Check if the required option is selected
+    final requiredOption = question.parentQuestionOption;
+
+    // Handle different answer types
+    if (parentAnswer is List) {
+      // For checkbox and multi-select fields
+      return parentAnswer.contains(requiredOption);
+    } else if (parentAnswer is String) {
+      // For radio and select fields
+      return parentAnswer == requiredOption;
+    }
+
+    return false;
+  }
+
+  void _updateQuestionVisibility() {
+    setState(() {
+      for (var question in _questions) {
+        final wasVisible = _questionVisibility[question.questionId] ?? true;
+        final isVisible = _isQuestionVisible(question);
+        _questionVisibility[question.questionId] = isVisible;
+
+        // Clear answer if question becomes hidden
+        if (wasVisible && !isVisible) {
+          _clearQuestionAnswer(question);
+        }
+      }
+    });
+  }
+
+  void _clearQuestionAnswer(FormQuestionData question) {
+    _answers.remove(question.questionId);
+    _validationErrors.remove(question.questionId);
+
+    // If this question has children, clear them recursively
+    final childQuestions = _questions.where(
+      (q) => q.parentQuestion == question.questionId,
+    );
+
+    for (var child in childQuestions) {
+      _clearQuestionAnswer(child);
+    }
+  }
+
+  List<FormQuestionData> _getVisibleQuestions() {
+    return _questions.where((q) {
+      return _questionVisibility[q.questionId] ?? true;
+    }).toList();
   }
 
   @override
@@ -163,6 +247,15 @@ class _SurveyPageState extends State<SurveyPage> {
     bool isValid = true;
     String? error;
 
+    // Only validate if question is visible
+    final isVisible = _questionVisibility[questionId] ?? true;
+    if (!isVisible) {
+      setState(() {
+        _validationErrors.remove(questionId);
+      });
+      return true;
+    }
+
     if (question.mandatory) {
       final answer = _answers[questionId];
       if (answer == null ||
@@ -190,7 +283,8 @@ class _SurveyPageState extends State<SurveyPage> {
     });
 
     bool isFormValid = true;
-    for (final question in _questions) {
+    final visibleQuestions = _getVisibleQuestions();
+    for (final question in visibleQuestions) {
       if (!_validateField(question.questionId)) {
         isFormValid = false;
       }
@@ -211,7 +305,8 @@ class _SurveyPageState extends State<SurveyPage> {
     isLoading.value = true;
 
     try {
-      List<Map<String, dynamic>> savedSurveyQuestions = _questions
+      final visibleQuestions = _getVisibleQuestions();
+      List<Map<String, dynamic>> savedSurveyQuestions = visibleQuestions
           .where(
               (question) => question.questionTypeEnum != QuestionType.readOnly)
           .map((question) {
@@ -362,6 +457,7 @@ class _SurveyPageState extends State<SurveyPage> {
               onChanged: (value) {
                 _answers[question.questionId] = value;
                 _validateField(question.questionId);
+                _updateQuestionVisibility();
               },
               maxLines: 3,
             ),
@@ -416,6 +512,7 @@ class _SurveyPageState extends State<SurveyPage> {
               onChanged: (value) {
                 _answers[question.questionId] = value;
                 _validateField(question.questionId);
+                _updateQuestionVisibility();
               },
             ),
           ],
@@ -467,6 +564,7 @@ class _SurveyPageState extends State<SurveyPage> {
               onChanged: (value) {
                 _answers[question.questionId] = value;
                 _validateField(question.questionId);
+                _updateQuestionVisibility();
               },
             ),
           ],
@@ -521,6 +619,7 @@ class _SurveyPageState extends State<SurveyPage> {
               onChanged: (value) {
                 _answers[question.questionId] = value;
                 _validateField(question.questionId);
+                _updateQuestionVisibility();
               },
             ),
           ],
@@ -570,6 +669,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   _answers[question.questionId] = value;
                   _validateField(question.questionId);
                 });
+                _updateQuestionVisibility();
               },
             ),
           ],
@@ -633,6 +733,7 @@ class _SurveyPageState extends State<SurveyPage> {
                   _answers[question.questionId] = value;
                   _validateField(question.questionId);
                 });
+                _updateQuestionVisibility();
               },
               isExpanded: true,
             ),
@@ -705,6 +806,7 @@ class _SurveyPageState extends State<SurveyPage> {
           _answers[question.questionId] = value;
           _validateField(question.questionId);
         });
+        _updateQuestionVisibility();
       },
     );
   }
@@ -757,6 +859,7 @@ class _SurveyPageState extends State<SurveyPage> {
                       }
                       _validateField(question.questionId);
                     });
+                    _updateQuestionVisibility();
                   },
                   controlAffinity: ListTileControlAffinity.leading,
                   dense: true,
@@ -800,6 +903,7 @@ class _SurveyPageState extends State<SurveyPage> {
                       _answers[question.questionId] = value;
                       _validateField(question.questionId);
                     });
+                    _updateQuestionVisibility();
                   },
                   dense: true,
                   contentPadding: EdgeInsets.zero,
@@ -870,6 +974,7 @@ class _SurveyPageState extends State<SurveyPage> {
                     }
                     _validateField(question.questionId);
                   });
+                  _updateQuestionVisibility();
                 },
               );
             }).toList(),
@@ -1303,7 +1408,7 @@ class _SurveyPageState extends State<SurveyPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      ..._questions
+                      ..._getVisibleQuestions()
                           .asMap()
                           .entries
                           .map((entry) =>
