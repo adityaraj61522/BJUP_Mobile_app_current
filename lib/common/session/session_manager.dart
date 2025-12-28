@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:bjup_application/common/hive_storage_controllers/survey_storage.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/routes/routes.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -120,13 +120,11 @@ class SessionManager {
 
     if (Get.currentRoute != '/login') {
       Get.offAllNamed(AppRoutes.login);
-      Get.snackbar(
+      final NotificationController notificationController =
+          Get.find<NotificationController>();
+      notificationController.showError(
         'session_expired'.tr,
         'please_login_again'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
       );
     }
   }

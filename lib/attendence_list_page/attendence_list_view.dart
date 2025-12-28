@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bjup_application/attendence_list_page/attendence_list_controller.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/response_models/attendence_record_model/attendence_record_model.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
@@ -38,6 +39,7 @@ class AttendenceListView extends StatelessWidget {
               }
             }),
           ),
+          NotificationCardsList(controller: controller.notificationController),
         ],
       ),
     );

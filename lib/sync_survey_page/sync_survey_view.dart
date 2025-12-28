@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/sync_survey_page/sync_survey_controller.dart';
@@ -10,6 +11,7 @@ class SyncSurveyView extends StatelessWidget {
 
   final SyncSurveyController controller = Get.put(SyncSurveyController(),
       permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
+  final notificationController = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +100,7 @@ class SyncSurveyView extends StatelessWidget {
                 ],
               ),
             ),
+            NotificationCardsList(controller: notificationController),
           ],
         ),
       ),

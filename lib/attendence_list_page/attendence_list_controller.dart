@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:bjup_application/attendence_list_page/attendence_list_view.dart';
 import 'package:bjup_application/common/api_service/api_service.dart';
-import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/hive_storage_controllers/attendence_list_storage.dart';
 import 'package:bjup_application/common/response_models/attendence_record_model/attendence_record_model.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -17,6 +17,8 @@ import 'package:intl/intl.dart';
 
 class AttendenceListController extends GetxController {
   final SessionManager sessionManager = SessionManager();
+  final NotificationController notificationController =
+      Get.find<NotificationController>();
   AttendenceStorageService attendenceStorageService =
       AttendenceStorageService();
 
@@ -111,12 +113,9 @@ class AttendenceListController extends GetxController {
       updateAttendanceCardList();
     } catch (e) {
       print("Error loading attendance data: $e");
-      Get.snackbar(
+      notificationController.showError(
         "Error",
         "error_loading_attendance".trParams({'error': e.toString()}),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     }
   }
@@ -188,12 +187,9 @@ class AttendenceListController extends GetxController {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        Get.snackbar(
+        notificationController.showError(
           "Location Error",
           "enable_location".tr,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: AppColors.red,
-          colorText: AppColors.white,
         );
         return;
       }
@@ -201,23 +197,17 @@ class AttendenceListController extends GetxController {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          Get.snackbar(
+          notificationController.showError(
             "Permission Denied",
             "location_permission_required".tr,
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: AppColors.red,
-            colorText: AppColors.white,
           );
           return;
         }
       }
       if (permission == LocationPermission.deniedForever) {
-        Get.snackbar(
+        notificationController.showError(
           "Permission Denied",
           "location_permanent_denied".tr,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: AppColors.red,
-          colorText: AppColors.white,
         );
         return;
       }
@@ -232,36 +222,24 @@ class AttendenceListController extends GetxController {
       await getAddressFromCoordinates(
           latitude: position.latitude, longitude: position.longitude);
     } on TimeoutException {
-      Get.snackbar(
+      notificationController.showError(
         "Timeout Error",
         "timeout_error".tr,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     } on PermissionDeniedException {
-      Get.snackbar(
+      notificationController.showError(
         "Permission Error",
         "location_denied".tr,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     } on LocationServiceDisabledException {
-      Get.snackbar(
+      notificationController.showError(
         "Service Disabled",
         "location_service_off".tr,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     } catch (e) {
-      Get.snackbar(
+      notificationController.showError(
         "Unexpected Error",
         "unexpected_error".trParams({'error': e.toString()}),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     }
   }
@@ -292,35 +270,27 @@ class AttendenceListController extends GetxController {
   // Function to mark attendance
   Future<void> saveattendence({required BuildContext context}) async {
     if (!isPunchButtonEnabled()) {
-      Get.snackbar(
+      notificationController.showError(
           "Not Allowed",
           isPunchActive.value
               ? "You have already punched out today"
-              : "You have already punched in today",
-          backgroundColor: AppColors.red,
-          colorText: AppColors.white);
+              : "You have already punched in today");
       return;
     }
 
     if (isMarkingAttendance.value) {
-      Get.snackbar(
+      notificationController.showError(
         "Processing",
         "processing_attendance".tr,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
       return;
     }
 
     // Check if an image is captured
     if (capturedImage.value == null) {
-      Get.snackbar(
+      notificationController.showError(
         "Error",
         "capture_image".tr,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
       isImageCaptured.value = true;
       return;
@@ -428,12 +398,9 @@ class AttendenceListController extends GetxController {
         resetDateTimeSelectors();
       }
     } catch (e) {
-      Get.snackbar(
+      notificationController.showError(
         "Error",
         "failed_mark_attendance".tr,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     } finally {
       isMarkingAttendance.value = false;
@@ -466,12 +433,9 @@ class AttendenceListController extends GetxController {
           ));
         } catch (e) {
           print('Error creating multipart file: $e');
-          Get.snackbar(
+          notificationController.showError(
             "File Error",
             "file_error".tr,
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: AppColors.red,
-            colorText: AppColors.white,
           );
           return false;
         }
@@ -482,12 +446,9 @@ class AttendenceListController extends GetxController {
       isLoading.value = false;
       if (response != null && response.statusCode == 200) {
         print('Attendance marked successfully: ${response.data}');
-        Get.snackbar(
+        notificationController.showSuccess(
           "Success",
           "attendance_marked".tr,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: AppColors.red,
-          colorText: AppColors.white,
         );
         return true;
       } else {
@@ -501,12 +462,9 @@ class AttendenceListController extends GetxController {
         } else if (response?.data != null) {
           errorMessage = 'Failed to mark attendance: ${response!.data}';
         }
-        Get.snackbar(
+        notificationController.showError(
           "Error",
           errorMessage,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: AppColors.red,
-          colorText: AppColors.white,
         );
         return false;
       }
@@ -522,23 +480,17 @@ class AttendenceListController extends GetxController {
       } else if (e.message != null) {
         errorMessage = 'Network error: ${e.message}';
       }
-      Get.snackbar(
+      notificationController.showError(
         "Network Error",
         errorMessage,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
       return false;
     } catch (e) {
       isLoading.value = false;
       print('Unexpected error marking attendance: $e');
-      Get.snackbar(
+      notificationController.showError(
         "Unexpected Error",
         "unexpected_error".trParams({'error': e.toString()}),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
       return false;
     }
@@ -617,12 +569,9 @@ class AttendenceListController extends GetxController {
           // Update UI
           updateAttendanceCardList();
 
-          Get.snackbar(
+          notificationController.showWarning(
             "Auto Punch-Out",
             "auto_punch_out".tr,
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: AppColors.red,
-            colorText: AppColors.white,
           );
         }
       } catch (e) {

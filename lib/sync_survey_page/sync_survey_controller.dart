@@ -1,11 +1,11 @@
 // ignore_for_file: unnecessary_type_check, unnecessary_null_comparison
 
 import 'package:bjup_application/common/api_service/api_service.dart';
-import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/hive_storage_controllers/survey_storage.dart';
 import 'package:bjup_application/common/immage_compressor/immage_compressor.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/survey_form/survey_form_enum.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -16,6 +16,8 @@ import 'dart:io';
 
 class SyncSurveyController extends GetxController {
   final SessionManager sessionManager = SessionManager();
+  final NotificationController notificationController =
+      Get.find<NotificationController>();
   final SurveyStorageService surveyStorageService = SurveyStorageService();
   final ApiService apiService = ApiService();
 
@@ -140,23 +142,17 @@ class SyncSurveyController extends GetxController {
 
   Future<void> onSyncSurveyClicked() async {
     if (notSynkedSurveyData.isEmpty) {
-      Get.snackbar(
+      notificationController.showInfo(
         "Info",
         "No surveys to sync",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.primary1,
-        colorText: AppColors.white,
       );
       return;
     }
 
     if (isLoading.value) {
-      Get.snackbar(
+      notificationController.showInfo(
         "Info",
         "Sync operation is already in progress",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.primary1,
-        colorText: AppColors.white,
       );
       return;
     }
@@ -230,31 +226,19 @@ class SyncSurveyController extends GetxController {
 
   void _showSyncResultMessage(int successCount, int failedCount) {
     if (successCount > 0 && failedCount == 0) {
-      Get.snackbar(
+      notificationController.showSuccess(
         "Success",
         "$successCount ${successCount == 1 ? 'survey' : 'surveys'} synced successfully!",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.primary1,
-        colorText: AppColors.white,
-        duration: Duration(seconds: 3),
       );
     } else if (successCount > 0 && failedCount > 0) {
-      Get.snackbar(
+      notificationController.showWarning(
         "Partial Success",
         "$successCount synced, $failedCount failed",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.orange,
-        colorText: AppColors.white,
-        duration: Duration(seconds: 5),
       );
     } else {
-      Get.snackbar(
+      notificationController.showError(
         "Failed",
         "All sync operations failed. Please try again later.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
-        duration: Duration(seconds: 5),
       );
     }
   }
@@ -466,13 +450,9 @@ class SyncSurveyController extends GetxController {
       print(message);
     }
 
-    Get.snackbar(
+    notificationController.showError(
       "Error",
       message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.red,
-      colorText: AppColors.white,
-      duration: Duration(seconds: 5),
     );
   }
 

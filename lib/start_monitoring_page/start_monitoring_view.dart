@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/response_models/get_beneficiary_response/get_beneficiary_response.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/start_monitoring_page/start_monitoring_Controller.dart';
@@ -15,6 +16,7 @@ class StartMonitoringView extends StatelessWidget {
     permanent: false,
     tag: DateTime.now().microsecondsSinceEpoch.toString(),
   );
+  final notificationController = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +144,7 @@ class StartMonitoringView extends StatelessWidget {
                 },
               ),
             ),
+            NotificationCardsList(controller: notificationController),
           ],
         ),
       ),

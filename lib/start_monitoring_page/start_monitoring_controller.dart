@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bjup_application/common/api_service/api_service.dart';
-import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/hive_storage_controllers/beneficery_list_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/question_form_data_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/question_set_storage.dart';
@@ -19,6 +19,8 @@ import 'package:bjup_application/common/hive_storage_controllers/cbo_list_storag
 class StartMonitoringController extends GetxController {
   // Dependencies (use Get.find for better testability)
   final SessionManager sessionManager = SessionManager();
+  final NotificationController notificationController =
+      Get.find<NotificationController>();
   final VillageStorageService villageStorageService = VillageStorageService();
   final BeneficiaryStorageService beneficiaryStorageService =
       BeneficiaryStorageService();
@@ -85,12 +87,9 @@ class StartMonitoringController extends GetxController {
   // Error handling function
   Future<void> _handleError(String message) async {
     errorText.value = message; // Update errorText
-    Get.snackbar(
+    notificationController.showError(
       'Error', //Consistent title
       message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.red,
-      colorText: AppColors.white,
     );
   }
 

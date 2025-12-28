@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/project_action_list/project_action_list_controller.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
@@ -12,48 +13,54 @@ class ProjectMonitoringActionListView extends StatelessWidget {
       permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
 
   final sessionManager = SessionManager();
+  final notificationController = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: LayoutBuilder(
-        builder: (_, constraints) {
-          return Padding(
-            padding: const EdgeInsets.all(20),
-            child: Wrap(
-              spacing: calculateSpacing(constraints.maxWidth, 150, 2),
-              runSpacing: 20,
-              alignment: WrapAlignment.start,
-              children: [
-                _buildDashboardButton(
-                  icon: Icons.download_for_offline_rounded,
-                  label: "download_village_data_button".tr,
-                  onTap: () => controller.routeToDownloadVillageData(),
-                  tileColor: AppColors.primary1,
+      body: Stack(
+        children: [
+          LayoutBuilder(
+            builder: (_, constraints) {
+              return Padding(
+                padding: const EdgeInsets.all(20),
+                child: Wrap(
+                  spacing: calculateSpacing(constraints.maxWidth, 150, 2),
+                  runSpacing: 20,
+                  alignment: WrapAlignment.start,
+                  children: [
+                    _buildDashboardButton(
+                      icon: Icons.download_for_offline_rounded,
+                      label: "download_village_data_button".tr,
+                      onTap: () => controller.routeToDownloadVillageData(),
+                      tileColor: AppColors.primary1,
+                    ),
+                    _buildDashboardButton(
+                      icon: Icons.question_mark_rounded,
+                      label: "download_question_set_button".tr,
+                      onTap: () => controller.routeToDownloadQuestionSet(),
+                      tileColor: AppColors.primary1,
+                    ),
+                    _buildDashboardButton(
+                      icon: Icons.analytics,
+                      label: "start_monitoring".tr,
+                      tileColor: AppColors.primary1,
+                      onTap: () => controller.routeToStartMonitoring(),
+                    ),
+                    _buildDashboardButton(
+                      icon: Icons.save_as_rounded,
+                      label: "local_saved_surveys".tr,
+                      onTap: () => controller.routeToSyncSurvey(),
+                      tileColor: AppColors.primary1,
+                    ),
+                  ],
                 ),
-                _buildDashboardButton(
-                  icon: Icons.question_mark_rounded,
-                  label: "download_question_set_button".tr,
-                  onTap: () => controller.routeToDownloadQuestionSet(),
-                  tileColor: AppColors.primary1,
-                ),
-                _buildDashboardButton(
-                  icon: Icons.analytics,
-                  label: "start_monitoring".tr,
-                  tileColor: AppColors.primary1,
-                  onTap: () => controller.routeToStartMonitoring(),
-                ),
-                _buildDashboardButton(
-                  icon: Icons.save_as_rounded,
-                  label: "local_saved_surveys".tr,
-                  onTap: () => controller.routeToSyncSurvey(),
-                  tileColor: AppColors.primary1,
-                ),
-              ],
-            ),
-          );
-        },
+              );
+            },
+          ),
+          NotificationCardsList(controller: notificationController),
+        ],
       ),
     );
   }

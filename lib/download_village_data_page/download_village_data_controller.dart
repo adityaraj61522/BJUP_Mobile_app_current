@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
-import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/hive_storage_controllers/beneficery_list_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/cbo_list_storage.dart';
@@ -15,6 +15,8 @@ import 'package:dio/dio.dart';
 
 class DownloadVillageDataController extends GetxController {
   final SessionManager sessionManager = SessionManager();
+  final NotificationController notificationController =
+      Get.find<NotificationController>();
 
   final VillageStorageService villageStorageService = VillageStorageService();
   final BeneficiaryStorageService beneficiaryStorageService =
@@ -264,12 +266,9 @@ class DownloadVillageDataController extends GetxController {
             }
           }
 
-          Get.snackbar(
+          notificationController.showSuccess(
             "success".tr,
             "data_saved".tr,
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.primary1,
-            colorText: AppColors.white,
           );
           Get.toNamed(
             AppRoutes.projectActionList,
@@ -299,11 +298,9 @@ class DownloadVillageDataController extends GetxController {
 }
 
 Future<void> handleErrorReported({required String error}) async {
-  Get.snackbar(
+  final notificationController = Get.find<NotificationController>();
+  notificationController.showError(
     error,
     'something_went_wrong'.tr,
-    snackPosition: SnackPosition.BOTTOM,
-    backgroundColor: AppColors.red,
-    colorText: AppColors.white,
   );
 }

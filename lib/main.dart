@@ -5,6 +5,7 @@ import 'package:bjup_application/common/response_models/get_question_set_respons
 import 'package:bjup_application/common/response_models/get_village_list_response/get_village_list_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/translations/translations_localization.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/login_page/login_controller.dart';
 import 'package:bjup_application/survey_form/survey_form_enum.g.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ void main() async {
   Hive.registerAdapter(AttendanceRecordAdapter());
   Hive.registerAdapter(CBODataAdapter());
   Get.put(LoginController());
+  Get.put(NotificationController());
 
   runApp(MyApp());
 }

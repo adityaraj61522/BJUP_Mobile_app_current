@@ -1,4 +1,4 @@
-import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/hive_storage_controllers/question_set_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
 import 'package:bjup_application/common/routes/routes.dart';
@@ -7,6 +7,8 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
 
 class ProjectMonitoringActionListController extends GetxController {
   final SessionManager sessionManager = SessionManager();
+  final NotificationController notificationController =
+      Get.find<NotificationController>();
 
   final VillageStorageService villageStorageService = VillageStorageService();
   final QuestionSetStorageService questionSetStorageService =
@@ -55,12 +57,9 @@ class ProjectMonitoringActionListController extends GetxController {
 
   void routeToDownloadQuestionSet() async {
     if (villageExists.value == false) {
-      Get.snackbar(
+      notificationController.showWarning(
         "Please Download Villages.",
         'Village Data required'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.orange,
-        colorText: AppColors.white,
       );
       return;
     }
@@ -79,22 +78,16 @@ class ProjectMonitoringActionListController extends GetxController {
 
   void routeToStartMonitoring() async {
     if (villageExists.value == false) {
-      Get.snackbar(
+      notificationController.showWarning(
         "download_villages_first".tr,
         'village_data_required'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.orange,
-        colorText: AppColors.white,
       );
       return;
     }
     if (questionSetsExists.value == false) {
-      Get.snackbar(
+      notificationController.showWarning(
         "download_question_sets".tr,
         'question_set_required'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.orange,
-        colorText: AppColors.white,
       );
       return;
     }

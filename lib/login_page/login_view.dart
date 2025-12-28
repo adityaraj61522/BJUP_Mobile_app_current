@@ -1,10 +1,13 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/login_page/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginScreen extends GetView<LoginController> {
   final _formKey = GlobalKey<FormState>();
+  final NotificationController notificationController =
+      Get.put(NotificationController());
 
   LoginScreen({super.key});
 
@@ -39,6 +42,7 @@ class LoginScreen extends GetView<LoginController> {
               ],
             ),
           ),
+          NotificationCardsList(controller: notificationController),
         ],
       ),
     );
@@ -242,12 +246,9 @@ class LoginScreen extends GetView<LoginController> {
       try {
         await controller.login();
       } catch (e) {
-        Get.snackbar(
+        notificationController.showError(
           'login_failed'.tr,
           'something_went_wrong'.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.red,
-          colorText: AppColors.white,
         );
       }
     }

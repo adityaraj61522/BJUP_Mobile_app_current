@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
@@ -14,21 +15,28 @@ class ProjectMonitoringListView extends StatelessWidget {
       permanent: false,
       tag: DateTime.now().millisecondsSinceEpoch.toString());
   final sessionManager = SessionManager();
+  final notificationController = Get.find<NotificationController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Obx(
-          () => Column(
-            children: controller.projectList
-                .map((projectItem) => _buildProjectMonitoringCard(
-                      projectItem: projectItem,
-                    ))
-                .toList(),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Obx(
+              () => Column(
+                children: controller.projectList
+                    .map((projectItem) => _buildProjectMonitoringCard(
+                          projectItem: projectItem,
+                        ))
+                    .toList(),
+              ),
+            ),
           ),
-        ),
+          NotificationCardsList(controller: notificationController),
+        ],
       ),
     );
   }

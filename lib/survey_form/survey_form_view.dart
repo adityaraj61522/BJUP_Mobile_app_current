@@ -6,6 +6,7 @@ import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/hive_storage_controllers/survey_storage.dart';
 import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:date_field/date_field.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -62,6 +63,8 @@ class _SurveyPageState extends State<SurveyPage> {
   final RxBool loadingLocation = false.obs;
   final ApiService apiService = ApiService();
   final SurveyStorageService surveyStorageService = SurveyStorageService();
+  final NotificationController notificationController =
+      Get.put(NotificationController());
   final Uuid _uuid = const Uuid();
 
   // Common style to use for all question texts
@@ -209,12 +212,9 @@ class _SurveyPageState extends State<SurveyPage> {
       return newPath;
     } catch (e) {
       print("Error saving file locally: $e");
-      Get.snackbar(
+      notificationController.showError(
         "File Error",
         "Could not save $fileType locally.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
       return null;
     }
@@ -231,12 +231,9 @@ class _SurveyPageState extends State<SurveyPage> {
       return filePath;
     } catch (e) {
       print("Error saving signature locally: $e");
-      Get.snackbar(
+      notificationController.showError(
         "File Error",
         "Could not save signature locally.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
       return null;
     }
@@ -291,12 +288,9 @@ class _SurveyPageState extends State<SurveyPage> {
     }
 
     if (!isFormValid) {
-      Get.snackbar(
+      notificationController.showError(
         "Validation Error",
         "Please fill all mandatory fields correctly.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
       setState(() {});
       return;
@@ -365,12 +359,9 @@ class _SurveyPageState extends State<SurveyPage> {
           savedSurveyQuestions: formToSave);
 
       print("Survey Saved Locally successfully!");
-      Get.snackbar(
+      notificationController.showSuccess(
         "Success",
         "survey_saved_locally".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.primary1,
-        colorText: AppColors.white,
       );
       Get.toNamed(AppRoutes.projectActionList, arguments: {
         "projectId": widget.projectId,
@@ -378,12 +369,9 @@ class _SurveyPageState extends State<SurveyPage> {
       });
     } catch (error) {
       print("Error saving survey locally: $error");
-      Get.snackbar(
+      notificationController.showError(
         "Error",
         "failed_save_survey".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     } finally {
       isLoading.value = false;
@@ -1090,9 +1078,8 @@ class _SurveyPageState extends State<SurveyPage> {
                     }
                   } else {
                     print("File path is null (potentially web platform)");
-                    Get.snackbar("Info",
-                        "File path not available directly. Web handling might be needed.",
-                        snackPosition: SnackPosition.BOTTOM);
+                    notificationController.showInfo("Info",
+                        "File path not available directly. Web handling might be needed.");
                   }
                 }
               },
@@ -1157,8 +1144,8 @@ class _SurveyPageState extends State<SurveyPage> {
               }
             } catch (e) {
               print("Error picking/saving camera image: $e");
-              Get.snackbar("Camera Error", "Could not capture or save image.",
-                  snackPosition: SnackPosition.BOTTOM);
+              notificationController.showError(
+                  "Camera Error", "Could not capture or save image.");
             }
           },
           label: Text('take_photo'.tr),
@@ -1217,8 +1204,8 @@ class _SurveyPageState extends State<SurveyPage> {
 
             serviceEnabled = await Geolocator.isLocationServiceEnabled();
             if (!serviceEnabled) {
-              Get.snackbar("Location Error", "location_services_disabled".tr,
-                  snackPosition: SnackPosition.BOTTOM);
+              notificationController.showError(
+                  "Location Error", "location_services_disabled".tr);
               return;
             }
 
@@ -1226,17 +1213,15 @@ class _SurveyPageState extends State<SurveyPage> {
             if (permission == LocationPermission.denied) {
               permission = await Geolocator.requestPermission();
               if (permission == LocationPermission.denied) {
-                Get.snackbar(
-                    "Permission Error", "location_permissions_denied".tr,
-                    snackPosition: SnackPosition.BOTTOM);
+                notificationController.showError(
+                    "Permission Error", "location_permissions_denied".tr);
                 return;
               }
             }
 
             if (permission == LocationPermission.deniedForever) {
-              Get.snackbar("Permission Error",
-                  "location_permissions_permanent_denied".tr,
-                  snackPosition: SnackPosition.BOTTOM);
+              notificationController.showError("Permission Error",
+                  "location_permissions_permanent_denied".tr);
               return;
             }
 
@@ -1250,17 +1235,14 @@ class _SurveyPageState extends State<SurveyPage> {
                     "${position.latitude}, ${position.longitude}";
                 _validateField(question.questionId);
               });
-              Get.snackbar(
+              notificationController.showSuccess(
                 "Success",
                 "location_captured".tr,
-                snackPosition: SnackPosition.BOTTOM,
-                duration: Duration(seconds: 2),
-                backgroundColor: AppColors.primary1,
               );
             } catch (e) {
               print("Error getting location: $e");
-              Get.snackbar("Location Error", "error_getting_location".tr,
-                  snackPosition: SnackPosition.BOTTOM);
+              notificationController.showError(
+                  "Location Error", "error_getting_location".tr);
             } finally {
               loadingLocation.value = false;
             }
@@ -1357,14 +1339,13 @@ class _SurveyPageState extends State<SurveyPage> {
                       setState(() {
                         _answers[question.questionId] = localPath;
                         _validateField(question.questionId);
-                        Get.snackbar("Success", "Signature saved.",
-                            snackPosition: SnackPosition.BOTTOM,
-                            duration: Duration(seconds: 2));
+                        notificationController.showSuccess(
+                            "Success", "Signature saved.");
                       });
                     }
                   } else {
-                    Get.snackbar("Error", "Could not export signature.",
-                        snackPosition: SnackPosition.BOTTOM);
+                    notificationController.showError(
+                        "Error", "Could not export signature.");
                   }
                 } else {
                   if (question.mandatory) {
@@ -1373,8 +1354,8 @@ class _SurveyPageState extends State<SurveyPage> {
                           'signature_required'.tr;
                     });
                   }
-                  Get.snackbar("Info", "provide_signature".tr,
-                      snackPosition: SnackPosition.BOTTOM);
+                  notificationController.showInfo(
+                      "Info", "provide_signature".tr);
                 }
               },
             ),
@@ -1428,6 +1409,7 @@ class _SurveyPageState extends State<SurveyPage> {
                       ),
                     ),
                   ),
+                NotificationCardsList(controller: notificationController),
               ],
             )),
         Padding(

@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/download_question_set_page/download_question_set_controller.dart';
@@ -10,6 +11,7 @@ class DownloadQuestionSetView extends StatelessWidget {
 
   final controller = Get.put(DownloadQuestionSetController(),
       permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
+  final notificationController = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +129,8 @@ class DownloadQuestionSetView extends StatelessWidget {
                       color: AppColors.white, fontWeight: FontWeight.bold),
                 ),
               ),
-            )
+            ),
+            NotificationCardsList(controller: notificationController),
           ],
         ),
       ),

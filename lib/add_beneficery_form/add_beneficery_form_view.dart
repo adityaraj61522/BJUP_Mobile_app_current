@@ -6,6 +6,7 @@ import 'package:bjup_application/common/response_models/get_village_list_respons
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/response_models/add_beneficery_request/add_beneficery_request.dart';
 import 'package:bjup_application/common/routes/routes.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
 
   final submitTriggered = false.obs;
   final SessionManager _sessionManager = SessionManager();
+  final NotificationController notificationController =
+      Get.put(NotificationController());
   final ApiService apiService = ApiService();
   final errorText = ''.obs;
   final isLoading = false.obs;
@@ -189,12 +192,9 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
 
   Future<void> _handleError(String message) async {
     errorText.value = message;
-    Get.snackbar(
+    notificationController.showError(
       'Error',
       message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.red,
-      colorText: AppColors.white,
     );
   }
 
@@ -241,49 +241,34 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
           print('Status code: ${e.response?.statusCode}');
           print('Response data: ${e.response?.data}');
           if (e.response?.statusCode == 500) {
-            Get.snackbar(
+            notificationController.showError(
               "Server Error",
               'An internal server error occurred. Please try again later.',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: AppColors.orange,
-              colorText: AppColors.white,
             );
           } else {
-            Get.snackbar(
+            notificationController.showError(
               "Error",
               'something_went_wrong'.tr,
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: AppColors.red,
-              colorText: AppColors.white,
             );
           }
         } else {
-          Get.snackbar(
+          notificationController.showError(
             "Network Error",
             'Failed to connect to the server. Please check your internet connection.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.red,
-            colorText: AppColors.white,
           );
         }
       } catch (e) {
         print('Other error submitting form: $e');
-        Get.snackbar(
+        notificationController.showError(
           "Error",
           'something_went_wrong'.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.red,
-          colorText: AppColors.white,
         );
       }
     } else {
       // Show validation errors
-      Get.snackbar(
+      notificationController.showError(
         "Error",
         'Please fill all required fields'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.red,
-        colorText: AppColors.white,
       );
     }
   }
@@ -334,12 +319,9 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
         if (data['response_code'] == 200) {
           errorText.value = '';
           // Get.offAllNamed('/moduleSelection');
-          Get.snackbar(
+          notificationController.showSuccess(
             "Success!!",
             'Beneficery Added Successfully!!'.tr,
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.primary1,
-            colorText: AppColors.white,
           );
 
           Get.toNamed(
@@ -376,12 +358,9 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
   }
 
   Future<void> handleErrorReported({required String error}) async {
-    Get.snackbar(
+    notificationController.showError(
       error,
       'something_went_wrong'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.red,
-      colorText: AppColors.white,
     );
   }
 
@@ -913,6 +892,7 @@ class _AddBeneficiaryScreenState extends State<AddBeneficiaryScreen> {
                 },
               ),
             ),
+            NotificationCardsList(controller: notificationController),
           ],
         ),
       ),

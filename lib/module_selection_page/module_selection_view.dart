@@ -1,4 +1,5 @@
 import 'package:bjup_application/common/color_pallet/color_pallet.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/routes/routes.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:bjup_application/common/widgets/version_screen.dart';
@@ -12,55 +13,62 @@ class ModuleSelectionView extends StatelessWidget {
   final controller = Get.put(ModuleSelectionController(),
       permanent: false, tag: DateTime.now().millisecondsSinceEpoch.toString());
   final sessionManager = SessionManager();
+  final notificationController = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _buildLogoAndLanguageSwitcher(),
-            Text(
-              "greeting".trParams({'s': controller.userData?.username ?? ''}),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildDashboardButton(
-                    icon: Icons.calendar_month_rounded,
-                    label: "attendance_module".tr,
-                    onTap: () => Get.toNamed(AppRoutes.attendenceList),
-                    tileColor: AppColors.primary2,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _buildLogoAndLanguageSwitcher(),
+                Text(
+                  "greeting"
+                      .trParams({'s': controller.userData?.username ?? ''}),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 20),
-                  _buildDashboardButton(
-                    icon: Icons.screenshot_monitor_rounded,
-                    label: "monitoring".tr,
-                    onTap: () => Get.toNamed(AppRoutes.projectList),
-                    tileColor: AppColors.primary1,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildDashboardButton(
+                        icon: Icons.calendar_month_rounded,
+                        label: "attendance_module".tr,
+                        onTap: () => Get.toNamed(AppRoutes.attendenceList),
+                        tileColor: AppColors.primary2,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildDashboardButton(
+                        icon: Icons.screenshot_monitor_rounded,
+                        label: "monitoring".tr,
+                        onTap: () => Get.toNamed(AppRoutes.projectList),
+                        tileColor: AppColors.primary1,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Spacer(),
+                const Center(
+                  child: VersionScreen(),
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-            Spacer(),
-            const Center(
-              child: VersionScreen(),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
+          ),
+          NotificationCardsList(controller: notificationController),
+        ],
       ),
     );
   }

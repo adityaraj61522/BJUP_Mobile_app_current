@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bjup_application/common/api_service/api_service.dart';
-import 'package:bjup_application/common/color_pallet/color_pallet.dart';
 import 'package:bjup_application/common/hive_storage_controllers/question_form_data_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/question_set_storage.dart';
 import 'package:bjup_application/common/hive_storage_controllers/village_list_storage.dart';
@@ -9,12 +8,15 @@ import 'package:bjup_application/common/response_models/get_question_set_respons
 import 'package:bjup_application/common/response_models/user_response/user_response.dart';
 import 'package:bjup_application/common/response_models/get_question_form_response/get_question_form_response.dart';
 import 'package:bjup_application/common/routes/routes.dart';
+import 'package:bjup_application/common/notification_card.dart';
 import 'package:bjup_application/common/session/session_manager.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 
 class DownloadQuestionSetController extends GetxController {
   final SessionManager sessionManager = SessionManager();
+  final NotificationController notificationController =
+      Get.find<NotificationController>();
   // final DownloadQuestionSetStorage downloadedStorageManager =
   //     DownloadQuestionSetStorage();
 
@@ -252,12 +254,9 @@ class DownloadQuestionSetController extends GetxController {
                   projectId: selectedProject.value)
               .then((value) => {
                     print("Question Set Data saved successfully!!"),
-                    Get.snackbar(
+                    notificationController.showSuccess(
                       "success".tr,
                       "question_set_saved".tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.primary1,
-                      colorText: AppColors.white,
                     ),
                   });
 
@@ -328,11 +327,9 @@ class DownloadQuestionSetController extends GetxController {
 }
 
 Future<void> handleErrorReported({required String error}) async {
-  Get.snackbar(
+  final notificationController = Get.find<NotificationController>();
+  notificationController.showError(
     error,
     'something_went_wrong'.tr,
-    snackPosition: SnackPosition.BOTTOM,
-    backgroundColor: AppColors.red,
-    colorText: AppColors.white,
   );
 }
